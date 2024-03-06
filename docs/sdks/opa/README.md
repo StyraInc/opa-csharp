@@ -18,9 +18,9 @@ Execute a policy
 ### Example Usage
 
 ```csharp
-using Openapi;
-using Openapi.Models.Requests;
-using Openapi.Models.Components;
+using Api;
+using Api.Models.Requests;
+using Api.Models.Components;
 
 var sdk = new Opa();
 
@@ -52,10 +52,10 @@ Execute a policy given an input
 ### Example Usage
 
 ```csharp
-using Openapi;
-using Openapi.Models.Requests;
+using Api;
+using Api.Models.Requests;
 using System.Collections.Generic;
-using Openapi.Models.Components;
+using Api.Models.Components;
 
 var sdk = new Opa();
 
@@ -92,8 +92,8 @@ The health API endpoint executes a simple built-in policy query to verify that t
 ### Example Usage
 
 ```csharp
-using Openapi;
-using Openapi.Models.Requests;
+using Api;
+using Api.Models.Requests;
 using System.Collections.Generic;
 
 var sdk = new Opa();

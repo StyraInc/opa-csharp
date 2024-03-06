@@ -12,8 +12,8 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.0.1
-  author: Speakeasy
+  version: 0.0.2
+  author: Styra
   dotnetVersion: net6.0
   flattenGlobalSecurity: true
   imports:
@@ -27,4 +27,4 @@ csharp:
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
-  packageName: openapi
+  packageName: api

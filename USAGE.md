@@ -1,9 +1,9 @@
 <!-- Start SDK Example Usage [usage] -->
 ```csharp
-using Openapi;
-using Openapi.Models.Requests;
+using Api;
+using Api.Models.Requests;
 using System.Collections.Generic;
-using Openapi.Models.Components;
+using Api.Models.Components;
 
 var sdk = new Opa();
 

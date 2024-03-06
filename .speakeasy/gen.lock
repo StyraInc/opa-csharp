@@ -5,8 +5,8 @@ management:
   docVersion: 0.2.0
   speakeasyVersion: 1.201.2
   generationVersion: 2.277.0
-  releaseVersion: 0.0.1
-  configChecksum: f64de8db58f1e4984a727c0b1d0c514e
+  releaseVersion: 0.0.2
+  configChecksum: d4b47405bcd8c3807128defb87f631f4
 features:
   csharp:
     core: 3.4.3
@@ -14,43 +14,43 @@ features:
     flattening: 2.81.1
     globalServerURLs: 2.82.2
 generatedFiles:
-  - Openapi/Opa.cs
+  - Api/Opa.cs
   - global.json
-  - Openapi/Utils/BigIntSerializer.cs
-  - Openapi/Utils/DecimalSerializer.cs
-  - Openapi/Utils/EnumSerializer.cs
-  - Openapi/Utils/FlexibleObjectDeserializer.cs
-  - Openapi/Utils/HeaderSerializer.cs
-  - Openapi/Utils/IsoDateTimeSerializer.cs
-  - Openapi/Utils/RequestBodySerializer.cs
-  - Openapi/Utils/SecuritySerializer.cs
-  - Openapi/Utils/SpeakeasyHttpClient.cs
-  - Openapi/Utils/SpeakeasyMetadata.cs
-  - Openapi/Utils/URLBuilder.cs
-  - Openapi/Utils/Utilities.cs
-  - Openapi/Openapi.csproj
-  - Openapi.sln
-  - Openapi/Models/Requests/ExecutePolicyRequest.cs
-  - Openapi/Models/Requests/ExecutePolicyResponse.cs
-  - Openapi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
-  - Openapi/Models/Requests/ExecutePolicyWithInputRequest.cs
-  - Openapi/Models/Requests/ExecutePolicyWithInputResponse.cs
-  - Openapi/Models/Requests/HealthRequest.cs
-  - Openapi/Models/Requests/HealthResponse.cs
-  - Openapi/Models/Components/ServerErrorLocation.cs
-  - Openapi/Models/Components/ServerErrorErrors.cs
-  - Openapi/Models/Components/ServerError.cs
-  - Openapi/Models/Components/Location.cs
-  - Openapi/Models/Components/Errors.cs
-  - Openapi/Models/Components/ClientError.cs
-  - Openapi/Models/Components/SuccessfulPolicyEvaluation.cs
-  - Openapi/Models/Components/Revision.cs
-  - Openapi/Models/Components/Provenance.cs
-  - Openapi/Models/Components/Explain.cs
-  - Openapi/Models/Components/GzipAcceptEncoding.cs
-  - Openapi/Models/Components/GzipContentEncoding.cs
-  - Openapi/Models/Components/UnhealthyServer.cs
-  - Openapi/Models/Components/HealthyServer.cs
+  - Api/Utils/BigIntSerializer.cs
+  - Api/Utils/DecimalSerializer.cs
+  - Api/Utils/EnumSerializer.cs
+  - Api/Utils/FlexibleObjectDeserializer.cs
+  - Api/Utils/HeaderSerializer.cs
+  - Api/Utils/IsoDateTimeSerializer.cs
+  - Api/Utils/RequestBodySerializer.cs
+  - Api/Utils/SecuritySerializer.cs
+  - Api/Utils/SpeakeasyHttpClient.cs
+  - Api/Utils/SpeakeasyMetadata.cs
+  - Api/Utils/URLBuilder.cs
+  - Api/Utils/Utilities.cs
+  - Api/Api.csproj
+  - Api.sln
+  - Api/Models/Requests/ExecutePolicyRequest.cs
+  - Api/Models/Requests/ExecutePolicyResponse.cs
+  - Api/Models/Requests/ExecutePolicyWithInputRequestBody.cs
+  - Api/Models/Requests/ExecutePolicyWithInputRequest.cs
+  - Api/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Api/Models/Requests/HealthRequest.cs
+  - Api/Models/Requests/HealthResponse.cs
+  - Api/Models/Components/ServerErrorLocation.cs
+  - Api/Models/Components/ServerErrorErrors.cs
+  - Api/Models/Components/ServerError.cs
+  - Api/Models/Components/Location.cs
+  - Api/Models/Components/Errors.cs
+  - Api/Models/Components/ClientError.cs
+  - Api/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Api/Models/Components/Revision.cs
+  - Api/Models/Components/Provenance.cs
+  - Api/Models/Components/Explain.cs
+  - Api/Models/Components/GzipAcceptEncoding.cs
+  - Api/Models/Components/GzipContentEncoding.cs
+  - Api/Models/Components/UnhealthyServer.cs
+  - Api/Models/Components/HealthyServer.cs
   - docs/Models/Requests/ExecutePolicyRequest.md
   - docs/Models/Requests/ExecutePolicyResponse.md
   - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md

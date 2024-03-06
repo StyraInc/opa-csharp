@@ -17,7 +17,7 @@ It has been generated successfully based on your OpenAPI spec. However, it is no
 ### Nuget
 
 ```bash
-dotnet add reference path/to/Openapi.csproj
+dotnet add reference path/to/Api.csproj
 ```
 <!-- End SDK Installation [installation] -->
 
@@ -27,10 +27,10 @@ dotnet add reference path/to/Openapi.csproj
 ### Example
 
 ```csharp
-using Openapi;
-using Openapi.Models.Requests;
+using Api;
+using Api.Models.Requests;
 using System.Collections.Generic;
-using Openapi.Models.Components;
+using Api.Models.Components;
 
 var sdk = new Opa();
 
