@@ -1,0 +1,77 @@
+lockVersion: 2.0.0
+id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
+management:
+  docChecksum: 51f4193538f657830431eb4a7cbb2b7c
+  docVersion: 0.2.0
+  speakeasyVersion: 1.201.2
+  generationVersion: 2.277.0
+  releaseVersion: 0.0.1
+  configChecksum: f64de8db58f1e4984a727c0b1d0c514e
+features:
+  csharp:
+    core: 3.4.3
+    examples: 2.81.3
+    flattening: 2.81.1
+    globalServerURLs: 2.82.2
+generatedFiles:
+  - Openapi/Opa.cs
+  - global.json
+  - Openapi/Utils/BigIntSerializer.cs
+  - Openapi/Utils/DecimalSerializer.cs
+  - Openapi/Utils/EnumSerializer.cs
+  - Openapi/Utils/FlexibleObjectDeserializer.cs
+  - Openapi/Utils/HeaderSerializer.cs
+  - Openapi/Utils/IsoDateTimeSerializer.cs
+  - Openapi/Utils/RequestBodySerializer.cs
+  - Openapi/Utils/SecuritySerializer.cs
+  - Openapi/Utils/SpeakeasyHttpClient.cs
+  - Openapi/Utils/SpeakeasyMetadata.cs
+  - Openapi/Utils/URLBuilder.cs
+  - Openapi/Utils/Utilities.cs
+  - Openapi/Openapi.csproj
+  - Openapi.sln
+  - Openapi/Models/Requests/ExecutePolicyRequest.cs
+  - Openapi/Models/Requests/ExecutePolicyResponse.cs
+  - Openapi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
+  - Openapi/Models/Requests/ExecutePolicyWithInputRequest.cs
+  - Openapi/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Openapi/Models/Requests/HealthRequest.cs
+  - Openapi/Models/Requests/HealthResponse.cs
+  - Openapi/Models/Components/ServerErrorLocation.cs
+  - Openapi/Models/Components/ServerErrorErrors.cs
+  - Openapi/Models/Components/ServerError.cs
+  - Openapi/Models/Components/Location.cs
+  - Openapi/Models/Components/Errors.cs
+  - Openapi/Models/Components/ClientError.cs
+  - Openapi/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Openapi/Models/Components/Revision.cs
+  - Openapi/Models/Components/Provenance.cs
+  - Openapi/Models/Components/Explain.cs
+  - Openapi/Models/Components/GzipAcceptEncoding.cs
+  - Openapi/Models/Components/GzipContentEncoding.cs
+  - Openapi/Models/Components/UnhealthyServer.cs
+  - Openapi/Models/Components/HealthyServer.cs
+  - docs/Models/Requests/ExecutePolicyRequest.md
+  - docs/Models/Requests/ExecutePolicyResponse.md
+  - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md
+  - docs/Models/Requests/ExecutePolicyWithInputRequest.md
+  - docs/Models/Requests/ExecutePolicyWithInputResponse.md
+  - docs/Models/Requests/HealthRequest.md
+  - docs/Models/Requests/HealthResponse.md
+  - docs/Models/Components/ServerErrorLocation.md
+  - docs/Models/Components/ServerErrorErrors.md
+  - docs/Models/Components/ServerError.md
+  - docs/Models/Components/Location.md
+  - docs/Models/Components/Errors.md
+  - docs/Models/Components/ClientError.md
+  - docs/Models/Components/SuccessfulPolicyEvaluation.md
+  - docs/Models/Components/Revision.md
+  - docs/Models/Components/Provenance.md
+  - docs/Models/Components/Explain.md
+  - docs/Models/Components/GzipAcceptEncoding.md
+  - docs/Models/Components/GzipContentEncoding.md
+  - docs/Models/Components/UnhealthyServer.md
+  - docs/Models/Components/HealthyServer.md
+  - docs/sdks/opa/README.md
+  - USAGE.md
+  - .gitattributes

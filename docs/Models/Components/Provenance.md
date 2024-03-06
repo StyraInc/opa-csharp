@@ -1,0 +1,14 @@
+# Provenance
+
+Provenance information can be requested on individual API calls and are returned inline with the API response. To obtain provenance information on an API call, specify the `provenance=true` query parameter when executing the API call.
+
+
+## Fields
+
+| Field                                                                                 | Type                                                                                  | Required                                                                              | Description                                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `Version`                                                                             | *string*                                                                              | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `BuildCommit`                                                                         | *string*                                                                              | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `BuildTimestamp`                                                                      | [DateTime](https://learn.microsoft.com/en-us/dotnet/api/system.datetime?view=net-5.0) | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `BuildHost`                                                                           | *string*                                                                              | :heavy_minus_sign:                                                                    | N/A                                                                                   |
+| `Bundles`                                                                             | Dictionary<String, [Revision](../../Models/Components/Revision.md)>                   | :heavy_minus_sign:                                                                    | N/A                                                                                   |
