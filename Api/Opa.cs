@@ -20,8 +20,6 @@ namespace Api
     using System.Threading.Tasks;
     using System;
 
-
-
     /// <summary>
     /// 
     /// <see>https://docs.styra.com/enterprise-opa} - Enterprise OPA documentation</see>
@@ -48,14 +46,16 @@ namespace Api
         /// </summary>
         Task<HealthResponse> HealthAsync(bool? bundles = null, bool? plugins = null, List<string>? excludePlugin = null);
     }
-    
+
     public class SDKConfig
     {
-        public static string[] ServerList = new string[]
-        {
+        /// <summary>
+        /// List of server URLs available to the SDK.
+        /// </summary>
+        public static readonly string[] ServerList = {
             "http://localhost:8181",
         };
-        /// Contains the list of servers available to the SDK
+
         public string serverUrl = "";
         public int serverIndex = 0;
 
@@ -78,10 +78,10 @@ namespace Api
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _language = "csharp";
-        private const string _sdkVersion = "0.0.2";
-        private const string _sdkGenVersion = "2.277.0";
+        private const string _sdkVersion = "0.0.3";
+        private const string _sdkGenVersion = "2.279.1";
         private const string _openapiDocVersion = "0.2.0";
-        private const string _userAgent = "speakeasy-sdk/csharp 0.0.2 2.277.0 0.2.0 api";
+        private const string _userAgent = "speakeasy-sdk/csharp 0.0.3 2.279.1 0.2.0 api";
         private string _serverUrl = "";
         private int _serverIndex = 0;
         private ISpeakeasyHttpClient _defaultClient;
@@ -90,6 +90,10 @@ namespace Api
         {
             if (serverIndex != null)
             {
+                if (serverIndex.Value < 0 || serverIndex.Value >= SDKConfig.ServerList.Length)
+                {
+                    throw new Exception($"Invalid server index {serverIndex.Value}");
+                }
                 _serverIndex = serverIndex.Value;
             }
 

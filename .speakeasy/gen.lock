@@ -3,16 +3,17 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 51f4193538f657830431eb4a7cbb2b7c
   docVersion: 0.2.0
-  speakeasyVersion: 1.201.2
-  generationVersion: 2.277.0
-  releaseVersion: 0.0.2
-  configChecksum: d4b47405bcd8c3807128defb87f631f4
+  speakeasyVersion: 1.204.1
+  generationVersion: 2.279.1
+  releaseVersion: 0.0.3
+  configChecksum: 61588a88f6e76c437ddad9a517ec76f4
+  repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
     core: 3.4.3
     examples: 2.81.3
     flattening: 2.81.1
-    globalServerURLs: 2.82.2
+    globalServerURLs: 2.82.3
 generatedFiles:
   - Api/Opa.cs
   - global.json
