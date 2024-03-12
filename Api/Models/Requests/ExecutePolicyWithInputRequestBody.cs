@@ -11,7 +11,6 @@
 namespace Api.Models.Requests
 {
     using Newtonsoft.Json;
-    using System.Collections.Generic;
     
     /// <summary>
     /// The input document
@@ -23,6 +22,6 @@ namespace Api.Models.Requests
         /// Arbitrary JSON used within your policies by accessing `input`
         /// </summary>
         [JsonProperty("input")]
-        public Dictionary<string, object> Input { get; set; } = default!;
+        public object Input { get; set; } = default!;
     }
 }

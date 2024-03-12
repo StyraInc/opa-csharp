@@ -20,7 +20,6 @@ dotnet add reference path/to/Api.csproj
 ```csharp
 using Api;
 using Api.Models.Requests;
-using System.Collections.Generic;
 using Api.Models.Components;
 
 var sdk = new Opa();
@@ -28,9 +27,7 @@ var sdk = new Opa();
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "<value>",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
-        Input = new Dictionary<string, object>() {
-            { "key", "<value>" },
-        },
+        Input = "<value>",
     },
 };
 
