@@ -2,7 +2,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>api</PackageId>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Authors>Styra</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
