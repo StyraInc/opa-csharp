@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 84d9628f4028269f1c229e162781733e
+  docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.207.0
-  generationVersion: 2.280.6
-  releaseVersion: 0.0.4
-  configChecksum: 5da86c6676991c8592fec3a4abc3f05a
+  speakeasyVersion: 1.209.2
+  generationVersion: 2.281.2
+  releaseVersion: 0.0.5
+  configChecksum: c7a152833d9e5dc2db830a2c01ba95d8
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:

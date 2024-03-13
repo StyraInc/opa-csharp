@@ -7,7 +7,7 @@ using Api.Models.Components;
 var sdk = new Opa();
 
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
-    Path = "<value>",
+    Path = "app/rbac",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
         Input = "<value>",
     },
