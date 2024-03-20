@@ -10,6 +10,7 @@
 #nullable enable
 namespace Api.Models.Requests
 {
+    using Api.Models.Components;
     using Newtonsoft.Json;
     
     /// <summary>
@@ -22,6 +23,6 @@ namespace Api.Models.Requests
         /// Arbitrary JSON used within your policies by accessing `input`
         /// </summary>
         [JsonProperty("input")]
-        public object Input { get; set; } = default!;
+        public Input Input { get; set; } = default!;
     }
 }

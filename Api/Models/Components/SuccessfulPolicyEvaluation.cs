@@ -10,6 +10,7 @@
 #nullable enable
 namespace Api.Models.Components
 {
+    using Api.Models.Components;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     
@@ -20,7 +21,7 @@ namespace Api.Models.Components
         /// The base or virtual document referred to by the URL path. If the path is undefined, this key will be omitted.
         /// </summary>
         [JsonProperty("result")]
-        public object? Result { get; set; }
+        public Result? Result { get; set; }
 
         /// <summary>
         /// If query metrics are enabled, this field contains query performance metrics collected during the parse, compile, and evaluation steps.

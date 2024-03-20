@@ -78,10 +78,10 @@ namespace Api
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _language = "csharp";
-        private const string _sdkVersion = "0.0.5";
-        private const string _sdkGenVersion = "2.281.2";
+        private const string _sdkVersion = "0.1.0";
+        private const string _sdkGenVersion = "2.283.1";
         private const string _openapiDocVersion = "0.2.0";
-        private const string _userAgent = "speakeasy-sdk/csharp 0.0.5 2.281.2 0.2.0 api";
+        private const string _userAgent = "speakeasy-sdk/csharp 0.1.0 2.283.1 0.2.0 api";
         private string _serverUrl = "";
         private int _serverIndex = 0;
         private ISpeakeasyHttpClient _defaultClient;

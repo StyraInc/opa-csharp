@@ -3,10 +3,10 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.209.2
-  generationVersion: 2.281.2
-  releaseVersion: 0.0.5
-  configChecksum: c7a152833d9e5dc2db830a2c01ba95d8
+  speakeasyVersion: 1.213.0
+  generationVersion: 2.283.1
+  releaseVersion: 0.1.0
+  configChecksum: ef8305e66f6c0da55e15a2c60e06f357
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
@@ -14,6 +14,7 @@ features:
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
+    unions: 0.0.1
 generatedFiles:
   - Api/Opa.cs
   - global.json
@@ -47,8 +48,10 @@ generatedFiles:
   - Api/Models/Components/SuccessfulPolicyEvaluation.cs
   - Api/Models/Components/Revision.cs
   - Api/Models/Components/Provenance.cs
+  - Api/Models/Components/Result.cs
   - Api/Models/Components/Explain.cs
   - Api/Models/Components/GzipAcceptEncoding.cs
+  - Api/Models/Components/Input.cs
   - Api/Models/Components/GzipContentEncoding.cs
   - Api/Models/Components/UnhealthyServer.cs
   - Api/Models/Components/HealthyServer.cs
@@ -68,8 +71,10 @@ generatedFiles:
   - docs/Models/Components/SuccessfulPolicyEvaluation.md
   - docs/Models/Components/Revision.md
   - docs/Models/Components/Provenance.md
+  - docs/Models/Components/Result.md
   - docs/Models/Components/Explain.md
   - docs/Models/Components/GzipAcceptEncoding.md
+  - docs/Models/Components/Input.md
   - docs/Models/Components/GzipContentEncoding.md
   - docs/Models/Components/UnhealthyServer.md
   - docs/Models/Components/HealthyServer.md

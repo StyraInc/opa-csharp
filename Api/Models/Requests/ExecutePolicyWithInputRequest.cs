@@ -11,6 +11,7 @@
 namespace Api.Models.Requests
 {
     using Api.Models.Components;
+    using Api.Models.Requests;
     using Api.Utils;
     
     public class ExecutePolicyWithInputRequest
