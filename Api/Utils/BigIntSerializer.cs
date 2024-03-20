@@ -42,7 +42,11 @@ namespace Api.Utils
                 return null;
             }
 
-            return BigInteger.Parse(reader.Value.ToString()!);
+            try {
+                return BigInteger.Parse(reader.Value.ToString()!);
+            } catch (System.FormatException ex) {
+                throw new Newtonsoft.Json.JsonSerializationException("Could not parse BigInteger", ex);
+            }
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)

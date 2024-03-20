@@ -10,6 +10,7 @@
 #nullable enable
 namespace Api.Models.Components
 {
+    using Api.Models.Components;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     

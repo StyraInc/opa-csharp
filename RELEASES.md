@@ -23,3 +23,11 @@ Based on:
 - Speakeasy CLI 1.209.2 (2.281.2) https://github.com/speakeasy-api/speakeasy
 ### Generated
 - [csharp v0.0.5] .
+
+## 2024-03-20 00:03:04
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.213.0 (2.283.1) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v0.1.0] .
