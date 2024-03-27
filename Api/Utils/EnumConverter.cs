@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Api.Utils
 {
-    internal class EnumSerializer : JsonConverter
+    internal class EnumConverter : JsonConverter
     {
         public override bool CanConvert(System.Type objectType)
         {
@@ -25,8 +25,6 @@ namespace Api.Utils
 
             return objectType.IsEnum;
         }
-
-        public override bool CanRead => true;
 
         public override object? ReadJson(
             JsonReader reader,

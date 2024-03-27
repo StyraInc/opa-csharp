@@ -12,22 +12,22 @@ namespace Api.Utils
 {
     using System;
     using System.Globalization;
+    using System.Numerics;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
-    internal class DecimalSerializer : JsonConverter
+    internal class BigIntStrConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            var  nullableType = Nullable.GetUnderlyingType(objectType);
+            var nullableType = Nullable.GetUnderlyingType(objectType);
             if (nullableType != null)
             {
-                return nullableType == typeof(Decimal);
+                return nullableType == typeof(BigInteger);
             }
 
-            return objectType == typeof(Decimal);
+            return objectType == typeof(BigInteger);
         }
-
-        public override bool CanRead => true;
 
         public override object? ReadJson(
             JsonReader reader,
@@ -41,7 +41,11 @@ namespace Api.Utils
                 return null;
             }
 
-            return Decimal.Parse(reader.Value.ToString()!);
+            try {
+                return BigInteger.Parse(reader.Value.ToString()!);
+            } catch (System.FormatException ex) {
+                throw new Newtonsoft.Json.JsonSerializationException("Could not parse BigInteger", ex);
+            }
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
@@ -52,7 +56,7 @@ namespace Api.Utils
                 return;
             }
 
-            writer.WriteValue(((Decimal)value).ToString(CultureInfo.InvariantCulture));
+            writer.WriteValue(((BigInteger)value).ToString(CultureInfo.InvariantCulture));
         }
     }
 }
