@@ -3,14 +3,14 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.227.0
-  generationVersion: 2.291.0
-  releaseVersion: 0.1.1
-  configChecksum: cf7f772784da84b4987084bd63356eed
+  speakeasyVersion: 1.228.1
+  generationVersion: 2.292.0
+  releaseVersion: 0.2.0
+  configChecksum: 0533e466bb5ff158a6d254f0b245f86d
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
-    core: 3.4.3
+    core: 3.5.0
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
@@ -18,6 +18,7 @@ features:
 generatedFiles:
   - Api/Opa.cs
   - global.json
+  - Api.sln
   - Api/Utils/AnyDeserializer.cs
   - Api/Utils/BigIntStrConverter.cs
   - Api/Utils/DecimalStrConverter.cs
@@ -32,7 +33,6 @@ generatedFiles:
   - Api/Utils/URLBuilder.cs
   - Api/Utils/Utilities.cs
   - Api/Api.csproj
-  - Api.sln
   - Api/Models/Requests/ExecutePolicyRequest.cs
   - Api/Models/Requests/ExecutePolicyResponse.cs
   - Api/Models/Requests/ExecutePolicyWithInputRequestBody.cs

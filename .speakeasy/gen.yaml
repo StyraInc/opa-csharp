@@ -12,8 +12,9 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.1.1
+  version: 0.2.0
   author: Styra
+  company: ""
   dotnetVersion: net6.0
   flattenGlobalSecurity: true
   imports:
@@ -28,3 +29,4 @@ csharp:
   maxMethodParams: 4
   outputModelSuffix: output
   packageName: api
+  product: ""

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <PackageId>api</PackageId>
-    <Version>0.1.1</Version>
+    <PackageId>Api</PackageId>
+    <Version>0.2.0</Version>
     <Authors>Styra</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -10,12 +10,12 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
     <RepositoryUrl>https://github.com/StyraInc/opa-csharp</RepositoryUrl>
-    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="../README.md" Pack="true" PackagePath="/"/>
     <None Include="../docs/*" Pack="true" PackagePath="/docs"/>
+
     <PackageReference Include="newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="nodatime" Version="3.1.9" />
   </ItemGroup>

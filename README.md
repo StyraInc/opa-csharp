@@ -27,7 +27,7 @@ var sdk = new Opa();
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
-        Input = Components.CreateInputMapOfany(
+        Input = Input.CreateInputMapOfany(
                 new Dictionary<string, object>() {
                     { "user", "alice" },
                     { "action", "read" },
