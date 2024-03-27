@@ -3,10 +3,10 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.213.0
-  generationVersion: 2.283.1
-  releaseVersion: 0.1.0
-  configChecksum: ef8305e66f6c0da55e15a2c60e06f357
+  speakeasyVersion: 1.227.0
+  generationVersion: 2.291.0
+  releaseVersion: 0.1.1
+  configChecksum: cf7f772784da84b4987084bd63356eed
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
@@ -14,13 +14,14 @@ features:
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
-    unions: 0.0.1
+    unions: 0.0.2
 generatedFiles:
   - Api/Opa.cs
   - global.json
-  - Api/Utils/BigIntSerializer.cs
-  - Api/Utils/DecimalSerializer.cs
-  - Api/Utils/EnumSerializer.cs
+  - Api/Utils/AnyDeserializer.cs
+  - Api/Utils/BigIntStrConverter.cs
+  - Api/Utils/DecimalStrConverter.cs
+  - Api/Utils/EnumConverter.cs
   - Api/Utils/FlexibleObjectDeserializer.cs
   - Api/Utils/HeaderSerializer.cs
   - Api/Utils/IsoDateTimeSerializer.cs

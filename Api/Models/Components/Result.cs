@@ -33,7 +33,7 @@ namespace Api.Models.Components
         
         public static ResultType Number { get { return new ResultType("number"); } }
         
-        public static ResultType Null { get { return new ResultType("null"); } } 
+        public static ResultType Null { get { return new ResultType("null"); } }
 
         public override string ToString() { return Value; }
         public static implicit operator String(ResultType v) { return v.Value; }
@@ -77,7 +77,7 @@ namespace Api.Models.Components
         public List<object>? ArrayOfany { get; set; } 
         public double? Number { get; set; } 
 
-        public ResultType Type {get; set; }
+        public ResultType Type { get; set; }
 
 
         public static Result CreateMapOfany(Dictionary<string, object> mapOfany) {
@@ -141,7 +141,7 @@ namespace Api.Models.Components
                 }
                 try
                 {
-                    Dictionary<string, object>? mapOfany = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(Dictionary<string, object>), "string")});
+                    Dictionary<string, object>? mapOfany = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(Dictionary<string, object>))});
                     return new Result(ResultType.MapOfany) {
                         MapOfany = mapOfany
                     };
@@ -167,7 +167,7 @@ namespace Api.Models.Components
                 }
                 try
                 {
-                    List<object>? arrayOfany = JsonConvert.DeserializeObject<List<object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(List<object>), "string")});
+                    List<object>? arrayOfany = JsonConvert.DeserializeObject<List<object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(List<object>))});
                     return new Result(ResultType.ArrayOfany) {
                         ArrayOfany = arrayOfany
                     };
@@ -232,6 +232,5 @@ namespace Api.Models.Components
         }
 
     }
-
 
 }
