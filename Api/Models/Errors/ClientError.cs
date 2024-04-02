@@ -8,22 +8,27 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Api.Models.Components
+namespace Api.Models.Errors
 {
-    using Api.Models.Components;
+    using Api.Models.Errors;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System;
     
-    public class ServerError
+    /// <summary>
+    /// Bad Request
+    /// </summary>
+    public class ClientError : Exception
     {
 
         [JsonProperty("code")]
         public string Code { get; set; } = default!;
 
         [JsonProperty("message")]
-        public string Message { get; set; } = default!;
+        private string? _message { get; set; }
+        public override string Message { get {return _message ?? "";} }
 
         [JsonProperty("errors")]
-        public List<ServerErrorErrors>? Errors { get; set; }
+        public List<Errors>? Errors { get; set; }
     }
 }

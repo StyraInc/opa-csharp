@@ -39,6 +39,11 @@ namespace Api.Utils
             }
 
             var extensionType = System.Type.GetType(objectType.FullName + "Extension");
+
+            if (Nullable.GetUnderlyingType(objectType) != null) {
+                extensionType = System.Type.GetType(Nullable.GetUnderlyingType(objectType)!.FullName + "Extension");
+            }
+
             if (extensionType == null)
             {
                 return Enum.ToObject(objectType, reader.Value);

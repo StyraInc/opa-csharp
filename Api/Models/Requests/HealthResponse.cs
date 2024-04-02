@@ -36,10 +36,5 @@ namespace Api.Models.Requests
         /// OPA service is healthy. If the bundles option is specified then all configured bundles have been activated. If the plugins option is specified then all plugins are in an OK state.
         /// </summary>
         public HealthyServer? HealthyServer { get; set; }
-
-        /// <summary>
-        /// OPA service is not healthy. If the bundles option is specified this can mean any of the configured bundles have not yet been activated. If the plugins option is specified then at least one plugin is in a non-OK state.
-        /// </summary>
-        public UnhealthyServer? UnhealthyServer { get; set; }
     }
 }

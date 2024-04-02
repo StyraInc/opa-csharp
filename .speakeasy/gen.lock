@@ -3,14 +3,14 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.228.1
-  generationVersion: 2.292.0
-  releaseVersion: 0.2.0
-  configChecksum: 0533e466bb5ff158a6d254f0b245f86d
+  speakeasyVersion: 1.231.1
+  generationVersion: 2.295.1
+  releaseVersion: 0.3.0
+  configChecksum: 63ca38beda4ee137c4037339b326841e
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
-    core: 3.5.0
+    core: 3.6.0
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
@@ -27,12 +27,14 @@ generatedFiles:
   - Api/Utils/HeaderSerializer.cs
   - Api/Utils/IsoDateTimeSerializer.cs
   - Api/Utils/RequestBodySerializer.cs
+  - Api/Utils/ResponseBodyDeserializer.cs
   - Api/Utils/SecuritySerializer.cs
   - Api/Utils/SpeakeasyHttpClient.cs
   - Api/Utils/SpeakeasyMetadata.cs
   - Api/Utils/URLBuilder.cs
   - Api/Utils/Utilities.cs
   - Api/Api.csproj
+  - Api/Models/Errors/SDKException.cs
   - Api/Models/Requests/ExecutePolicyRequest.cs
   - Api/Models/Requests/ExecutePolicyResponse.cs
   - Api/Models/Requests/ExecutePolicyWithInputRequestBody.cs
@@ -40,12 +42,6 @@ generatedFiles:
   - Api/Models/Requests/ExecutePolicyWithInputResponse.cs
   - Api/Models/Requests/HealthRequest.cs
   - Api/Models/Requests/HealthResponse.cs
-  - Api/Models/Components/ServerErrorLocation.cs
-  - Api/Models/Components/ServerErrorErrors.cs
-  - Api/Models/Components/ServerError.cs
-  - Api/Models/Components/Location.cs
-  - Api/Models/Components/Errors.cs
-  - Api/Models/Components/ClientError.cs
   - Api/Models/Components/SuccessfulPolicyEvaluation.cs
   - Api/Models/Components/Revision.cs
   - Api/Models/Components/Provenance.cs
@@ -54,8 +50,14 @@ generatedFiles:
   - Api/Models/Components/GzipAcceptEncoding.cs
   - Api/Models/Components/Input.cs
   - Api/Models/Components/GzipContentEncoding.cs
-  - Api/Models/Components/UnhealthyServer.cs
   - Api/Models/Components/HealthyServer.cs
+  - Api/Models/Errors/Location.cs
+  - Api/Models/Errors/Errors.cs
+  - Api/Models/Errors/ClientError.cs
+  - Api/Models/Errors/ServerErrorLocation.cs
+  - Api/Models/Errors/ServerErrorErrors.cs
+  - Api/Models/Errors/ServerError.cs
+  - Api/Models/Errors/UnhealthyServer.cs
   - docs/Models/Requests/ExecutePolicyRequest.md
   - docs/Models/Requests/ExecutePolicyResponse.md
   - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md
@@ -63,12 +65,6 @@ generatedFiles:
   - docs/Models/Requests/ExecutePolicyWithInputResponse.md
   - docs/Models/Requests/HealthRequest.md
   - docs/Models/Requests/HealthResponse.md
-  - docs/Models/Components/ServerErrorLocation.md
-  - docs/Models/Components/ServerErrorErrors.md
-  - docs/Models/Components/ServerError.md
-  - docs/Models/Components/Location.md
-  - docs/Models/Components/Errors.md
-  - docs/Models/Components/ClientError.md
   - docs/Models/Components/SuccessfulPolicyEvaluation.md
   - docs/Models/Components/Revision.md
   - docs/Models/Components/Provenance.md
@@ -77,8 +73,14 @@ generatedFiles:
   - docs/Models/Components/GzipAcceptEncoding.md
   - docs/Models/Components/Input.md
   - docs/Models/Components/GzipContentEncoding.md
-  - docs/Models/Components/UnhealthyServer.md
   - docs/Models/Components/HealthyServer.md
+  - docs/Models/Errors/Location.md
+  - docs/Models/Errors/Errors.md
+  - docs/Models/Errors/ClientError.md
+  - docs/Models/Errors/ServerErrorLocation.md
+  - docs/Models/Errors/ServerErrorErrors.md
+  - docs/Models/Errors/ServerError.md
+  - docs/Models/Errors/UnhealthyServer.md
   - docs/sdks/opa/README.md
   - USAGE.md
   - .gitattributes

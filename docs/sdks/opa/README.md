@@ -43,7 +43,13 @@ var res = await sdk.ExecutePolicyAsync(req);
 ### Response
 
 **[ExecutePolicyResponse](../../Models/Requests/ExecutePolicyResponse.md)**
+### Errors
 
+| Error Object                   | Status Code                    | Content Type                   |
+| ------------------------------ | ------------------------------ | ------------------------------ |
+| Api.Models.Errors.ClientError  | 400                            | application/json               |
+| Api.Models.Errors.ServerError  | 500                            | application/json               |
+| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
 
 ## ExecutePolicyWithInput
 
@@ -87,7 +93,13 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 ### Response
 
 **[ExecutePolicyWithInputResponse](../../Models/Requests/ExecutePolicyWithInputResponse.md)**
+### Errors
 
+| Error Object                   | Status Code                    | Content Type                   |
+| ------------------------------ | ------------------------------ | ------------------------------ |
+| Api.Models.Errors.ClientError  | 400                            | application/json               |
+| Api.Models.Errors.ServerError  | 500                            | application/json               |
+| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
 
 ## Health
 
@@ -124,4 +136,9 @@ var res = await sdk.HealthAsync(
 ### Response
 
 **[HealthResponse](../../Models/Requests/HealthResponse.md)**
+### Errors
 
+| Error Object                      | Status Code                       | Content Type                      |
+| --------------------------------- | --------------------------------- | --------------------------------- |
+| Api.Models.Errors.UnhealthyServer | 500                               | application/json                  |
+| Api.Models.Errors.SDKException    | 4xx-5xx                           | */*                               |

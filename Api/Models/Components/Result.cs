@@ -141,7 +141,7 @@ namespace Api.Models.Components
                 }
                 try
                 {
-                    Dictionary<string, object>? mapOfany = JsonConvert.DeserializeObject<Dictionary<string, object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(Dictionary<string, object>))});
+                    Dictionary<string, object>? mapOfany = ResponseBodyDeserializer.Deserialize<Dictionary<string, object>>(json, missingMemberHandling: MissingMemberHandling.Error);
                     return new Result(ResultType.MapOfany) {
                         MapOfany = mapOfany
                     };
@@ -167,7 +167,7 @@ namespace Api.Models.Components
                 }
                 try
                 {
-                    List<object>? arrayOfany = JsonConvert.DeserializeObject<List<object>>(json, new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Error, Converters = Utilities.GetJsonConverters(typeof(List<object>))});
+                    List<object>? arrayOfany = ResponseBodyDeserializer.Deserialize<List<object>>(json, missingMemberHandling: MissingMemberHandling.Error);
                     return new Result(ResultType.ArrayOfany) {
                         ArrayOfany = arrayOfany
                     };

@@ -12,8 +12,9 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.2.0
+  version: 0.3.0
   author: Styra
+  clientServerStatusCodesAsErrors: true
   company: ""
   dotnetVersion: net6.0
   flattenGlobalSecurity: true

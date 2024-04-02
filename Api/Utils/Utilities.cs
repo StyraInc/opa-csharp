@@ -22,7 +22,7 @@ namespace Api.Utils
 
     public class Utilities
     {
-        public static JsonConverter[] GetDefaultJsonConverters()
+        public static JsonConverter[] GetDefaultJsonSerializers()
         {
             return new JsonConverter[]
             {
@@ -31,16 +31,34 @@ namespace Api.Utils
             };
         }
 
+        public static JsonConverter[] GetDefaultJsonDeserializers()
+        {
+            return new JsonConverter[] {
+                new FlexibleObjectDeserializer(),
+                new EnumConverter(),
+                new AnyDeserializer()
+            };
+        }
+
         public static JsonSerializerSettings GetDefaultJsonSerializerSettings()
         {
             return new JsonSerializerSettings()
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Converters = GetDefaultJsonConverters()
+                Converters = GetDefaultJsonSerializers()
             };
         }
 
-        public static JsonConverter[] GetJsonConverters(Type type, string format = "")
+        public static JsonSerializerSettings GetDefaultJsonDeserializerSettings()
+        {
+            return new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = GetDefaultJsonDeserializers()
+            };
+        }
+
+        public static JsonConverter[] GetJsonSerializers(Type type, string format = "")
         {
             if (format == "string")
             {
@@ -55,7 +73,22 @@ namespace Api.Utils
                 }
             }
 
-            return GetDefaultJsonConverters();
+            return GetDefaultJsonSerializers();
+        }
+
+        public static JsonConverter[] GetJsonDeserializers(Type type)
+        {
+            if (type == typeof(BigInteger))
+            {
+                return new JsonConverter[] { new BigIntStrConverter() };
+            }
+
+            if (type == typeof(Decimal))
+            {
+                return new JsonConverter[] { new DecimalStrConverter() };
+            }
+
+            return GetDefaultJsonDeserializers();
         }
 
         public static string SerializeJSON(object obj, string format = "")
@@ -75,7 +108,7 @@ namespace Api.Utils
                 new JsonSerializerSettings()
                 {
                     NullValueHandling = NullValueHandling.Ignore,
-                    Converters = GetJsonConverters(type, format)
+                    Converters = GetJsonSerializers(type, format)
                 }
             );
         }

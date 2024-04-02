@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Api.Models.Components
+namespace Api.Models.Errors
 {
     using Newtonsoft.Json;
     
