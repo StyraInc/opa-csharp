@@ -8,20 +8,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Api.Models.Components
+namespace Api.Models.Errors
 {
     using Newtonsoft.Json;
+    using System;
     
-    public class ServerErrorLocation
+    public class UnhealthyServer : Exception
     {
 
-        [JsonProperty("file")]
-        public string File { get; set; } = default!;
-
-        [JsonProperty("row")]
-        public long Row { get; set; } = default!;
-
-        [JsonProperty("col")]
-        public long Col { get; set; } = default!;
+        [JsonProperty("code")]
+        public string? Code { get; set; }
     }
 }

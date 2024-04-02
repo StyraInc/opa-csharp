@@ -43,16 +43,6 @@ namespace Api.Models.Requests
         /// </summary>
         public SuccessfulPolicyEvaluation? SuccessfulPolicyEvaluation { get; set; }
 
-        /// <summary>
-        /// Bad Request
-        /// </summary>
-        public ClientError? ClientError { get; set; }
-
-        /// <summary>
-        /// Server Error
-        /// </summary>
-        public ServerError? ServerError { get; set; }
-
         public Dictionary<string, List<string>> Headers { get; set; } = default!;
     }
 }

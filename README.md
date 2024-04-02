@@ -57,8 +57,6 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 <!-- Start Server Selection [server] -->
 ## Server Selection
 
-## Server Selection
-
 ### Select Server by Index
 
 You can override the default server globally by passing a server index to the `serverIndex: number` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
@@ -74,6 +72,56 @@ You can override the default server globally by passing a server index to the `s
 
 The default server can also be overridden globally by passing a URL to the `serverUrl: str` optional parameter when initializing the SDK client instance. For example:
 <!-- End Server Selection [server] -->
+
+<!-- Start Error Handling [errors] -->
+## Error Handling
+
+Handling errors in this SDK should largely match your expectations.  All operations return a response object or thow an exception.  If Error objects are specified in your OpenAPI Spec, the SDK will raise the appropriate type.
+
+| Error Object                   | Status Code                    | Content Type                   |
+| ------------------------------ | ------------------------------ | ------------------------------ |
+| Api.Models.Errors.ClientError  | 400                            | application/json               |
+| Api.Models.Errors.ServerError  | 500                            | application/json               |
+| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
+
+### Example
+
+```csharp
+using Api;
+using System;
+using Api.Models.Errors;
+using Api.Models.Requests;
+using Api.Models.Components;
+
+var sdk = new Opa();
+
+ExecutePolicyRequest req = new ExecutePolicyRequest() {
+    Path = "app/rbac",
+};
+
+try
+{
+    var res = await sdk.ExecutePolicyAsync(req);
+    // handle response
+}
+catch (Exception ex)
+{
+    if (ex is ClientError)
+    {
+        // handle exception
+    }
+    else if (ex is ServerError)
+    {
+        // handle exception
+    }
+    else if (ex is Api.Models.Errors.SDKException)
+    {
+        // handle exception
+    }
+}
+
+```
+<!-- End Error Handling [errors] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 
