@@ -8,7 +8,7 @@
 ### Nuget
 
 ```bash
-dotnet add reference path/to/Api.csproj
+dotnet add reference path/to/Api/SDK.csproj
 ```
 <!-- End SDK Installation [installation] -->
 
@@ -18,9 +18,9 @@ dotnet add reference path/to/Api.csproj
 ### Example
 
 ```csharp
-using Api;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Api.SDK;
+using Api.SDK.Models.Requests;
+using Api.SDK.Models.Components;
 
 var sdk = new Opa();
 
@@ -78,20 +78,20 @@ The default server can also be overridden globally by passing a URL to the `serv
 
 Handling errors in this SDK should largely match your expectations.  All operations return a response object or thow an exception.  If Error objects are specified in your OpenAPI Spec, the SDK will raise the appropriate type.
 
-| Error Object                   | Status Code                    | Content Type                   |
-| ------------------------------ | ------------------------------ | ------------------------------ |
-| Api.Models.Errors.ClientError  | 400                            | application/json               |
-| Api.Models.Errors.ServerError  | 500                            | application/json               |
-| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
+| Error Object                       | Status Code                        | Content Type                       |
+| ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| Api.SDK.Models.Errors.ClientError  | 400                                | application/json                   |
+| Api.SDK.Models.Errors.ServerError  | 500                                | application/json                   |
+| Api.SDK.Models.Errors.SDKException | 4xx-5xx                            | */*                                |
 
 ### Example
 
 ```csharp
-using Api;
+using Api.SDK;
 using System;
-using Api.Models.Errors;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Api.SDK.Models.Errors;
+using Api.SDK.Models.Requests;
+using Api.SDK.Models.Components;
 
 var sdk = new Opa();
 
@@ -114,7 +114,7 @@ catch (Exception ex)
     {
         // handle exception
     }
-    else if (ex is Api.Models.Errors.SDKException)
+    else if (ex is Api.SDK.Models.Errors.SDKException)
     {
         // handle exception
     }

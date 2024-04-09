@@ -3,61 +3,60 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.231.1
-  generationVersion: 2.295.1
-  releaseVersion: 0.3.0
-  configChecksum: 63ca38beda4ee137c4037339b326841e
+  speakeasyVersion: 1.244.2
+  generationVersion: 2.301.3
+  releaseVersion: 0.4.3
+  configChecksum: c5f6e45899feda3e6e4e78d2b284dfa0
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
-    core: 3.6.0
+    core: 3.7.0
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
     unions: 0.0.2
 generatedFiles:
-  - Api/Opa.cs
+  - Api/SDK/Opa.cs
   - global.json
-  - Api.sln
-  - Api/Utils/AnyDeserializer.cs
-  - Api/Utils/BigIntStrConverter.cs
-  - Api/Utils/DecimalStrConverter.cs
-  - Api/Utils/EnumConverter.cs
-  - Api/Utils/FlexibleObjectDeserializer.cs
-  - Api/Utils/HeaderSerializer.cs
-  - Api/Utils/IsoDateTimeSerializer.cs
-  - Api/Utils/RequestBodySerializer.cs
-  - Api/Utils/ResponseBodyDeserializer.cs
-  - Api/Utils/SecuritySerializer.cs
-  - Api/Utils/SpeakeasyHttpClient.cs
-  - Api/Utils/SpeakeasyMetadata.cs
-  - Api/Utils/URLBuilder.cs
-  - Api/Utils/Utilities.cs
-  - Api/Api.csproj
-  - Api/Models/Errors/SDKException.cs
-  - Api/Models/Requests/ExecutePolicyRequest.cs
-  - Api/Models/Requests/ExecutePolicyResponse.cs
-  - Api/Models/Requests/ExecutePolicyWithInputRequestBody.cs
-  - Api/Models/Requests/ExecutePolicyWithInputRequest.cs
-  - Api/Models/Requests/ExecutePolicyWithInputResponse.cs
-  - Api/Models/Requests/HealthRequest.cs
-  - Api/Models/Requests/HealthResponse.cs
-  - Api/Models/Components/SuccessfulPolicyEvaluation.cs
-  - Api/Models/Components/Revision.cs
-  - Api/Models/Components/Provenance.cs
-  - Api/Models/Components/Result.cs
-  - Api/Models/Components/Explain.cs
-  - Api/Models/Components/GzipAcceptEncoding.cs
-  - Api/Models/Components/Input.cs
-  - Api/Models/Components/GzipContentEncoding.cs
-  - Api/Models/Components/HealthyServer.cs
-  - Api/Models/Errors/Location.cs
-  - Api/Models/Errors/Errors.cs
-  - Api/Models/Errors/ClientError.cs
-  - Api/Models/Errors/ServerErrorLocation.cs
-  - Api/Models/Errors/ServerErrorErrors.cs
-  - Api/Models/Errors/ServerError.cs
-  - Api/Models/Errors/UnhealthyServer.cs
+  - Api/SDK/Utils/AnyDeserializer.cs
+  - Api/SDK/Utils/BigIntStrConverter.cs
+  - Api/SDK/Utils/DecimalStrConverter.cs
+  - Api/SDK/Utils/EnumConverter.cs
+  - Api/SDK/Utils/FlexibleObjectDeserializer.cs
+  - Api/SDK/Utils/HeaderSerializer.cs
+  - Api/SDK/Utils/IsoDateTimeSerializer.cs
+  - Api/SDK/Utils/RequestBodySerializer.cs
+  - Api/SDK/Utils/ResponseBodyDeserializer.cs
+  - Api/SDK/Utils/SecuritySerializer.cs
+  - Api/SDK/Utils/SpeakeasyHttpClient.cs
+  - Api/SDK/Utils/SpeakeasyMetadata.cs
+  - Api/SDK/Utils/URLBuilder.cs
+  - Api/SDK/Utils/Utilities.cs
+  - Api/SDK/Api.SDK.csproj
+  - Api/SDK/Models/Errors/SDKException.cs
+  - Api/SDK/Models/Requests/ExecutePolicyRequest.cs
+  - Api/SDK/Models/Requests/ExecutePolicyResponse.cs
+  - Api/SDK/Models/Requests/ExecutePolicyWithInputRequestBody.cs
+  - Api/SDK/Models/Requests/ExecutePolicyWithInputRequest.cs
+  - Api/SDK/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Api/SDK/Models/Requests/HealthRequest.cs
+  - Api/SDK/Models/Requests/HealthResponse.cs
+  - Api/SDK/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Api/SDK/Models/Components/Revision.cs
+  - Api/SDK/Models/Components/Provenance.cs
+  - Api/SDK/Models/Components/Result.cs
+  - Api/SDK/Models/Components/Explain.cs
+  - Api/SDK/Models/Components/GzipAcceptEncoding.cs
+  - Api/SDK/Models/Components/Input.cs
+  - Api/SDK/Models/Components/GzipContentEncoding.cs
+  - Api/SDK/Models/Components/HealthyServer.cs
+  - Api/SDK/Models/Errors/Location.cs
+  - Api/SDK/Models/Errors/Errors.cs
+  - Api/SDK/Models/Errors/ClientError.cs
+  - Api/SDK/Models/Errors/ServerErrorLocation.cs
+  - Api/SDK/Models/Errors/ServerErrorErrors.cs
+  - Api/SDK/Models/Errors/ServerError.cs
+  - Api/SDK/Models/Errors/UnhealthyServer.cs
   - docs/Models/Requests/ExecutePolicyRequest.md
   - docs/Models/Requests/ExecutePolicyResponse.md
   - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md

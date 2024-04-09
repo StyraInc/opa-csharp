@@ -18,9 +18,9 @@ Execute a policy
 ### Example Usage
 
 ```csharp
-using Api;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Api.SDK;
+using Api.SDK.Models.Requests;
+using Api.SDK.Models.Components;
 
 var sdk = new Opa();
 
@@ -45,11 +45,11 @@ var res = await sdk.ExecutePolicyAsync(req);
 **[ExecutePolicyResponse](../../Models/Requests/ExecutePolicyResponse.md)**
 ### Errors
 
-| Error Object                   | Status Code                    | Content Type                   |
-| ------------------------------ | ------------------------------ | ------------------------------ |
-| Api.Models.Errors.ClientError  | 400                            | application/json               |
-| Api.Models.Errors.ServerError  | 500                            | application/json               |
-| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
+| Error Object                       | Status Code                        | Content Type                       |
+| ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| Api.SDK.Models.Errors.ClientError  | 400                                | application/json                   |
+| Api.SDK.Models.Errors.ServerError  | 500                                | application/json                   |
+| Api.SDK.Models.Errors.SDKException | 4xx-5xx                            | */*                                |
 
 ## ExecutePolicyWithInput
 
@@ -58,9 +58,9 @@ Execute a policy given an input
 ### Example Usage
 
 ```csharp
-using Api;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Api.SDK;
+using Api.SDK.Models.Requests;
+using Api.SDK.Models.Components;
 
 var sdk = new Opa();
 
@@ -95,11 +95,11 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 **[ExecutePolicyWithInputResponse](../../Models/Requests/ExecutePolicyWithInputResponse.md)**
 ### Errors
 
-| Error Object                   | Status Code                    | Content Type                   |
-| ------------------------------ | ------------------------------ | ------------------------------ |
-| Api.Models.Errors.ClientError  | 400                            | application/json               |
-| Api.Models.Errors.ServerError  | 500                            | application/json               |
-| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
+| Error Object                       | Status Code                        | Content Type                       |
+| ---------------------------------- | ---------------------------------- | ---------------------------------- |
+| Api.SDK.Models.Errors.ClientError  | 400                                | application/json                   |
+| Api.SDK.Models.Errors.ServerError  | 500                                | application/json                   |
+| Api.SDK.Models.Errors.SDKException | 4xx-5xx                            | */*                                |
 
 ## Health
 
@@ -108,8 +108,8 @@ The health API endpoint executes a simple built-in policy query to verify that t
 ### Example Usage
 
 ```csharp
-using Api;
-using Api.Models.Requests;
+using Api.SDK;
+using Api.SDK.Models.Requests;
 using System.Collections.Generic;
 
 var sdk = new Opa();
@@ -138,7 +138,7 @@ var res = await sdk.HealthAsync(
 **[HealthResponse](../../Models/Requests/HealthResponse.md)**
 ### Errors
 
-| Error Object                      | Status Code                       | Content Type                      |
-| --------------------------------- | --------------------------------- | --------------------------------- |
-| Api.Models.Errors.UnhealthyServer | 500                               | application/json                  |
-| Api.Models.Errors.SDKException    | 4xx-5xx                           | */*                               |
+| Error Object                          | Status Code                           | Content Type                          |
+| ------------------------------------- | ------------------------------------- | ------------------------------------- |
+| Api.SDK.Models.Errors.UnhealthyServer | 500                                   | application/json                      |
+| Api.SDK.Models.Errors.SDKException    | 4xx-5xx                               | */*                                   |

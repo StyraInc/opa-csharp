@@ -12,10 +12,11 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.3.0
+  version: 0.4.3
   author: Styra
   clientServerStatusCodesAsErrors: true
-  company: ""
+  company: Styra
+  disableNamespacePascalCasingApr2024: true
   dotnetVersion: net6.0
   flattenGlobalSecurity: true
   imports:
@@ -29,5 +30,5 @@ csharp:
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
-  packageName: api
+  packageName: Api.SDK
   product: ""

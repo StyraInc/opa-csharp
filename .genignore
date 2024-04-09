@@ -1,1 +1,5 @@
+Api.SDK.sln
+Api.sln
+Api/OPA.cs
+Api/OPAException.cs
 LICENSE
