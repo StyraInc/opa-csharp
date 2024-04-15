@@ -1,1 +1,5 @@
+Styra.OpenApi.sln
+Styra.sln
+Styra/OPAClient.cs
+Styra/OPAException.cs
 LICENSE

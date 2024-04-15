@@ -8,7 +8,7 @@
 ### Nuget
 
 ```bash
-dotnet add reference path/to/Api.csproj
+dotnet add reference path/to/Styra/OpenApi.csproj
 ```
 <!-- End SDK Installation [installation] -->
 
@@ -18,11 +18,11 @@ dotnet add reference path/to/Api.csproj
 ### Example
 
 ```csharp
-using Api;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Styra.OpenApi;
+using Styra.OpenApi.Models.Requests;
+using Styra.OpenApi.Models.Components;
 
-var sdk = new Opa();
+var sdk = new OpaApiClient();
 
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
@@ -47,11 +47,11 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 <!-- Start Available Resources and Operations [operations] -->
 ## Available Resources and Operations
 
-### [Opa SDK](docs/sdks/opa/README.md)
+### [OpaApiClient SDK](docs/sdks/opaapiclient/README.md)
 
-* [ExecutePolicy](docs/sdks/opa/README.md#executepolicy) - Execute a policy
-* [ExecutePolicyWithInput](docs/sdks/opa/README.md#executepolicywithinput) - Execute a policy given an input
-* [Health](docs/sdks/opa/README.md#health) - Verify the server is operational
+* [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
+* [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
+* [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
 <!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Server Selection [server] -->
@@ -78,22 +78,22 @@ The default server can also be overridden globally by passing a URL to the `serv
 
 Handling errors in this SDK should largely match your expectations.  All operations return a response object or thow an exception.  If Error objects are specified in your OpenAPI Spec, the SDK will raise the appropriate type.
 
-| Error Object                   | Status Code                    | Content Type                   |
-| ------------------------------ | ------------------------------ | ------------------------------ |
-| Api.Models.Errors.ClientError  | 400                            | application/json               |
-| Api.Models.Errors.ServerError  | 500                            | application/json               |
-| Api.Models.Errors.SDKException | 4xx-5xx                        | */*                            |
+| Error Object                             | Status Code                              | Content Type                             |
+| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
+| Styra.OpenApi.Models.Errors.ClientError  | 400                                      | application/json                         |
+| Styra.OpenApi.Models.Errors.ServerError  | 500                                      | application/json                         |
+| Styra.OpenApi.Models.Errors.SDKException | 4xx-5xx                                  | */*                                      |
 
 ### Example
 
 ```csharp
-using Api;
+using Styra.OpenApi;
 using System;
-using Api.Models.Errors;
-using Api.Models.Requests;
-using Api.Models.Components;
+using Styra.OpenApi.Models.Errors;
+using Styra.OpenApi.Models.Requests;
+using Styra.OpenApi.Models.Components;
 
-var sdk = new Opa();
+var sdk = new OpaApiClient();
 
 ExecutePolicyRequest req = new ExecutePolicyRequest() {
     Path = "app/rbac",
@@ -114,7 +114,7 @@ catch (Exception ex)
     {
         // handle exception
     }
-    else if (ex is Api.Models.Errors.SDKException)
+    else if (ex is Styra.OpenApi.Models.Errors.SDKException)
     {
         // handle exception
     }

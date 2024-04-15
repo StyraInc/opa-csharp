@@ -1,6 +1,6 @@
 configVersion: 2.0.0
 generation:
-  sdkClassName: opa
+  sdkClassName: OpaApiClient
   maintainOpenAPIOrder: true
   usageSnippets:
     optionalPropertyRendering: withExample
@@ -12,10 +12,11 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.3.0
+  version: 0.5.0
   author: Styra
   clientServerStatusCodesAsErrors: true
-  company: ""
+  company: Styra
+  disableNamespacePascalCasingApr2024: true
   dotnetVersion: net6.0
   flattenGlobalSecurity: true
   imports:
@@ -29,5 +30,6 @@ csharp:
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
-  packageName: api
+  packageName: Styra.OpenApi
   product: ""
+  responseFormat: envelope
