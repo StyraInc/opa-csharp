@@ -15,16 +15,15 @@ namespace Api.Models.Errors
 
     public class SDKException : Exception
     {
-        public int StatusCode { get; set; }
 
         public override string Message { get; }
+        public int StatusCode { get; set; }
         public string Body { get; set; }
-
         public HttpResponseMessage RawResponse { get; set; } = default!;
-
         public SDKException(string message, int statusCode, string body, HttpResponseMessage rawResponse)
         {
             Message = message;
+            this.StatusCode = statusCode;
             StatusCode = statusCode;
             Body = body;
             RawResponse = rawResponse;
@@ -36,7 +35,6 @@ namespace Api.Models.Errors
             {
                 body += $"\n{Body}";
             }
-
             return Message + ": Status " + StatusCode + body;
         }
 

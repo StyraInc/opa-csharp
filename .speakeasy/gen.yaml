@@ -12,10 +12,11 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.3.0
+  version: 0.4.0
   author: Styra
   clientServerStatusCodesAsErrors: true
   company: ""
+  disableNamespacePascalCasingApr2024: false
   dotnetVersion: net6.0
   flattenGlobalSecurity: true
   imports:
@@ -31,3 +32,4 @@ csharp:
   outputModelSuffix: output
   packageName: api
   product: ""
+  responseFormat: envelope

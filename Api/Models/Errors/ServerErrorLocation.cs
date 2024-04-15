@@ -10,6 +10,7 @@
 #nullable enable
 namespace Api.Models.Errors
 {
+    using Api.Utils;
     using Newtonsoft.Json;
     
     public class ServerErrorLocation
