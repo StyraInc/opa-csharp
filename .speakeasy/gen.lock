@@ -3,10 +3,10 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.244.2
-  generationVersion: 2.301.3
-  releaseVersion: 0.4.3
-  configChecksum: c5f6e45899feda3e6e4e78d2b284dfa0
+  speakeasyVersion: 1.252.0
+  generationVersion: 2.306.0
+  releaseVersion: 0.5.0
+  configChecksum: 283c252204dd78c7e50e267e525b3fab
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
@@ -14,49 +14,51 @@ features:
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
+    responseFormat: 0.0.1
     unions: 0.0.2
 generatedFiles:
-  - Api/SDK/Opa.cs
+  - Styra/OpenApi/OpaApiClient.cs
   - global.json
-  - Api/SDK/Utils/AnyDeserializer.cs
-  - Api/SDK/Utils/BigIntStrConverter.cs
-  - Api/SDK/Utils/DecimalStrConverter.cs
-  - Api/SDK/Utils/EnumConverter.cs
-  - Api/SDK/Utils/FlexibleObjectDeserializer.cs
-  - Api/SDK/Utils/HeaderSerializer.cs
-  - Api/SDK/Utils/IsoDateTimeSerializer.cs
-  - Api/SDK/Utils/RequestBodySerializer.cs
-  - Api/SDK/Utils/ResponseBodyDeserializer.cs
-  - Api/SDK/Utils/SecuritySerializer.cs
-  - Api/SDK/Utils/SpeakeasyHttpClient.cs
-  - Api/SDK/Utils/SpeakeasyMetadata.cs
-  - Api/SDK/Utils/URLBuilder.cs
-  - Api/SDK/Utils/Utilities.cs
-  - Api/SDK/Api.SDK.csproj
-  - Api/SDK/Models/Errors/SDKException.cs
-  - Api/SDK/Models/Requests/ExecutePolicyRequest.cs
-  - Api/SDK/Models/Requests/ExecutePolicyResponse.cs
-  - Api/SDK/Models/Requests/ExecutePolicyWithInputRequestBody.cs
-  - Api/SDK/Models/Requests/ExecutePolicyWithInputRequest.cs
-  - Api/SDK/Models/Requests/ExecutePolicyWithInputResponse.cs
-  - Api/SDK/Models/Requests/HealthRequest.cs
-  - Api/SDK/Models/Requests/HealthResponse.cs
-  - Api/SDK/Models/Components/SuccessfulPolicyEvaluation.cs
-  - Api/SDK/Models/Components/Revision.cs
-  - Api/SDK/Models/Components/Provenance.cs
-  - Api/SDK/Models/Components/Result.cs
-  - Api/SDK/Models/Components/Explain.cs
-  - Api/SDK/Models/Components/GzipAcceptEncoding.cs
-  - Api/SDK/Models/Components/Input.cs
-  - Api/SDK/Models/Components/GzipContentEncoding.cs
-  - Api/SDK/Models/Components/HealthyServer.cs
-  - Api/SDK/Models/Errors/Location.cs
-  - Api/SDK/Models/Errors/Errors.cs
-  - Api/SDK/Models/Errors/ClientError.cs
-  - Api/SDK/Models/Errors/ServerErrorLocation.cs
-  - Api/SDK/Models/Errors/ServerErrorErrors.cs
-  - Api/SDK/Models/Errors/ServerError.cs
-  - Api/SDK/Models/Errors/UnhealthyServer.cs
+  - Styra.OpenApi.sln
+  - Styra/OpenApi/Utils/AnyDeserializer.cs
+  - Styra/OpenApi/Utils/BigIntStrConverter.cs
+  - Styra/OpenApi/Utils/DecimalStrConverter.cs
+  - Styra/OpenApi/Utils/EnumConverter.cs
+  - Styra/OpenApi/Utils/FlexibleObjectDeserializer.cs
+  - Styra/OpenApi/Utils/HeaderSerializer.cs
+  - Styra/OpenApi/Utils/IsoDateTimeSerializer.cs
+  - Styra/OpenApi/Utils/RequestBodySerializer.cs
+  - Styra/OpenApi/Utils/ResponseBodyDeserializer.cs
+  - Styra/OpenApi/Utils/SecuritySerializer.cs
+  - Styra/OpenApi/Utils/SpeakeasyHttpClient.cs
+  - Styra/OpenApi/Utils/SpeakeasyMetadata.cs
+  - Styra/OpenApi/Utils/URLBuilder.cs
+  - Styra/OpenApi/Utils/Utilities.cs
+  - Styra/OpenApi/Styra.OpenApi.csproj
+  - Styra/OpenApi/Models/Errors/SDKException.cs
+  - Styra/OpenApi/Models/Requests/ExecutePolicyRequest.cs
+  - Styra/OpenApi/Models/Requests/ExecutePolicyResponse.cs
+  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
+  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputRequest.cs
+  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Styra/OpenApi/Models/Requests/HealthRequest.cs
+  - Styra/OpenApi/Models/Requests/HealthResponse.cs
+  - Styra/OpenApi/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Styra/OpenApi/Models/Components/Revision.cs
+  - Styra/OpenApi/Models/Components/Provenance.cs
+  - Styra/OpenApi/Models/Components/Result.cs
+  - Styra/OpenApi/Models/Components/Explain.cs
+  - Styra/OpenApi/Models/Components/GzipAcceptEncoding.cs
+  - Styra/OpenApi/Models/Components/Input.cs
+  - Styra/OpenApi/Models/Components/GzipContentEncoding.cs
+  - Styra/OpenApi/Models/Components/HealthyServer.cs
+  - Styra/OpenApi/Models/Errors/Location.cs
+  - Styra/OpenApi/Models/Errors/Errors.cs
+  - Styra/OpenApi/Models/Errors/ClientError.cs
+  - Styra/OpenApi/Models/Errors/ServerErrorLocation.cs
+  - Styra/OpenApi/Models/Errors/ServerErrorErrors.cs
+  - Styra/OpenApi/Models/Errors/ServerError.cs
+  - Styra/OpenApi/Models/Errors/UnhealthyServer.cs
   - docs/Models/Requests/ExecutePolicyRequest.md
   - docs/Models/Requests/ExecutePolicyResponse.md
   - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md
@@ -80,6 +82,6 @@ generatedFiles:
   - docs/Models/Errors/ServerErrorErrors.md
   - docs/Models/Errors/ServerError.md
   - docs/Models/Errors/UnhealthyServer.md
-  - docs/sdks/opa/README.md
+  - docs/sdks/opaapiclient/README.md
   - USAGE.md
   - .gitattributes

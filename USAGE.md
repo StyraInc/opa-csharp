@@ -1,10 +1,10 @@
 <!-- Start SDK Example Usage [usage] -->
 ```csharp
-using Api.SDK;
-using Api.SDK.Models.Requests;
-using Api.SDK.Models.Components;
+using Styra.OpenApi;
+using Styra.OpenApi.Models.Requests;
+using Styra.OpenApi.Models.Components;
 
-var sdk = new Opa();
+var sdk = new OpaApiClient();
 
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",

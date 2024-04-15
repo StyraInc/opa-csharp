@@ -1,6 +1,6 @@
-using Api.SDK;
-using Api.SDK.Models.Requests;
-using Api.SDK.Models.Components;
+using Styra.OpenApi;
+using Styra.OpenApi.Models.Requests;
+using Styra.OpenApi.Models.Components;
 
 namespace SmokeTest.Tests;
 
@@ -38,7 +38,7 @@ public class OPAEvalRBACTest
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, container.Hostname, container.GetMappedPublicPort(8181)).Uri;
 
     // Send an HTTP GET request to the specified URI and retrieve the response as a string.
-    var sdk = new Opa(serverIndex: 0, serverUrl: requestUri.ToString());
+    var client = new OpaApiClient(serverIndex: 0, serverUrl: requestUri.ToString());
 
     // Exercise the low-level OPA C# SDK.
     ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest()
@@ -56,7 +56,7 @@ public class OPAEvalRBACTest
       },
     };
 
-    var res = Task.Run(() => sdk.ExecutePolicyWithInputAsync(req)).GetAwaiter().GetResult();
+    var res = Task.Run(() => client.ExecutePolicyWithInputAsync(req)).GetAwaiter().GetResult();
     var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfany;
 
     // Ensure we got back the expected fields from the eval.
