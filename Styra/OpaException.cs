@@ -5,16 +5,16 @@ using System;
 // This generic exception should be used as a parent type for any other custom
 // exceptions thrown by the high level API.
 [Serializable]
-public class OPAException : Exception
+public class OpaException : Exception
 {
-    public OPAException()
+    public OpaException()
     { }
 
-    public OPAException(string message)
+    public OpaException(string message)
         : base(message)
     { }
 
-    public OPAException(string message, Exception innerException)
+    public OpaException(string message, Exception innerException)
         : base(message, innerException)
     { }
 }

@@ -12,6 +12,118 @@ dotnet add reference path/to/Styra/OpenApi.csproj
 ```
 <!-- End SDK Installation [installation] -->
 
+## SDK Example Usage (high-level)
+
+All the code examples that follow assume that the high-level SDK module has been imported, and that an `OpaClient` instance was created:
+
+```csharp
+using Styra;
+
+public class MyExample {
+    private string serverURL = "http://opa-host:8181";
+    private string path = "authz/allow";
+    private OpaClient opa;
+
+    public MyExample() {
+        opa = new OPAClient(serverURL);
+    }
+
+    // ...
+}
+```
+
+### Simple query
+
+For a simple boolean response with a dictionary input, use the SDK as follows:
+
+```csharp
+var input = new Dictionary<string, object>() {
+    { "user", "alice" },
+    { "action", "read" },
+};
+
+// (local variable) bool? allowed
+var allowed = opa.check(input, path);
+
+// Logic for the `undefined` case ...
+if (allowed == null) {
+    // ...
+}
+// Normal true/false cases...
+if (allowed) {
+    // ...
+}
+```
+
+In the above example, a `null` value for `allowed` indicates the `/authz/allow` endpoint returned `undefined`.
+A non-null result can be used as a normal true/false value.
+
+<details><summary>HTTP Request</summary>
+
+```http
+POST /v1/data/authz/allow
+Content-Type: application/json
+
+{ "input": { "user": "alice", "action": "read" } }
+```
+
+</details>
+
+### Input types
+
+The `check` and `query` methods are overloaded for most standard JSON types, which include the following variants for the `input` parameter:
+
+| C# type | JSON equivalent type |
+| ------- | -------------------- |
+| `bool` | Boolean |
+| `double` | Number |
+| `string` | String |
+| `List<object>` | Array |
+| `Dictionary<string, object>` | Object |
+
+### Result Types
+
+#### `OpaClient.check`
+For the `check` method, the output type is always `bool?`, allowing API users to disambiguate `undefined` from normal `true`/`false` results.
+
+#### `OpaClient.query<T>`
+For the `query` method, the output type is configurable using generics, as shown in the example below.
+
+```csharp
+string path = "authz/accounts/max_limit";
+
+double maxLimit = opa.query<double>("example", path);
+```
+
+<!--If the selected return type `<T>` is possible to deserialize from the returned JSON, `query<T>` will attempt to populate the variable with the value(s) present.
+
+```csharp
+public struct AuthzStatus
+{
+    public AuthzStatus(bool allowed)
+    {
+        Allowed = allowed;
+    }
+
+    public double Allowed { get; }
+
+    public override string ToString() => $"Application authorized: {Allowed}";
+}
+
+var input = new Dictionary<string, object>() {
+    { "user", "alice" },
+    { "action", "read" },
+};
+
+// (local variable) AuthzStatus status
+var status =opa.query<AuthzStatus>(input, path);
+```-->
+
+> [!NOTE]
+> For low-level SDK usage, see the sections below.
+
+---
+
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
