@@ -20,13 +20,13 @@ namespace Styra.OpenApi.Models.Requests
         /// Boolean parameter to account for bundle activation status in response. This includes any discovery bundles or bundles defined in the loaded discovery configuration.
         /// </summary>
         [SpeakeasyMetadata("queryParam:style=form,explode=true,name=bundles")]
-        public bool? Bundles { get; set; }
+        public bool? Bundles { get; set; } = false;
 
         /// <summary>
         /// Boolean parameter to account for plugin status in response.
         /// </summary>
         [SpeakeasyMetadata("queryParam:style=form,explode=true,name=plugins")]
-        public bool? Plugins { get; set; }
+        public bool? Plugins { get; set; } = false;
 
         /// <summary>
         /// String parameter to exclude a plugin from status checks. Can be added multiple times. Does nothing if plugins is not true. This parameter is useful for special use cases where a plugin depends on the server being fully initialized before it can fully initialize itself.

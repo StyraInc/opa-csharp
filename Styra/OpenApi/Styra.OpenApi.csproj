@@ -2,7 +2,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Styra.OpenApi</PackageId>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <Authors>Styra</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
