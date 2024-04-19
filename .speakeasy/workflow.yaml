@@ -1,5 +1,4 @@
 workflowVersion: 1.0.0
-speakeasyVersion: latest
 sources:
     openapi:
         inputs:
@@ -8,3 +7,6 @@ targets:
     first-target:
         target: csharp
         source: openapi
+        publish:
+            nuget:
+                apiKey: $nuget_api_key
