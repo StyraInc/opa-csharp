@@ -3,13 +3,14 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2401c7030f847f72ab31c8f75de58a66
   docVersion: 0.2.0
-  speakeasyVersion: 1.252.0
-  generationVersion: 2.306.0
-  releaseVersion: 0.5.0
-  configChecksum: 283c252204dd78c7e50e267e525b3fab
+  speakeasyVersion: 1.260.6
+  generationVersion: 2.311.1
+  releaseVersion: 0.6.0
+  configChecksum: 4c4aa1619dbdf97bfdc4c59ad3152678
   repoURL: https://github.com/StyraInc/opa-csharp.git
 features:
   csharp:
+    constsAndDefaults: 0.0.1
     core: 3.7.0
     examples: 2.81.3
     flattening: 2.81.1
@@ -19,7 +20,6 @@ features:
 generatedFiles:
   - Styra/OpenApi/OpaApiClient.cs
   - global.json
-  - Styra.OpenApi.sln
   - Styra/OpenApi/Utils/AnyDeserializer.cs
   - Styra/OpenApi/Utils/BigIntStrConverter.cs
   - Styra/OpenApi/Utils/DecimalStrConverter.cs
