@@ -1,4 +1,4 @@
-speakeasyVersion: 1.260.6
+speakeasyVersion: 1.264.1
 sources: {}
 targets: {}
 workflow:
@@ -12,3 +12,6 @@ workflow:
         first-target:
             target: csharp
             source: openapi
+            publish:
+                nuget:
+                    apiKey: $nuget_api_key
