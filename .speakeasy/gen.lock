@@ -8,6 +8,7 @@ management:
   releaseVersion: 0.6.0
   configChecksum: 4c4aa1619dbdf97bfdc4c59ad3152678
   repoURL: https://github.com/StyraInc/opa-csharp.git
+  published: true
 features:
   csharp:
     constsAndDefaults: 0.0.1
