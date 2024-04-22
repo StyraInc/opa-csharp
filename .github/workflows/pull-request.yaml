@@ -11,6 +11,33 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  version-check:
+    name: Check Version for NuGet package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tune GitHub-hosted runner network
+        uses: smorimoto/tune-github-hosted-runner-network@v1
+      - uses: actions/checkout@v4
+      - name: Get Speakeasy version
+        id: speakeasy_version
+        run: |
+          VERSION=$(./scripts/get-speakeasy-sdk-version.sh)
+          echo "speakeasy_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Get .NET package version
+        id: dotnet_proj_version
+        run: |
+          VERSION=$(./scripts/get-csproj-version.sh Styra/Styra.csproj)
+          echo "dotnet_proj_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Compare the two, failing if there's a diff.
+        if: ${{ steps.speakeasy_version.outputs.speakeasy_version != steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+        run: |
+          SE_VERSION=${{ steps.speakeasy_version.outputs.speakeasy_version }}
+          DOTNET_VERSION=${{ steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+          echo "Version mismatch. Speakeasy ver: ${SE_VERSION}, .NET project ver: ${DOTNET_VERSION}"
+          echo "To update the .NET project version, try this sed command, and then commit the changes:"
+          echo "  sed -i \"s/<Version>[^<]*<\/Version>/<Version>${SE_VERSION}<\/Version>/\" Styra/Styra.csproj"
+          exit 1
+
   build:
     name: Build
     runs-on: ubuntu-latest
