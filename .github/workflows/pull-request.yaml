@@ -11,6 +11,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  version-update:
+    name: Automatic Version Updater
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Tune GitHub-hosted runner network
+        uses: smorimoto/tune-github-hosted-runner-network@v1
+      - uses: actions/checkout@v4
+      - name: Get Speakeasy version
+        id: speakeasy_version
+        run: |
+          VERSION=$(./scripts/get-speakeasy-sdk-version.sh)
+          echo "speakeasy_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Get .NET package version
+        id: dotnet_proj_version
+        run: |
+          VERSION=$(./scripts/get-csproj-version.sh Styra/Styra.csproj)
+          echo "dotnet_proj_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Checkout PR
+        if: ${{ steps.speakeasy_version.outputs.speakeasy_version != steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+      - name: Add comment to PR thread
+        if: ${{ steps.speakeasy_version.outputs.speakeasy_version != steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo ':information_source: This PR has been updated with an automated commit. Please Close and Reopen the PR to trigger normal CI checks.' >> comment.txt
+          echo '' >> comment.txt
+          echo 'To fetch the new commits down for local use, try the following git operations:' >> comment.txt
+          echo '```' >> comment.txt
+          echo 'git fetch origin refs/pull/${{ github.event.pull_request.number }}/head:pr_${{ github.event.pull_request.number }}' >> comment.txt
+          echo 'git merge pr_${{ github.event.pull_request.number }}' >> comment.txt
+          echo '```' >> comment.txt
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment.txt
+      - name: Compare the two. Forcibly update with a commit if there's a diff.
+        if: ${{ steps.speakeasy_version.outputs.speakeasy_version != steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+        run: |
+          SE_VERSION=${{ steps.speakeasy_version.outputs.speakeasy_version }}
+          DOTNET_VERSION=${{ steps.dotnet_proj_version.outputs.dotnet_proj_version }}
+          echo "Version mismatch. Speakeasy ver: ${SE_VERSION}, .NET project ver: ${DOTNET_VERSION}"
+          echo "Updating the .NET project version..."
+          sed -i "s/<Version>[^<]*<\/Version>/<Version>${SE_VERSION}<\/Version>/" Styra/Styra.csproj
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Styra/Styra.csproj
+          git commit -am "Update project file to version ${SE_VERSION}"
+          git push
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -19,7 +71,7 @@ jobs:
         uses: smorimoto/tune-github-hosted-runner-network@v1
       - uses: actions/checkout@v4
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "6.0.x"
       - name: Install dependencies
@@ -35,7 +87,7 @@ jobs:
         uses: smorimoto/tune-github-hosted-runner-network@v1
       - uses: actions/checkout@v4
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "6.0.x"
       - name: Install dependencies
