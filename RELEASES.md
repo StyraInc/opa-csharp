@@ -85,3 +85,13 @@ Based on:
 - [csharp v0.6.0] .
 ### Releases
 - [NuGet v0.6.0] https://www.nuget.org/packages/Styra.OpenApi/0.6.0 - .
+
+## 2024-04-23 00:03:42
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.269.1 (2.312.1) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v0.6.0] .
+### Releases
+- [NuGet v0.6.0] https://www.nuget.org/packages/Styra.OpenApi/0.6.0 - .
