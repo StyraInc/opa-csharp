@@ -3,23 +3,26 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![NuGet Version](https://img.shields.io/nuget/v/Styra?style=flat&color=%2324b6e0)](https://www.nuget.org/packages/Styra/)
 
+> [!IMPORTANT]
+> The documentation for this SDK lives at https://docs.styra.com/sdk, with reference documentation available at https://styrainc.github.io/opa-csharp
 
-<!-- Start SDK Installation [installation] -->
+You can use the Styra OPA SDK to connect to [Open Policy Agent](https://www.openpolicyagent.org/) and [Enterprise OPA](https://www.styra.com/enterprise-opa/) deployments.
+
 ## SDK Installation
 
 ### Nuget
 
 ```bash
-dotnet add reference path/to/Styra/OpenApi.csproj
+dotnet add reference Styra.Opa
 ```
-<!-- End SDK Installation [installation] -->
+<!-- No SDK Installation [installation] -->
 
 ## SDK Example Usage (high-level)
 
 All the code examples that follow assume that the high-level SDK module has been imported, and that an `OpaClient` instance was created:
 
 ```csharp
-using Styra;
+using Styra.Opa;
 
 public class MyExample {
     private string serverURL = "http://opa-host:8181";
@@ -126,6 +129,7 @@ var status =opa.query<AuthzStatus>(input, path);
 
 ---
 
+# OPA OpenAPI SDK (low-level)
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
