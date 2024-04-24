@@ -1,6 +1,8 @@
 # OPA C# SDK
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![NuGet Version](https://img.shields.io/nuget/v/Styra?style=flat&color=%2324b6e0)](https://www.nuget.org/packages/Styra/)
+
 
 <!-- Start SDK Installation [installation] -->
 ## SDK Installation
