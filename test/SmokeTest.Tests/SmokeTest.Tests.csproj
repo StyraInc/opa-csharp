@@ -33,6 +33,7 @@
   <ItemGroup>
     <None Update="testdata\data.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="testdata\policy.rego" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="testdata\weird_name.rego" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 
