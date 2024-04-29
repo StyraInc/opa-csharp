@@ -51,21 +51,21 @@ public class OpaClient
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(string path)
+    public async Task<bool> check(string path)
     {
-        return evaluate<bool>(path);
+        return await evaluate<bool>(path);
     }
 
     /// <summary>
     /// Simple allow/deny-style check against a rule, using the provided input mapping.
     /// </summary>
-    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
+    /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
-    public bool check(string path, Dictionary<string, object> input)
+    public async Task<bool> check(string path, Dictionary<string, object> input)
     {
-        return evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -74,9 +74,9 @@ public class OpaClient
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(string path, string input)
+    public async Task<bool> check(string path, string input)
     {
-        return evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -85,9 +85,9 @@ public class OpaClient
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(string path, bool input)
+    public async Task<bool> check(string path, bool input)
     {
-        return evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -96,31 +96,31 @@ public class OpaClient
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(string path, double input)
+    public async Task<bool> check(string path, double input)
     {
-        return evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
     /// Simple allow/deny-style check against a rule, using the provided input list.
     /// </summary>
-    /// <param name="input">The input list OPA will use for evaluating the rule.</param>
+    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public bool check(string path, List<object> input)
+    public async Task<bool> check(string path, List<object> input)
     {
-        return evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
     /// Evaluate a rule, then coerce the result to type T.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? evaluate<T>(string path)
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path)
     {
-        return queryMachinery<T>(path, Input.CreateNull());
+        return await queryMachinery<T>(path, Input.CreateNull());
     }
 
     /// <summary>
@@ -128,10 +128,10 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? evaluate<T>(string path, Dictionary<string, object> input)
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, Dictionary<string, object> input)
     {
-        return queryMachinery<T>(path, Input.CreateMapOfany(input));
+        return await queryMachinery<T>(path, Input.CreateMapOfany(input));
     }
 
     /// <summary>
@@ -139,10 +139,10 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? evaluate<T>(string path, string input)
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, string input)
     {
-        return queryMachinery<T>(path, Input.CreateStr(input));
+        return await queryMachinery<T>(path, Input.CreateStr(input));
     }
 
     /// <summary>
@@ -150,10 +150,10 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? evaluate<T>(string path, bool input)
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, bool input)
     {
-        return queryMachinery<T>(path, Input.CreateBoolean(input));
+        return await queryMachinery<T>(path, Input.CreateBoolean(input));
     }
 
     /// <summary>
@@ -161,26 +161,26 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? evaluate<T>(string path, double input)
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, double input)
     {
-        return queryMachinery<T>(path, Input.CreateNumber(input));
+        return await queryMachinery<T>(path, Input.CreateNumber(input));
     }
 
     /// <summary>
     /// Evaluate a rule, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
-    /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
+    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public T? evaluate<T>(string path, List<object> input)
+    public async Task<T?> evaluate<T>(string path, List<object> input)
     {
-        return queryMachinery<T>(path, Input.CreateArrayOfany(input));
+        return await queryMachinery<T>(path, Input.CreateArrayOfany(input));
     }
 
     /// <exclude />
-    private T? queryMachinery<T>(string path, Input input)
+    private async Task<T?> queryMachinery<T>(string path, Input input)
     {
         ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest()
         {
@@ -200,7 +200,7 @@ public class OpaClient
         ExecutePolicyWithInputResponse res;
         try
         {
-            res = Task.Run(() => opa.ExecutePolicyWithInputAsync(req)).GetAwaiter().GetResult();
+            res = await opa.ExecutePolicyWithInputAsync(req);
         }
         catch (Exception e)
         {

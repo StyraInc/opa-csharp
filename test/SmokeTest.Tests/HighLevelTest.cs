@@ -40,7 +40,7 @@ public class HighLevelTest
 
 
     // Exercise the high-level OPA C# SDK.
-    var allow = client.check("app/rbac/allow", new Dictionary<string, object>() {
+    var allow = await client.check("app/rbac/allow", new Dictionary<string, object>() {
       { "user", "alice" },
       { "action", "read" },
       { "object", "id123" },
