@@ -188,15 +188,40 @@ public class OpaClient
             throw new OpaException(msg, e);
         }
 
-        T? result = default;
-        var resultString = res.SuccessfulPolicyEvaluation?.Result?.ToString();
-        if (resultString != null)
+        // We return the default null value for type T if Result is null.
+        var result = res.SuccessfulPolicyEvaluation?.Result;
+        if (result is null)
         {
-            JsonSerializer serializer = new JsonSerializer();
-            JsonTextReader reader = new JsonTextReader(new StringReader(resultString));
-            result = serializer.Deserialize<T>(reader);
+            return default;
         }
 
-        return result;
+        // We do the type-switch here, so that high-level clients don't have to.
+        // Because the Result members are nullable types, we use type testing
+        // with pattern matching to extract a non-null instance of the value if
+        // it exists.
+        switch (result.Type.ToString())
+        {
+            case "boolean":
+                if (result.Boolean is T defBoolean) { return defBoolean; }
+                break;
+            case "number":
+                if (result.Number is T defNumber) { return defNumber; }
+                break;
+            case "str":
+                if (result.Str is T defStr) { return defStr; }
+                break;
+            case "arrayOfany":
+                if (result.ArrayOfany is T defArray) { return defArray; }
+                break;
+            case "mapOfany":
+                if (result.MapOfany is T defObject) { return defObject; }
+                break;
+            case null:
+            default:
+                break;
+        }
+        // If we could not find a type present in the result that T derives
+        // from or is, we return the appropriate null type for T.
+        return default;
     }
 }
