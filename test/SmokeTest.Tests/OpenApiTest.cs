@@ -4,10 +4,10 @@ using Styra.OpenApi.Models.Components;
 
 namespace SmokeTest.Tests;
 
-public class OPAEvalRBACTest
+public class OpenApiTest
 {
   [Fact]
-  public async Task HelloTestContainers()
+  public async Task OpenApiClientRBACTestcontainersTest()
   {
     // Read in the test data files.
     var policy = System.IO.File.ReadAllBytes(Path.Combine("testdata", "policy.rego"));
