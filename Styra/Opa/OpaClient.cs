@@ -53,30 +53,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path)
     {
-        return await evaluate<bool>(path);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input mapping.
-    /// </summary>
-    /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
-    public async Task<bool> check(string path, Dictionary<string, object> input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input string.
-    /// </summary>
-    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public async Task<bool> check(string path, string input)
-    {
-        return await evaluate<bool>(path, input);
+        return await evaluate<bool>(path) ?? false;
     }
 
     /// <summary>
@@ -87,7 +64,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path, bool input)
     {
-        return await evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input) ?? false;
     }
 
     /// <summary>
@@ -98,7 +75,18 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path, double input)
     {
-        return await evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input) ?? false;
+    }
+
+    /// <summary>
+    /// Simple allow/deny-style check against a rule, using the provided input string.
+    /// </summary>
+    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    public async Task<bool> check(string path, string input)
+    {
+        return await evaluate<bool>(path, input) ?? false;
     }
 
     /// <summary>
@@ -110,7 +98,19 @@ public class OpaClient
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
     public async Task<bool> check(string path, List<object> input)
     {
-        return await evaluate<bool>(path, input);
+        return await evaluate<bool>(path, input) ?? false;
+    }
+
+    /// <summary>
+    /// Simple allow/deny-style check against a rule, using the provided input mapping.
+    /// </summary>
+    /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
+    public async Task<bool> check(string path, Dictionary<string, object> input)
+    {
+        return await evaluate<bool>(path, input) ?? false;
     }
 
     /// <summary>
@@ -121,28 +121,6 @@ public class OpaClient
     public async Task<T?> evaluate<T>(string path)
     {
         return await queryMachinery<T>(path, Input.CreateNull());
-    }
-
-    /// <summary>
-    /// Evaluate a rule, using the provided input map, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, Dictionary<string, object> input)
-    {
-        return await queryMachinery<T>(path, Input.CreateMapOfany(input));
-    }
-
-    /// <summary>
-    /// Evaluate a rule, using the provided input string, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, string input)
-    {
-        return await queryMachinery<T>(path, Input.CreateStr(input));
     }
 
     /// <summary>
@@ -168,6 +146,17 @@ public class OpaClient
     }
 
     /// <summary>
+    /// Evaluate a rule, using the provided input string, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, string input)
+    {
+        return await queryMachinery<T>(path, Input.CreateStr(input));
+    }
+
+    /// <summary>
     /// Evaluate a rule, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
@@ -177,6 +166,17 @@ public class OpaClient
     public async Task<T?> evaluate<T>(string path, List<object> input)
     {
         return await queryMachinery<T>(path, Input.CreateArrayOfany(input));
+    }
+
+    /// <summary>
+    /// Evaluate a rule, using the provided input map, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, Dictionary<string, object> input)
+    {
+        return await queryMachinery<T>(path, Input.CreateMapOfany(input));
     }
 
     /// <exclude />
