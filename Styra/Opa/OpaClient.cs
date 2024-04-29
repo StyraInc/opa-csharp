@@ -53,7 +53,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path)
     {
-        return await evaluate<bool>(path) ?? false;
+        return await evaluate<bool>(path);
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path, bool input)
     {
-        return await evaluate<bool>(path, input) ?? false;
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path, double input)
     {
-        return await evaluate<bool>(path, input) ?? false;
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public async Task<bool> check(string path, string input)
     {
-        return await evaluate<bool>(path, input) ?? false;
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class OpaClient
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
     public async Task<bool> check(string path, List<object> input)
     {
-        return await evaluate<bool>(path, input) ?? false;
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public class OpaClient
     /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
     public async Task<bool> check(string path, Dictionary<string, object> input)
     {
-        return await evaluate<bool>(path, input) ?? false;
+        return await evaluate<bool>(path, input);
     }
 
     /// <summary>
