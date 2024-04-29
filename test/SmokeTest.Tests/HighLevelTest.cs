@@ -1,4 +1,4 @@
-using Styra;
+using Styra.Opa;
 
 namespace SmokeTest.Tests;
 

@@ -1,6 +1,6 @@
-using Styra.OpenApi;
-using Styra.OpenApi.Models.Requests;
-using Styra.OpenApi.Models.Components;
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
 
 namespace SmokeTest.Tests;
 

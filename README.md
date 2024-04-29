@@ -10,7 +10,7 @@
 ### Nuget
 
 ```bash
-dotnet add package Styra.OpenApi
+dotnet add package Styra.Opa.OpenApi
 ```
 <!-- End SDK Installation [installation] -->
 
@@ -132,9 +132,9 @@ var status =opa.query<AuthzStatus>(input, path);
 ### Example
 
 ```csharp
-using Styra.OpenApi;
-using Styra.OpenApi.Models.Requests;
-using Styra.OpenApi.Models.Components;
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
 
 var sdk = new OpaApiClient();
 
@@ -187,20 +187,20 @@ The default server can also be overridden globally by passing a URL to the `serv
 
 Handling errors in this SDK should largely match your expectations.  All operations return a response object or thow an exception.  If Error objects are specified in your OpenAPI Spec, the SDK will raise the appropriate type.
 
-| Error Object                             | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| Styra.OpenApi.Models.Errors.ClientError  | 400                                      | application/json                         |
-| Styra.OpenApi.Models.Errors.ServerError  | 500                                      | application/json                         |
-| Styra.OpenApi.Models.Errors.SDKException | 4xx-5xx                                  | */*                                      |
+| Error Object                                 | Status Code                                  | Content Type                                 |
+| -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| Styra.Opa.OpenApi.Models.Errors.ClientError  | 400                                          | application/json                             |
+| Styra.Opa.OpenApi.Models.Errors.ServerError  | 500                                          | application/json                             |
+| Styra.Opa.OpenApi.Models.Errors.SDKException | 4xx-5xx                                      | */*                                          |
 
 ### Example
 
 ```csharp
-using Styra.OpenApi;
+using Styra.Opa.OpenApi;
 using System;
-using Styra.OpenApi.Models.Errors;
-using Styra.OpenApi.Models.Requests;
-using Styra.OpenApi.Models.Components;
+using Styra.Opa.OpenApi.Models.Errors;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
 
 var sdk = new OpaApiClient();
 
@@ -223,7 +223,7 @@ catch (Exception ex)
     {
         // handle exception
     }
-    else if (ex is Styra.OpenApi.Models.Errors.SDKException)
+    else if (ex is Styra.Opa.OpenApi.Models.Errors.SDKException)
     {
         // handle exception
     }

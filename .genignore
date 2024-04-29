@@ -1,7 +1,9 @@
-Styra.OpenApi.sln
+Styra.Opa.OpenApi.sln
+Styra.Opa.sln
 Styra.sln
-Styra/OpaClient.cs
-Styra/OpaException.cs
-Styra/OpenApi/Styra.OpenApi.csproj
+Styra/Opa/OpaClient.cs
+Styra/Opa/OpaException.cs
+Styra/Opa/Styra.Opa.csproj
+Styra/Opa/OpenApi/Styra.Opa.OpenApi.csproj
 LICENSE
 /docs/

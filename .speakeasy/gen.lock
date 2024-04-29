@@ -3,11 +3,12 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 2422daf10293e923232daf08349ae0ae
   docVersion: 0.2.0
-  speakeasyVersion: 1.276.0
-  generationVersion: 2.314.0
-  releaseVersion: 0.7.0
-  configChecksum: e61305d32a3a6ac9caf57da79f97e6f9
-  repoURL: https://github.com/StyraInc/opa-csharp.git
+  speakeasyVersion: 1.277.0
+  generationVersion: 2.317.0
+  releaseVersion: 0.7.1
+  configChecksum: 16e5e55ee5344a70e7b3d59832fadd77
+  repoURL: https://github.com/StyraInc/opa-csharp
+  repoSubDirectory: Styra/Opa/OpenApi/
   published: true
 features:
   csharp:
@@ -16,48 +17,50 @@ features:
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
-    responseFormat: 0.0.1
+    responseFormat: 0.0.2
     unions: 0.0.2
 generatedFiles:
-  - Styra/OpenApi/OpaApiClient.cs
+  - Styra/Opa/OpenApi/OpaApiClient.cs
   - global.json
-  - Styra/OpenApi/Utils/AnyDeserializer.cs
-  - Styra/OpenApi/Utils/BigIntStrConverter.cs
-  - Styra/OpenApi/Utils/DecimalStrConverter.cs
-  - Styra/OpenApi/Utils/EnumConverter.cs
-  - Styra/OpenApi/Utils/FlexibleObjectDeserializer.cs
-  - Styra/OpenApi/Utils/HeaderSerializer.cs
-  - Styra/OpenApi/Utils/IsoDateTimeSerializer.cs
-  - Styra/OpenApi/Utils/RequestBodySerializer.cs
-  - Styra/OpenApi/Utils/ResponseBodyDeserializer.cs
-  - Styra/OpenApi/Utils/SecuritySerializer.cs
-  - Styra/OpenApi/Utils/SpeakeasyHttpClient.cs
-  - Styra/OpenApi/Utils/SpeakeasyMetadata.cs
-  - Styra/OpenApi/Utils/URLBuilder.cs
-  - Styra/OpenApi/Utils/Utilities.cs
-  - Styra/OpenApi/Models/Errors/SDKException.cs
-  - Styra/OpenApi/Models/Requests/ExecutePolicyRequest.cs
-  - Styra/OpenApi/Models/Requests/ExecutePolicyResponse.cs
-  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
-  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputRequest.cs
-  - Styra/OpenApi/Models/Requests/ExecutePolicyWithInputResponse.cs
-  - Styra/OpenApi/Models/Requests/HealthRequest.cs
-  - Styra/OpenApi/Models/Requests/HealthResponse.cs
-  - Styra/OpenApi/Models/Components/SuccessfulPolicyEvaluation.cs
-  - Styra/OpenApi/Models/Components/Revision.cs
-  - Styra/OpenApi/Models/Components/Provenance.cs
-  - Styra/OpenApi/Models/Components/Result.cs
-  - Styra/OpenApi/Models/Components/Explain.cs
-  - Styra/OpenApi/Models/Components/GzipAcceptEncoding.cs
-  - Styra/OpenApi/Models/Components/Input.cs
-  - Styra/OpenApi/Models/Components/GzipContentEncoding.cs
-  - Styra/OpenApi/Models/Components/HealthyServer.cs
-  - Styra/OpenApi/Models/Errors/Location.cs
-  - Styra/OpenApi/Models/Errors/Errors.cs
-  - Styra/OpenApi/Models/Errors/ClientError.cs
-  - Styra/OpenApi/Models/Errors/ServerErrorLocation.cs
-  - Styra/OpenApi/Models/Errors/ServerErrorErrors.cs
-  - Styra/OpenApi/Models/Errors/ServerError.cs
-  - Styra/OpenApi/Models/Errors/UnhealthyServer.cs
+  - Styra/Opa/OpenApi/Utils/AnyDeserializer.cs
+  - Styra/Opa/OpenApi/Utils/BigIntStrConverter.cs
+  - Styra/Opa/OpenApi/Utils/DecimalStrConverter.cs
+  - Styra/Opa/OpenApi/Utils/EnumConverter.cs
+  - Styra/Opa/OpenApi/Utils/FlexibleObjectDeserializer.cs
+  - Styra/Opa/OpenApi/Utils/HeaderSerializer.cs
+  - Styra/Opa/OpenApi/Utils/IsoDateTimeSerializer.cs
+  - Styra/Opa/OpenApi/Utils/RequestBodySerializer.cs
+  - Styra/Opa/OpenApi/Utils/ResponseBodyDeserializer.cs
+  - Styra/Opa/OpenApi/Utils/SecurityMetadata.cs
+  - Styra/Opa/OpenApi/Utils/SpeakeasyHttpClient.cs
+  - Styra/Opa/OpenApi/Utils/SpeakeasyMetadata.cs
+  - Styra/Opa/OpenApi/Utils/URLBuilder.cs
+  - Styra/Opa/OpenApi/Utils/Utilities.cs
+  - Styra/Opa/OpenApi/Models/Errors/SDKException.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyResponse.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Styra/Opa/OpenApi/Models/Requests/HealthRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/HealthResponse.cs
+  - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Styra/Opa/OpenApi/Models/Components/Revision.cs
+  - Styra/Opa/OpenApi/Models/Components/Provenance.cs
+  - Styra/Opa/OpenApi/Models/Components/Result.cs
+  - Styra/Opa/OpenApi/Models/Components/Explain.cs
+  - Styra/Opa/OpenApi/Models/Components/GzipAcceptEncoding.cs
+  - Styra/Opa/OpenApi/Models/Components/Input.cs
+  - Styra/Opa/OpenApi/Models/Components/GzipContentEncoding.cs
+  - Styra/Opa/OpenApi/Models/Components/HealthyServer.cs
+  - Styra/Opa/OpenApi/Models/Errors/Location.cs
+  - Styra/Opa/OpenApi/Models/Errors/Errors.cs
+  - Styra/Opa/OpenApi/Models/Errors/ClientError.cs
+  - Styra/Opa/OpenApi/Models/Errors/ServerErrorLocation.cs
+  - Styra/Opa/OpenApi/Models/Errors/ServerErrorErrors.cs
+  - Styra/Opa/OpenApi/Models/Errors/ServerError.cs
+  - Styra/Opa/OpenApi/Models/Errors/UnhealthyServer.cs
   - USAGE.md
   - .gitattributes
+  - Styra/Opa/OpenApi/Hooks/SDKHooks.cs
+  - Styra/Opa/OpenApi/Hooks/HookTypes.cs
