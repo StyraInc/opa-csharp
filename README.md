@@ -10,7 +10,7 @@
 ### Nuget
 
 ```bash
-dotnet add reference path/to/Styra/OpenApi.csproj
+dotnet add package Styra.OpenApi
 ```
 <!-- End SDK Installation [installation] -->
 
@@ -141,13 +141,8 @@ var sdk = new OpaApiClient();
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
-        Input = Input.CreateInputMapOfany(
-                new Dictionary<string, object>() {
-                    { "user", "alice" },
-                    { "action", "read" },
-                    { "object", "id123" },
-                    { "type", "dog" },
-                },
+        Input = Input.CreateInputBoolean(
+        false,
         ),
     },
 };

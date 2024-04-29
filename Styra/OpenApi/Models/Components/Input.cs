@@ -23,15 +23,15 @@ namespace Styra.OpenApi.Models.Components
         private InputType(string value) { Value = value; }
 
         public string Value { get; private set; }
-        public static InputType MapOfany { get { return new InputType("mapOfany"); } }
-        
         public static InputType Boolean { get { return new InputType("boolean"); } }
         
         public static InputType Str { get { return new InputType("str"); } }
         
+        public static InputType Number { get { return new InputType("number"); } }
+        
         public static InputType ArrayOfany { get { return new InputType("arrayOfany"); } }
         
-        public static InputType Number { get { return new InputType("number"); } }
+        public static InputType MapOfany { get { return new InputType("mapOfany"); } }
         
         public static InputType Null { get { return new InputType("null"); } }
 
@@ -39,11 +39,11 @@ namespace Styra.OpenApi.Models.Components
         public static implicit operator String(InputType v) { return v.Value; }
         public static InputType FromString(string v) {
             switch(v) {
-                case "mapOfany": return MapOfany;
                 case "boolean": return Boolean;
                 case "str": return Str;
-                case "arrayOfany": return ArrayOfany;
                 case "number": return Number;
+                case "arrayOfany": return ArrayOfany;
+                case "mapOfany": return MapOfany;
                 case "null": return Null;
                 default: throw new ArgumentException("Invalid value for InputType");
             }
@@ -71,22 +71,14 @@ namespace Styra.OpenApi.Models.Components
         public Input(InputType type) {
             Type = type;
         }
-        public Dictionary<string, object>? MapOfany { get; set; } 
         public bool? Boolean { get; set; } 
         public string? Str { get; set; } 
-        public List<object>? ArrayOfany { get; set; } 
         public double? Number { get; set; } 
+        public List<object>? ArrayOfany { get; set; } 
+        public Dictionary<string, object>? MapOfany { get; set; } 
 
         public InputType Type { get; set; }
 
-
-        public static Input CreateMapOfany(Dictionary<string, object> mapOfany) {
-            InputType typ = InputType.MapOfany;
-
-            Input res = new Input(typ);
-            res.MapOfany = mapOfany;
-            return res;
-        }
 
         public static Input CreateBoolean(bool boolean) {
             InputType typ = InputType.Boolean;
@@ -104,6 +96,14 @@ namespace Styra.OpenApi.Models.Components
             return res;
         }
 
+        public static Input CreateNumber(double number) {
+            InputType typ = InputType.Number;
+
+            Input res = new Input(typ);
+            res.Number = number;
+            return res;
+        }
+
         public static Input CreateArrayOfany(List<object> arrayOfany) {
             InputType typ = InputType.ArrayOfany;
 
@@ -112,11 +112,11 @@ namespace Styra.OpenApi.Models.Components
             return res;
         }
 
-        public static Input CreateNumber(double number) {
-            InputType typ = InputType.Number;
+        public static Input CreateMapOfany(Dictionary<string, object> mapOfany) {
+            InputType typ = InputType.MapOfany;
 
             Input res = new Input(typ);
-            res.Number = number;
+            res.MapOfany = mapOfany;
             return res;
         }
 
@@ -138,19 +138,6 @@ namespace Styra.OpenApi.Models.Components
 
                 if (json == "null") {
                     return null;
-                }
-                try
-                {
-                    Dictionary<string, object>? mapOfany = ResponseBodyDeserializer.Deserialize<Dictionary<string, object>>(json, missingMemberHandling: MissingMemberHandling.Error);
-                    return new Input(InputType.MapOfany) {
-                        MapOfany = mapOfany
-                    };
-                }
-                catch (Exception ex)
-                {
-                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
-                        throw ex;
-                    }
                 } 
                 try {
                     var converted = Convert.ToBoolean(json);
@@ -164,6 +151,14 @@ namespace Styra.OpenApi.Models.Components
                     return new Input(InputType.Str) {
                         Str = json[1..^1]
                     };
+                } 
+                try {
+                    var converted = Convert.ToDouble(json);
+                    return new Input(InputType.Number) {
+                        Number = converted
+                    };
+                } catch (System.FormatException) {
+                    // try next option
                 }
                 try
                 {
@@ -177,14 +172,19 @@ namespace Styra.OpenApi.Models.Components
                     if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
                         throw ex;
                     }
-                } 
-                try {
-                    var converted = Convert.ToDouble(json);
-                    return new Input(InputType.Number) {
-                        Number = converted
+                }
+                try
+                {
+                    Dictionary<string, object>? mapOfany = ResponseBodyDeserializer.Deserialize<Dictionary<string, object>>(json, missingMemberHandling: MissingMemberHandling.Error);
+                    return new Input(InputType.MapOfany) {
+                        MapOfany = mapOfany
                     };
-                } catch (System.FormatException) {
-                    // try next option
+                }
+                catch (Exception ex)
+                {
+                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
+                        throw ex;
+                    }
                 }
 
                 throw new InvalidOperationException("Could not deserialize into any supported types.");
@@ -202,11 +202,6 @@ namespace Styra.OpenApi.Models.Components
                     writer.WriteRawValue("null");
                     return;
                 }
-                if (res.MapOfany != null)
-                {
-                    writer.WriteRawValue(Utilities.SerializeJSON(res.MapOfany));
-                    return;
-                }
                 if (res.Boolean != null)
                 {
                     writer.WriteRawValue(Utilities.SerializeJSON(res.Boolean));
@@ -217,14 +212,19 @@ namespace Styra.OpenApi.Models.Components
                     writer.WriteRawValue(Utilities.SerializeJSON(res.Str));
                     return;
                 }
+                if (res.Number != null)
+                {
+                    writer.WriteRawValue(Utilities.SerializeJSON(res.Number));
+                    return;
+                }
                 if (res.ArrayOfany != null)
                 {
                     writer.WriteRawValue(Utilities.SerializeJSON(res.ArrayOfany));
                     return;
                 }
-                if (res.Number != null)
+                if (res.MapOfany != null)
                 {
-                    writer.WriteRawValue(Utilities.SerializeJSON(res.Number));
+                    writer.WriteRawValue(Utilities.SerializeJSON(res.MapOfany));
                     return;
                 }
 
