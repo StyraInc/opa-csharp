@@ -53,7 +53,7 @@ public class OpaClient
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     public bool check(string path)
     {
-        return query<bool>(path);
+        return evaluate<bool>(path);
     }
 
     /// <summary>
@@ -63,9 +63,9 @@ public class OpaClient
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
-    public bool check(Dictionary<string, object> input, string path)
+    public bool check(string path, Dictionary<string, object> input)
     {
-        return query<bool>(input, path);
+        return evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -74,9 +74,9 @@ public class OpaClient
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(string input, string path)
+    public bool check(string path, string input)
     {
-        return query<bool>(input, path);
+        return evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -85,9 +85,9 @@ public class OpaClient
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(bool input, string path)
+    public bool check(string path, bool input)
     {
-        return query<bool>(input, path);
+        return evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -96,9 +96,9 @@ public class OpaClient
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public bool check(double input, string path)
+    public bool check(string path, double input)
     {
-        return query<bool>(input, path);
+        return evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -108,9 +108,9 @@ public class OpaClient
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public bool check(List<object> input, string path)
+    public bool check(string path, List<object> input)
     {
-        return query<bool>(input, path);
+        return evaluate<bool>(path, input);
     }
 
     /// <summary>
@@ -118,9 +118,9 @@ public class OpaClient
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? query<T>(string path)
+    public T? evaluate<T>(string path)
     {
-        return queryMachinery<T>(Input.CreateNull(), path);
+        return queryMachinery<T>(path, Input.CreateNull());
     }
 
     /// <summary>
@@ -129,9 +129,9 @@ public class OpaClient
     /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? query<T>(Dictionary<string, object> input, string path)
+    public T? evaluate<T>(string path, Dictionary<string, object> input)
     {
-        return queryMachinery<T>(Input.CreateMapOfany(input), path);
+        return queryMachinery<T>(path, Input.CreateMapOfany(input));
     }
 
     /// <summary>
@@ -140,9 +140,9 @@ public class OpaClient
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? query<T>(string input, string path)
+    public T? evaluate<T>(string path, string input)
     {
-        return queryMachinery<T>(Input.CreateStr(input), path);
+        return queryMachinery<T>(path, Input.CreateStr(input));
     }
 
     /// <summary>
@@ -151,9 +151,9 @@ public class OpaClient
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? query<T>(bool input, string path)
+    public T? evaluate<T>(string path, bool input)
     {
-        return queryMachinery<T>(Input.CreateBoolean(input), path);
+        return queryMachinery<T>(path, Input.CreateBoolean(input));
     }
 
     /// <summary>
@@ -162,9 +162,9 @@ public class OpaClient
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
-    public T? query<T>(double input, string path)
+    public T? evaluate<T>(string path, double input)
     {
-        return queryMachinery<T>(Input.CreateNumber(input), path);
+        return queryMachinery<T>(path, Input.CreateNumber(input));
     }
 
     /// <summary>
@@ -174,13 +174,13 @@ public class OpaClient
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public T? query<T>(List<object> input, string path)
+    public T? evaluate<T>(string path, List<object> input)
     {
-        return queryMachinery<T>(Input.CreateArrayOfany(input), path);
+        return queryMachinery<T>(path, Input.CreateArrayOfany(input));
     }
 
     /// <exclude />
-    private T? queryMachinery<T>(Input input, string path)
+    private T? queryMachinery<T>(string path, Input input)
     {
         ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest()
         {
