@@ -1,18 +1,18 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 2401c7030f847f72ab31c8f75de58a66
+  docChecksum: 2422daf10293e923232daf08349ae0ae
   docVersion: 0.2.0
-  speakeasyVersion: 1.260.6
-  generationVersion: 2.311.1
-  releaseVersion: 0.6.0
-  configChecksum: 4c4aa1619dbdf97bfdc4c59ad3152678
+  speakeasyVersion: 1.276.0
+  generationVersion: 2.314.0
+  releaseVersion: 0.7.0
+  configChecksum: e61305d32a3a6ac9caf57da79f97e6f9
   repoURL: https://github.com/StyraInc/opa-csharp.git
   published: true
 features:
   csharp:
     constsAndDefaults: 0.0.1
-    core: 3.7.0
+    core: 3.8.0
     examples: 2.81.3
     flattening: 2.81.1
     globalServerURLs: 2.82.3
@@ -35,7 +35,6 @@ generatedFiles:
   - Styra/OpenApi/Utils/SpeakeasyMetadata.cs
   - Styra/OpenApi/Utils/URLBuilder.cs
   - Styra/OpenApi/Utils/Utilities.cs
-  - Styra/OpenApi/Styra.OpenApi.csproj
   - Styra/OpenApi/Models/Errors/SDKException.cs
   - Styra/OpenApi/Models/Requests/ExecutePolicyRequest.cs
   - Styra/OpenApi/Models/Requests/ExecutePolicyResponse.cs
@@ -60,29 +59,5 @@ generatedFiles:
   - Styra/OpenApi/Models/Errors/ServerErrorErrors.cs
   - Styra/OpenApi/Models/Errors/ServerError.cs
   - Styra/OpenApi/Models/Errors/UnhealthyServer.cs
-  - docs/Models/Requests/ExecutePolicyRequest.md
-  - docs/Models/Requests/ExecutePolicyResponse.md
-  - docs/Models/Requests/ExecutePolicyWithInputRequestBody.md
-  - docs/Models/Requests/ExecutePolicyWithInputRequest.md
-  - docs/Models/Requests/ExecutePolicyWithInputResponse.md
-  - docs/Models/Requests/HealthRequest.md
-  - docs/Models/Requests/HealthResponse.md
-  - docs/Models/Components/SuccessfulPolicyEvaluation.md
-  - docs/Models/Components/Revision.md
-  - docs/Models/Components/Provenance.md
-  - docs/Models/Components/Result.md
-  - docs/Models/Components/Explain.md
-  - docs/Models/Components/GzipAcceptEncoding.md
-  - docs/Models/Components/Input.md
-  - docs/Models/Components/GzipContentEncoding.md
-  - docs/Models/Components/HealthyServer.md
-  - docs/Models/Errors/Location.md
-  - docs/Models/Errors/Errors.md
-  - docs/Models/Errors/ClientError.md
-  - docs/Models/Errors/ServerErrorLocation.md
-  - docs/Models/Errors/ServerErrorErrors.md
-  - docs/Models/Errors/ServerError.md
-  - docs/Models/Errors/UnhealthyServer.md
-  - docs/sdks/opaapiclient/README.md
   - USAGE.md
   - .gitattributes
