@@ -50,7 +50,7 @@ public class OpaClient
     /// Simple allow/deny-style check against a rule, using the provided input mapping.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     public async Task<bool> check(string path)
     {
         return await evaluate<bool>(path);
@@ -61,7 +61,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     public async Task<bool> check(string path, bool input)
     {
         return await evaluate<bool>(path, input);
@@ -72,7 +72,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     public async Task<bool> check(string path, double input)
     {
         return await evaluate<bool>(path, input);
@@ -83,7 +83,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     public async Task<bool> check(string path, string input)
     {
         return await evaluate<bool>(path, input);
@@ -94,7 +94,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
     public async Task<bool> check(string path, List<object> input)
     {
@@ -106,7 +106,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or nil in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
     public async Task<bool> check(string path, Dictionary<string, object> input)
     {
