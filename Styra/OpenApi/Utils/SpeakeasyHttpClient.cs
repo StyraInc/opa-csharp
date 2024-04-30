@@ -17,80 +17,26 @@ namespace Styra.OpenApi.Utils
 
     public interface ISpeakeasyHttpClient
     {
-        void AddHeader(string key, string value);
-        void AddQueryParam(string key, string value);
-        Task<HttpResponseMessage> SendAsync(HttpRequestMessage message);
+        Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
     }
 
     public class SpeakeasyHttpClient : ISpeakeasyHttpClient
     {
         private ISpeakeasyHttpClient? client;
 
-        private Dictionary<string, List<string>> headers { get; } =
-            new Dictionary<string, List<string>>();
-
-        private Dictionary<string, List<string>> queryParams { get; } =
-            new Dictionary<string, List<string>>();
-
         internal SpeakeasyHttpClient(ISpeakeasyHttpClient? client = null)
         {
             this.client = client;
         }
 
-        public void AddHeader(string key, string value)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
-            if (headers.ContainsKey(key))
-            {
-                headers[key].Add(value);
-            }
-            else
-            {
-                headers.Add(key, new List<string> { value });
-            }
-        }
-
-        public void AddQueryParam(string key, string value)
-        {
-            if (queryParams.ContainsKey(key))
-            {
-                queryParams[key].Add(value);
-            }
-            else
-            {
-                queryParams.Add(key, new List<string> { value });
-            }
-        }
-
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage message)
-        {
-            foreach(var hh in headers)
-            {
-                foreach(var hv in hh.Value)
-                {
-                    message.Headers.Add(hh.Key, hv);
-                }
-            }
-
-            /*var qp = URLBuilder.SerializeQueryParams(queryParams);
-
-            if (qp != "")
-            {
-                if (message.uri.Query == "")
-                {
-                    message.url += "?" + qp;
-                }
-                else
-                {
-                    message.url += "&" + qp;
-                }
-            }*/
-
             if (client != null)
             {
-                return await client.SendAsync(message);
+                return await client.SendAsync(request);
             }
 
-	    return await new HttpClient().SendAsync(message);
+            return await new HttpClient().SendAsync(request);
         }
     }
 }

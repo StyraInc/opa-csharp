@@ -11,138 +11,159 @@
 namespace Styra.OpenApi.Utils
 {
     using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
     using System.Reflection;
     using System.Text;
+    using System.Web;
 
-    internal static class SecuritySerializer
+
+    internal class SecurityMetadata
     {
-        public static ISpeakeasyHttpClient Apply(ISpeakeasyHttpClient client, Func<object> securitySource)
+        private Dictionary<string, string> headerParams { get; } = new Dictionary<string, string>();
+        private Dictionary<string, string> queryParams { get; } = new Dictionary<string, string>();
+
+        public SecurityMetadata(Func<object> securitySource)
+        {
+            ParseSecuritySource(securitySource);
+        }
+
+        public HttpRequestMessage Apply(HttpRequestMessage request)
+        {
+            foreach (var kvp in headerParams)
+            {
+                request.Headers.Add(kvp.Key, kvp.Value);
+            }
+
+            if(request.RequestUri != null)
+            {
+                var uriBuilder = new UriBuilder(request.RequestUri);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                foreach (var kvp in queryParams)
+                {
+                    query.Add(kvp.Key, kvp.Value);
+                }
+                uriBuilder.Query = query.ToString();
+                request.RequestUri =  uriBuilder.Uri;
+            }
+
+            return request;
+        }
+
+        private void ParseSecuritySource(Func<object> securitySource)
         {
             if (securitySource == null)
             {
-                return client;
+                return;
             }
 
             var security = securitySource();
             if (security == null)
             {
-                return client;
+                return;
             }
 
-            client = new SpeakeasyHttpClient(client);
-
-            var props = security.GetType().GetProperties();
-
-            foreach (var prop in props)
+            foreach (var prop in security.GetType().GetProperties())
             {
                 var value = prop.GetValue(security, null);
-
                 if (value == null)
                 {
                     continue;
                 }
 
-                var metadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
-                if (metadata == null)
+                var secMetadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
+                if (secMetadata == null)
                 {
                     continue;
                 }
 
-                if (metadata.Option)
+                if (secMetadata.Option)
                 {
-                    ApplyOption(ref client, value);
+                    ParseOption(value);
                 }
-                else if (metadata.Scheme)
+                else if (secMetadata.Scheme)
                 {
-                    if (metadata.SubType == "basic" && !Utilities.IsClass(value))
+                    if (secMetadata.SubType == "basic" && !Utilities.IsClass(value))
                     {
-                        ApplyScheme(ref client, metadata, security);
-                        return client;
+                        ParseScheme(secMetadata, security);
+                        return;
                     }
                     else
                     {
-                        ApplyScheme(ref client, metadata, value);
+                        ParseScheme(secMetadata, value);
                     }
                 }
             }
 
-            return client;
+            return;
         }
 
-        private static void ApplyOption(ref ISpeakeasyHttpClient client, object option)
+        private void ParseOption(object option)
         {
-            var props = option.GetType().GetProperties();
-
-            foreach (var prop in props)
+            foreach (var prop in option.GetType().GetProperties())
             {
                 var value = prop.GetValue(option, null);
-
                 if (value == null)
                 {
                     continue;
                 }
 
-                var metadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
-                if (metadata == null || !metadata.Scheme)
+                var secMetadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
+                if (secMetadata == null || !secMetadata.Scheme)
                 {
                     continue;
                 }
 
-                ApplyScheme(ref client, metadata, value);
+                ParseScheme(secMetadata, value);
             }
         }
 
-        private static void ApplyScheme(
-            ref ISpeakeasyHttpClient client,
-            SpeakeasyMetadata.SecurityMetadata schemeMetadata,
-            object scheme
-        )
+        private void ParseScheme(SpeakeasyMetadata.SecurityMetadata schemeMetadata, object scheme)
         {
             if (Utilities.IsClass(scheme))
             {
                 if (schemeMetadata.Type == "http" && schemeMetadata.SubType == "basic")
                 {
-                    ApplyBasicAuthScheme(ref client, scheme);
+                    ParseBasicAuthScheme(scheme);
                     return;
                 }
 
-                var props = scheme.GetType().GetProperties();
-
-                foreach (var prop in props)
+                foreach (var prop in scheme.GetType().GetProperties())
                 {
                     var value = prop.GetValue(scheme, null);
-
                     if (value == null)
                     {
                         continue;
                     }
 
-                    var metadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
-                    if (metadata == null || metadata.Name == "")
+                    var secMetadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
+                    if (secMetadata == null || secMetadata.Name == "")
                     {
                         continue;
                     }
 
-                    ApplySchemeValue(ref client, schemeMetadata, metadata, value);
+                    ParseSchemeValue(schemeMetadata, secMetadata, value);
                 }
             }
             else
             {
-                ApplySchemeValue(ref client, schemeMetadata, schemeMetadata, scheme);
+                ParseSchemeValue(schemeMetadata, schemeMetadata, scheme);
             }
         }
 
-        private static void ApplySchemeValue(
-            ref ISpeakeasyHttpClient client,
+        private void ParseSchemeValue(
             SpeakeasyMetadata.SecurityMetadata schemeMetadata,
             SpeakeasyMetadata.SecurityMetadata valueMetadata,
             object value
         )
         {
-            if (valueMetadata.Name == "")
+            var key = valueMetadata.Name;
+            if (key == "")
             {
                 return;
             }
+
+            var valStr = Utilities.ValueToString(value);
 
             switch (schemeMetadata.Type)
             {
@@ -150,40 +171,29 @@ namespace Styra.OpenApi.Utils
                     switch (schemeMetadata.SubType)
                     {
                         case "header":
-                            client.AddHeader(valueMetadata.Name, Utilities.ValueToString(value));
+                            headerParams.Add(key, valStr);
                             break;
                         case "query":
-                            client.AddQueryParam(
-                                valueMetadata.Name,
-                                Utilities.ValueToString(value)
-                            );
+                            queryParams.Add(key, valStr);
                             break;
                         case "cookie":
-                            client.AddHeader(
-                                "cookie",
-                                $"{valueMetadata.Name}={Utilities.ValueToString(value)}"
-                            );
+                            headerParams.Add("cookie", $"{key}={valStr}");
                             break;
                         default:
-                            throw new Exception(
-                                $"Unknown apiKey subType: {schemeMetadata.SubType}"
-                            );
+                            throw new Exception($"Unknown apiKey subType: {schemeMetadata.SubType}");
                     }
                     break;
                 case "openIdConnect":
-                    client.AddHeader(valueMetadata.Name, Utilities.PrefixBearer(Utilities.ValueToString(value)));
+                    headerParams.Add(key, Utilities.PrefixBearer(valStr));
                     break;
                 case "oauth2":
-                    client.AddHeader(valueMetadata.Name, Utilities.PrefixBearer(Utilities.ValueToString(value)));
+                    headerParams.Add(key, Utilities.PrefixBearer(valStr));
                     break;
                 case "http":
                     switch (schemeMetadata.SubType)
                     {
                         case "bearer":
-                            client.AddHeader(
-                                valueMetadata.Name,
-                                Utilities.PrefixBearer(Utilities.ValueToString(value))
-                            );
+                            headerParams.Add(key, Utilities.PrefixBearer(valStr));
                             break;
                         default:
                             throw new Exception($"Unknown http subType: {schemeMetadata.SubType}");
@@ -194,40 +204,38 @@ namespace Styra.OpenApi.Utils
             }
         }
 
-        private static void ApplyBasicAuthScheme(ref ISpeakeasyHttpClient client, object scheme)
+        private void ParseBasicAuthScheme(object scheme)
         {
-            var props = scheme.GetType().GetProperties();
 
             string username = "";
             string password = "";
 
-            foreach (var prop in props)
+            foreach (var prop in scheme.GetType().GetProperties())
             {
                 var value = prop.GetValue(scheme, null);
-
                 if (value == null)
                 {
                     continue;
                 }
 
-                var metadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
-                if (metadata == null || metadata.Name == "")
+                var secMetadata = prop.GetCustomAttribute<SpeakeasyMetadata>()?.GetSecurityMetadata();
+                if (secMetadata == null || secMetadata.Name == "")
                 {
                     continue;
                 }
 
-                if (metadata.Name == "username")
+                if (secMetadata.Name == "username")
                 {
                     username = Utilities.ValueToString(value);
                 }
-                else if (metadata.Name == "password")
+                else if (secMetadata.Name == "password")
                 {
                     password = Utilities.ValueToString(value);
                 }
             }
 
             var auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-            client.AddHeader("Authorization", $"Basic {auth}");
+            headerParams.Add("Authorization", $"Basic {auth}");
         }
     }
 }
