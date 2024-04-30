@@ -36,7 +36,10 @@ namespace Styra.Opa.OpenApi.Utils
             JsonSerializer serializer
         )
         {
-            return ParseTokenIntoDictionary(JToken.Load(reader));
+            if (reader.TokenType == JsonToken.StartObject) {
+                return ParseTokenIntoDictionary(JToken.Load(reader));
+            }
+            throw new JsonSerializationException($"Could not deserialize token into dictionary");
         }
 
         private Dictionary<string, object?> ParseTokenIntoDictionary(JToken token)
