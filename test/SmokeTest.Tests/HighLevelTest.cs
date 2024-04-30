@@ -1,4 +1,4 @@
-using Styra;
+using Styra.Opa;
 
 namespace SmokeTest.Tests;
 
@@ -40,15 +40,15 @@ public class HighLevelTest
 
 
     // Exercise the high-level OPA C# SDK.
-    var allow = client.check(new Dictionary<string, object>() {
+    var allow = await client.check("app/rbac/allow", new Dictionary<string, object>() {
       { "user", "alice" },
       { "action", "read" },
       { "object", "id123" },
       { "type", "dog" },
-    }, "app/rbac/allow");
+    });
 
-    // BUG: This will fail as long as Speakeasy generates the upstream SDK with
+    // BUG: This can fail as long as Speakeasy generates the upstream SDK with
     // deserializers occurring in the same ordering as the OpenAPI spec.
-    Assert.Equal(true, allow);
+    Assert.True(allow);
   }
 }
