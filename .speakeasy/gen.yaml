@@ -12,7 +12,8 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 0.6.0
+  version: 0.7.3
+  additionalDependencies: []
   author: Styra
   clientServerStatusCodesAsErrors: true
   company: Styra
@@ -30,6 +31,6 @@ csharp:
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
-  packageName: Styra.OpenApi
+  packageName: Styra.Opa.OpenApi
   product: ""
   responseFormat: envelope

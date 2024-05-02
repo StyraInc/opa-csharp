@@ -26,13 +26,14 @@
 
   <!-- OPA API Reference. -->
   <ItemGroup>
-    <ProjectReference Include="..\..\Styra\Styra.csproj" />
+    <ProjectReference Include="..\..\Styra\Opa\Styra.Opa.csproj" />
   </ItemGroup>
 
   <!-- Ensure our data files are copied next to the test executables. -->
   <ItemGroup>
     <None Update="testdata\data.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="testdata\policy.rego" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="testdata\weird_name.rego" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 

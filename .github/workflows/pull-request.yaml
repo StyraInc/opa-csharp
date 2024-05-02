@@ -29,7 +29,7 @@ jobs:
       - name: Get .NET package version
         id: dotnet_proj_version
         run: |
-          VERSION=$(./scripts/get-csproj-version.sh Styra/Styra.csproj)
+          VERSION=$(./scripts/get-csproj-version.sh Styra/Opa/Styra.Opa.csproj)
           echo "dotnet_proj_version=$VERSION" >> $GITHUB_OUTPUT
       - name: Checkout PR
         if: ${{ steps.speakeasy_version.outputs.speakeasy_version != steps.dotnet_proj_version.outputs.dotnet_proj_version }}
@@ -56,10 +56,10 @@ jobs:
           DOTNET_VERSION=${{ steps.dotnet_proj_version.outputs.dotnet_proj_version }}
           echo "Version mismatch. Speakeasy ver: ${SE_VERSION}, .NET project ver: ${DOTNET_VERSION}"
           echo "Updating the .NET project version..."
-          sed -i "s/<Version>[^<]*<\/Version>/<Version>${SE_VERSION}<\/Version>/" Styra/Styra.csproj
+          sed -i "s/<Version>[^<]*<\/Version>/<Version>${SE_VERSION}<\/Version>/" Styra/Opa/Styra.Opa.csproj
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add Styra/Styra.csproj
+          git add Styra/Opa/Styra.Opa.csproj
           git commit -am "Update project file to version ${SE_VERSION}"
           git push
 

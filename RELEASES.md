@@ -95,3 +95,33 @@ Based on:
 - [csharp v0.6.0] .
 ### Releases
 - [NuGet v0.6.0] https://www.nuget.org/packages/Styra.OpenApi/0.6.0 - .
+
+## 2024-04-29 00:03:32
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.276.0 (2.314.0) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v0.7.0] .
+### Releases
+- [NuGet v0.7.0] https://www.nuget.org/packages/Styra.OpenApi/0.7.0 - .
+
+## 2024-04-30 12:47:41
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.277.2 (2.317.0) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v0.7.2] .
+### Releases
+- [NuGet v0.7.2] https://www.nuget.org/packages/Styra.Opa.OpenApi/0.7.2 - .
+
+## 2024-04-30 17:57:17
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.277.4 (2.318.3) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v0.7.3] .
+### Releases
+- [NuGet v0.7.3] https://www.nuget.org/packages/Styra.Opa.OpenApi/0.7.3 - .
