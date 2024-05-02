@@ -22,21 +22,36 @@ namespace Styra.Opa.OpenApi.Utils
 
     public class SpeakeasyHttpClient : ISpeakeasyHttpClient
     {
+        private class HttpClient : ISpeakeasyHttpClient
+        {
+            private System.Net.Http.HttpClient client;
+
+            public HttpClient()
+            {
+                client = new System.Net.Http.HttpClient();
+            }
+
+            public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+            {
+                return await client.SendAsync(request);
+            }
+        }
+
         private ISpeakeasyHttpClient? client;
 
         internal SpeakeasyHttpClient(ISpeakeasyHttpClient? client = null)
         {
+            if (client == null)
+            {
+                client = new HttpClient();
+            }
+
             this.client = client;
         }
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
-            if (client != null)
-            {
-                return await client.SendAsync(request);
-            }
-
-            return await new HttpClient().SendAsync(request);
+            return await client?.SendAsync(request);
         }
     }
 }
