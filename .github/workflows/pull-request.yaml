@@ -1,4 +1,4 @@
-name: Checks
+name: 2 - PR Updater
 
 on:
   workflow_dispatch: {}

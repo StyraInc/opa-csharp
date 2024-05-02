@@ -1,4 +1,4 @@
-name: Generate
+name: 1 - Generate
 permissions:
   checks: write
   contents: write

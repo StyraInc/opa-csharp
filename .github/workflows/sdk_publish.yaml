@@ -1,4 +1,4 @@
-name: Publish
+name: 3a – Publish to NuGet
 "on":
   push:
     branches:

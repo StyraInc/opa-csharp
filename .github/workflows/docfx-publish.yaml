@@ -1,3 +1,5 @@
+name: 3b – Publish Docs
+
 # Trigger the action on push to main
 on:
   push:
