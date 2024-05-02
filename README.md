@@ -1,79 +1,58 @@
 # OPA C# SDK
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![NuGet Version](https://img.shields.io/nuget/v/Styra?style=flat&color=%2324b6e0)](https://www.nuget.org/packages/Styra/)
+[![NuGet Version](https://img.shields.io/nuget/v/Styra.Opa?style=flat&color=%2324b6e0)](https://www.nuget.org/packages/Styra.Opa/)
 
+> [!IMPORTANT]
+> The documentation for this SDK lives at https://docs.styra.com/sdk, with reference documentation available at https://styrainc.github.io/opa-csharp
 
-<!-- Start SDK Installation [installation] -->
+You can use the Styra OPA SDK to connect to [Open Policy Agent](https://www.openpolicyagent.org/) and [Enterprise OPA](https://www.styra.com/enterprise-opa/) deployments.
+
 ## SDK Installation
 
 ### Nuget
 
 ```bash
-dotnet add package Styra.Opa.OpenApi
+dotnet add package Styra.Opa
 ```
-<!-- End SDK Installation [installation] -->
+<!-- No SDK Installation [installation] -->
 
 ## SDK Example Usage (high-level)
 
 All the code examples that follow assume that the high-level SDK module has been imported, and that an `OpaClient` instance was created:
 
 ```csharp
-using Styra;
+using Styra.Opa;
 
-public class MyExample {
-    private string serverURL = "http://opa-host:8181";
-    private string path = "authz/allow";
-    private OpaClient opa;
 
-    public MyExample() {
-        opa = new OPAClient(serverURL);
-    }
+private string serverURL = "http://opa-host:8181";
+private string path = "authz/allow";
+private OpaClient opa;
 
-    // ...
-}
-```
+opa = new OPAClient(serverURL);
 
-### Simple query
-
-For a simple boolean response with a dictionary input, use the SDK as follows:
-
-```csharp
 var input = new Dictionary<string, object>() {
     { "user", "alice" },
     { "action", "read" },
+    {"resource", "/finance/reports/fy2038_budget.csv"},
 };
 
-// (local variable) bool? allowed
-var allowed = opa.check(input, path);
+// (local variable) bool allowed
+var allowed = await opa.check("authz/allow", input);
+// (local variable) violations List<string>?
+var violations = await opa.evaluate<List<string>>("authz/violations", input);
 
-// Logic for the `undefined` case ...
-if (allowed == null) {
-    // ...
-}
 // Normal true/false cases...
 if (allowed) {
     // ...
+} else {
+    Console.WriteLine("Violations: " + violations);
 }
 ```
 
-In the above example, a `null` value for `allowed` indicates the `/authz/allow` endpoint returned `undefined`.
-A non-null result can be used as a normal true/false value.
-
-<details><summary>HTTP Request</summary>
-
-```http
-POST /v1/data/authz/allow
-Content-Type: application/json
-
-{ "input": { "user": "alice", "action": "read" } }
-```
-
-</details>
-
 ### Input types
 
-The `check` and `query` methods are overloaded for most standard JSON types, which include the following variants for the `input` parameter:
+The `check` and `evaluate` methods are overloaded for most standard JSON types, which include the following variants for the `input` parameter:
 
 | C# type | JSON equivalent type |
 | ------- | -------------------- |
@@ -86,15 +65,23 @@ The `check` and `query` methods are overloaded for most standard JSON types, whi
 ### Result Types
 
 #### `OpaClient.check`
-For the `check` method, the output type is always `bool?`, allowing API users to disambiguate `undefined` from normal `true`/`false` results.
+For the `check` method, the output type is always `bool`.
 
-#### `OpaClient.query<T>`
-For the `query` method, the output type is configurable using generics, as shown in the example below.
+#### `OpaClient.evaluate<T>`
+For the `evaluate` method, the output type is configurable using generics, as shown in the example below.
 
 ```csharp
 string path = "authz/accounts/max_limit";
 
-double maxLimit = opa.query<double>("example", path);
+double? maxLimit = opa.evaluate<double>(path, "example");
+```
+
+For cases where a default value is appropriate, you can avoid the nullable `double` type in the example like so:
+```csharp
+string path = "authz/accounts/max_limit";
+
+double maxLimit = opa.evaluate<double>(path, "example") ?? 0.0f;
+```
 ```
 
 <!--If the selected return type `<T>` is possible to deserialize from the returned JSON, `query<T>` will attempt to populate the variable with the value(s) present.
@@ -118,7 +105,7 @@ var input = new Dictionary<string, object>() {
 };
 
 // (local variable) AuthzStatus status
-var status =opa.query<AuthzStatus>(input, path);
+var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
 ```-->
 
 > [!NOTE]
@@ -126,6 +113,7 @@ var status =opa.query<AuthzStatus>(input, path);
 
 ---
 
+# OPA OpenAPI SDK (low-level)
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
