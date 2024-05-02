@@ -13,7 +13,7 @@ You can use the Styra OPA SDK to connect to [Open Policy Agent](https://www.open
 ### Nuget
 
 ```bash
-dotnet add reference Styra.Opa
+dotnet add package Styra.Opa
 ```
 <!-- No SDK Installation [installation] -->
 
