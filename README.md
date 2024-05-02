@@ -39,6 +39,7 @@ var input = new Dictionary<string, object>() {
 
 // (local variable) bool allowed
 var allowed = await opa.check("authz/allow", input);
+// (local variable) violations List<string>?
 var violations = await opa.evaluate<List<string>>("authz/violations", input);
 
 // Normal true/false cases...
@@ -72,7 +73,15 @@ For the `evaluate` method, the output type is configurable using generics, as sh
 ```csharp
 string path = "authz/accounts/max_limit";
 
-double maxLimit = opa.evaluate<double>(path, "example");
+double? maxLimit = opa.evaluate<double>(path, "example");
+```
+
+For cases where a default value is appropriate, you can avoid the nullable `double` type in the example like so:
+```csharp
+string path = "authz/accounts/max_limit";
+
+double maxLimit = opa.evaluate<double>(path, "example") ?? 0.0f;
+```
 ```
 
 <!--If the selected return type `<T>` is possible to deserialize from the returned JSON, `query<T>` will attempt to populate the variable with the value(s) present.
@@ -96,7 +105,7 @@ var input = new Dictionary<string, object>() {
 };
 
 // (local variable) AuthzStatus status
-var status =opa.evaluate<AuthzStatus>(path, input);
+var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
 ```-->
 
 > [!NOTE]
