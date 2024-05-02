@@ -2,7 +2,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Styra.Opa</PackageId>
-    <Version>0.7.3</Version>
+    <Version>0.7.5</Version>
     <Authors>Styra</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>

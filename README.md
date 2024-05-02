@@ -82,9 +82,8 @@ string path = "authz/accounts/max_limit";
 
 double maxLimit = opa.evaluate<double>(path, "example") ?? 0.0f;
 ```
-```
 
-<!--If the selected return type `<T>` is possible to deserialize from the returned JSON, `query<T>` will attempt to populate the variable with the value(s) present.
+If the selected return type `<T>` is possible to deserialize from the returned JSON, `evaluate<T>` will attempt to populate the variable with the value(s) present.
 
 ```csharp
 public struct AuthzStatus
@@ -106,7 +105,7 @@ var input = new Dictionary<string, object>() {
 
 // (local variable) AuthzStatus status
 var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
-```-->
+```
 
 > [!NOTE]
 > For low-level SDK usage, see the sections below.
@@ -114,6 +113,7 @@ var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
 ---
 
 # OPA OpenAPI SDK (low-level)
+
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
