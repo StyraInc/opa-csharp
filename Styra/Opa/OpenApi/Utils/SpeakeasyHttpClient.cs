@@ -51,7 +51,12 @@ namespace Styra.Opa.OpenApi.Utils
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
         {
-            return await client?.SendAsync(request);
+            if (client == null)
+            {
+                throw new InvalidOperationException("HttpClient is not initialized");
+            }
+
+            return await client.SendAsync(request);
         }
     }
 }
