@@ -21,11 +21,10 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>
   }
 
   [Fact]
-  public async Task OpaClientRBACTestcontainersTest()
+  public async Task RBACCheckDictionaryTest()
   {
     var client = GetOpaClient();
 
-    // Exercise the high-level OPA C# SDK.
     var allow = await client.check("app/rbac/allow", new Dictionary<string, object>() {
       { "user", "alice" },
       { "action", "read" },
@@ -36,5 +35,55 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>
     // BUG: This can fail as long as Speakeasy generates the upstream SDK with
     // deserializers occurring in the same ordering as the OpenAPI spec.
     Assert.True(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckNullTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow");
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckBoolTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", true);
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckDoubleTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", 42);
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckStringTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", "alice");
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckListObjTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", new List<object>() { "A", "B", "C", "D" });
+
+    Assert.False(allow);
   }
 }
