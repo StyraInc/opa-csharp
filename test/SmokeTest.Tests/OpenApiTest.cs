@@ -16,9 +16,6 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
   [Fact]
   public async Task OpenApiClientRBACTestcontainersTest()
   {
-    // Create a new instance of HttpClient to send HTTP requests.
-    var httpClient = new HttpClient();
-
     // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _container.Hostname, _container.GetMappedPublicPort(8181)).Uri;
 
@@ -53,9 +50,6 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
   [Fact]
   public async Task OpenApiClientEncodedPathTest()
   {
-    // Create a new instance of HttpClient to send HTTP requests.
-    var httpClient = new HttpClient();
-
     // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _container.Hostname, _container.GetMappedPublicPort(8181)).Uri;
 

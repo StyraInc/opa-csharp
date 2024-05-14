@@ -11,18 +11,19 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>
     _container = fixture.GetContainer();
   }
 
-  [Fact]
-  public async Task OpaClientRBACTestcontainersTest()
+  private OpaClient GetOpaClient()
   {
-    // Create a new instance of HttpClient to send HTTP requests.
-    var httpClient = new HttpClient();
-
     // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _container.Hostname, _container.GetMappedPublicPort(8181)).Uri;
 
     // Send an HTTP GET request to the specified URI and retrieve the response as a string.
-    var client = new OpaClient(serverUrl: requestUri.ToString());
+    return new OpaClient(serverUrl: requestUri.ToString());
+  }
 
+  [Fact]
+  public async Task OpaClientRBACTestcontainersTest()
+  {
+    var client = GetOpaClient();
 
     // Exercise the high-level OPA C# SDK.
     var allow = await client.check("app/rbac/allow", new Dictionary<string, object>() {
