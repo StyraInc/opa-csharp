@@ -2,44 +2,29 @@ using Styra.Opa;
 
 namespace SmokeTest.Tests;
 
-public class HighLevelTest
+public class HighLevelTest : IClassFixture<OPAContainerFixture>
 {
-  [Fact]
-  public async Task OpaClientRBACTestcontainersTest()
+  public IContainer _container;
+
+  public HighLevelTest(OPAContainerFixture fixture)
   {
-    // Read in the test data files.
-    var policy = System.IO.File.ReadAllBytes(Path.Combine("testdata", "policy.rego"));
-    var data = System.IO.File.ReadAllBytes(Path.Combine("testdata", "data.json"));
+    _container = fixture.GetContainer();
+  }
 
-    // Create a new instance of a container.
-    var container = new ContainerBuilder()
-      .WithImage("openpolicyagent/opa:latest")
-      // Bind port 8181 of the container to a random port on the host.
-      .WithPortBinding(8181, true)
-      .WithCommand("run", "--server", "policy.rego", "data.json")
-      // Map our policy and data files into the container instance.
-      .WithResourceMapping(policy, "policy.rego")
-      .WithResourceMapping(data, "data.json")
-      // Wait until the HTTP endpoint of the container is available.
-      .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(8181).ForPath("/health")))
-      // Build the container configuration.
-      .Build();
-
-    // Start the container.
-    await container.StartAsync()
-        .ConfigureAwait(false);
-
-    // Create a new instance of HttpClient to send HTTP requests.
-    var httpClient = new HttpClient();
-
+  private OpaClient GetOpaClient()
+  {
     // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
-    var requestUri = new UriBuilder(Uri.UriSchemeHttp, container.Hostname, container.GetMappedPublicPort(8181)).Uri;
+    var requestUri = new UriBuilder(Uri.UriSchemeHttp, _container.Hostname, _container.GetMappedPublicPort(8181)).Uri;
 
     // Send an HTTP GET request to the specified URI and retrieve the response as a string.
-    var client = new OpaClient(serverUrl: requestUri.ToString());
+    return new OpaClient(serverUrl: requestUri.ToString());
+  }
 
+  [Fact]
+  public async Task RBACCheckDictionaryTest()
+  {
+    var client = GetOpaClient();
 
-    // Exercise the high-level OPA C# SDK.
     var allow = await client.check("app/rbac/allow", new Dictionary<string, object>() {
       { "user", "alice" },
       { "action", "read" },
@@ -50,5 +35,55 @@ public class HighLevelTest
     // BUG: This can fail as long as Speakeasy generates the upstream SDK with
     // deserializers occurring in the same ordering as the OpenAPI spec.
     Assert.True(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckNullTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow");
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckBoolTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", true);
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckDoubleTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", 42);
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckStringTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", "alice");
+
+    Assert.False(allow);
+  }
+
+  [Fact]
+  public async Task RBACCheckListObjTest()
+  {
+    var client = GetOpaClient();
+
+    var allow = await client.check("app/rbac/allow", new List<object>() { "A", "B", "C", "D" });
+
+    Assert.False(allow);
   }
 }
