@@ -1,23 +1,27 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 2422daf10293e923232daf08349ae0ae
+  docChecksum: 11b8c1e1d3f9d5dab18c36b33f81200d
   docVersion: 0.2.0
-  speakeasyVersion: 1.283.1
-  generationVersion: 2.324.0
-  releaseVersion: 0.7.7
-  configChecksum: 42347a776828cf7702764a4d5341c948
+  speakeasyVersion: 1.293.0
+  generationVersion: 2.332.4
+  releaseVersion: 0.8.0
+  configChecksum: d65f4c0f7e73dc7d363ccac334fb14e1
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
 features:
   csharp:
+    additionalDependencies: 0.1.0
     constsAndDefaults: 0.0.1
     core: 3.8.3
     examples: 2.81.3
     flattening: 2.81.2
+    globalSecurityCallbacks: 0.1.0
     globalServerURLs: 2.82.3
+    intellisenseMarkdownSupport: 0.1.0
     responseFormat: 0.0.3
+    sdkHooks: 0.1.0
     unions: 0.0.3
 generatedFiles:
   - Styra/Opa/OpenApi/OpaApiClient.cs
@@ -31,12 +35,17 @@ generatedFiles:
   - Styra/Opa/OpenApi/Utils/IsoDateTimeSerializer.cs
   - Styra/Opa/OpenApi/Utils/RequestBodySerializer.cs
   - Styra/Opa/OpenApi/Utils/ResponseBodyDeserializer.cs
+  - Styra/Opa/OpenApi/Utils/Retries/BackoffStrategy.cs
+  - Styra/Opa/OpenApi/Utils/Retries/Retries.cs
+  - Styra/Opa/OpenApi/Utils/Retries/RetryConfig.cs
   - Styra/Opa/OpenApi/Utils/SecurityMetadata.cs
   - Styra/Opa/OpenApi/Utils/SpeakeasyHttpClient.cs
   - Styra/Opa/OpenApi/Utils/SpeakeasyMetadata.cs
   - Styra/Opa/OpenApi/Utils/URLBuilder.cs
   - Styra/Opa/OpenApi/Utils/Utilities.cs
   - Styra/Opa/OpenApi/Models/Errors/SDKException.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecuteDefaultPolicyWithInputRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecuteDefaultPolicyWithInputResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
@@ -44,13 +53,13 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/HealthRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/HealthResponse.cs
+  - Styra/Opa/OpenApi/Models/Components/Result.cs
+  - Styra/Opa/OpenApi/Models/Components/Input.cs
+  - Styra/Opa/OpenApi/Models/Components/GzipAcceptEncoding.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyEvaluation.cs
   - Styra/Opa/OpenApi/Models/Components/Revision.cs
   - Styra/Opa/OpenApi/Models/Components/Provenance.cs
-  - Styra/Opa/OpenApi/Models/Components/Result.cs
   - Styra/Opa/OpenApi/Models/Components/Explain.cs
-  - Styra/Opa/OpenApi/Models/Components/GzipAcceptEncoding.cs
-  - Styra/Opa/OpenApi/Models/Components/Input.cs
   - Styra/Opa/OpenApi/Models/Components/GzipContentEncoding.cs
   - Styra/Opa/OpenApi/Models/Components/HealthyServer.cs
   - Styra/Opa/OpenApi/Models/Errors/Location.cs
