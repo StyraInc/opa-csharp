@@ -15,6 +15,7 @@ namespace Styra.Opa.OpenApi
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Models.Errors;
     using Styra.Opa.OpenApi.Models.Requests;
+    using Styra.Opa.OpenApi.Utils.Retries;
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     using System.Net.Http.Headers;
@@ -28,6 +29,11 @@ namespace Styra.Opa.OpenApi
     /// </summary>
     public interface IOpaApiClient
     {
+
+        /// <summary>
+        /// Execute the default decision  given an input
+        /// </summary>
+        Task<ExecuteDefaultPolicyWithInputResponse> ExecuteDefaultPolicyWithInputAsync(Input input, bool? pretty = null, GzipAcceptEncoding? acceptEncoding = null);
 
         /// <summary>
         /// Execute a policy
@@ -60,7 +66,8 @@ namespace Styra.Opa.OpenApi
 
         public string ServerUrl = "";
         public int ServerIndex = 0;
-        public SDKHooks hooks = new SDKHooks();
+        public SDKHooks Hooks = new SDKHooks();
+        public RetryConfig? RetryConfig = null;
 
         public string GetTemplatedServerUrl()
         {
@@ -74,7 +81,7 @@ namespace Styra.Opa.OpenApi
         public ISpeakeasyHttpClient InitHooks(ISpeakeasyHttpClient client)
         {
             string preHooksUrl = GetTemplatedServerUrl();
-            var (postHooksUrl, postHooksClient) = this.hooks.SDKInit(preHooksUrl, client);
+            var (postHooksUrl, postHooksClient) = this.Hooks.SDKInit(preHooksUrl, client);
             if (preHooksUrl != postHooksUrl)
             {
                 this.ServerUrl = postHooksUrl;
@@ -92,15 +99,15 @@ namespace Styra.Opa.OpenApi
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _language = "csharp";
-        private const string _sdkVersion = "0.7.7";
-        private const string _sdkGenVersion = "2.324.0";
+        private const string _sdkVersion = "0.8.0";
+        private const string _sdkGenVersion = "2.332.4";
         private const string _openapiDocVersion = "0.2.0";
-        private const string _userAgent = "speakeasy-sdk/csharp 0.7.7 2.324.0 0.2.0 Styra.Opa.OpenApi";
+        private const string _userAgent = "speakeasy-sdk/csharp 0.8.0 2.332.4 0.2.0 Styra.Opa.OpenApi";
         private string _serverUrl = "";
         private int _serverIndex = 0;
         private ISpeakeasyHttpClient _defaultClient;
 
-        public OpaApiClient(int? serverIndex = null, string? serverUrl = null, Dictionary<string, string>? urlParams = null, ISpeakeasyHttpClient? client = null)
+        public OpaApiClient(int? serverIndex = null, string? serverUrl = null, Dictionary<string, string>? urlParams = null, ISpeakeasyHttpClient? client = null, RetryConfig? retryConfig = null)
         {
             if (serverIndex != null)
             {
@@ -125,10 +132,121 @@ namespace Styra.Opa.OpenApi
             SDKConfiguration = new SDKConfig()
             {
                 ServerIndex = _serverIndex,
-                ServerUrl = _serverUrl
+                ServerUrl = _serverUrl,
+                RetryConfig = retryConfig
             };
 
             _defaultClient = SDKConfiguration.InitHooks(_defaultClient);
+        }
+
+        public async Task<ExecuteDefaultPolicyWithInputResponse> ExecuteDefaultPolicyWithInputAsync(Input input, bool? pretty = null, GzipAcceptEncoding? acceptEncoding = null)
+        {
+            var request = new ExecuteDefaultPolicyWithInputRequest()
+            {
+                Input = input,
+                Pretty = pretty,
+                AcceptEncoding = acceptEncoding,
+            };
+            string baseUrl = this.SDKConfiguration.GetTemplatedServerUrl();
+            var urlString = URLBuilder.Build(baseUrl, "/", request);
+
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, urlString);
+            httpRequest.Headers.Add("user-agent", _userAgent);
+            HeaderSerializer.PopulateHeaders(ref httpRequest, request);
+
+            var serializedBody = RequestBodySerializer.Serialize(request, "Input", "json", false, false);
+            if (serializedBody != null)
+            {
+                httpRequest.Content = serializedBody;
+            }
+
+            var hookCtx = new HookContext("executeDefaultPolicyWithInput", null, null);
+
+            httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+
+            HttpResponseMessage httpResponse;
+            try
+            {
+                httpResponse = await _defaultClient.SendAsync(httpRequest);
+                int _statusCode = (int)httpResponse.StatusCode;
+
+                if (_statusCode == 400 || _statusCode == 404 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
+                {
+                    var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
+                    if (_httpResponse != null)
+                    {
+                        httpResponse = _httpResponse;
+                    }
+                }
+            }
+            catch (Exception error)
+            {
+                var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
+                if (_httpResponse != null)
+                {
+                    httpResponse = _httpResponse;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            httpResponse = await this.SDKConfiguration.Hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
+
+            var contentType = httpResponse.Content.Headers.ContentType?.MediaType;
+            int responseStatusCode = (int)httpResponse.StatusCode;
+            if(responseStatusCode == 200)
+            {
+                if(Utilities.IsContentTypeMatch("application/json", contentType))
+                {
+                    var obj = ResponseBodyDeserializer.Deserialize<Result>(await httpResponse.Content.ReadAsStringAsync(), NullValueHandling.Ignore);
+                    var response = new ExecuteDefaultPolicyWithInputResponse()
+                    {
+                        StatusCode = responseStatusCode,
+                        ContentType = contentType,
+                        RawResponse = httpResponse
+                    };
+                    response.Result = obj;
+                    return response;
+                }
+                else
+                {
+                    throw new SDKException("Unknown content type received", responseStatusCode, await httpResponse.Content.ReadAsStringAsync(), httpResponse);
+                }
+            }
+            else if(new List<int>{400, 404}.Contains(responseStatusCode))
+            {
+                if(Utilities.IsContentTypeMatch("application/json", contentType))
+                {
+                    var obj = ResponseBodyDeserializer.Deserialize<ClientError>(await httpResponse.Content.ReadAsStringAsync(), NullValueHandling.Ignore);
+                    throw obj!;
+                }
+                else
+                {
+                    throw new SDKException("Unknown content type received", responseStatusCode, await httpResponse.Content.ReadAsStringAsync(), httpResponse);
+                }
+            }
+            else if(responseStatusCode >= 400 && responseStatusCode < 500 || responseStatusCode >= 500 && responseStatusCode < 600)
+            {
+                throw new SDKException("API error occurred", responseStatusCode, await httpResponse.Content.ReadAsStringAsync(), httpResponse);
+            }
+            else if(responseStatusCode == 500)
+            {
+                if(Utilities.IsContentTypeMatch("application/json", contentType))
+                {
+                    var obj = ResponseBodyDeserializer.Deserialize<ServerError>(await httpResponse.Content.ReadAsStringAsync(), NullValueHandling.Ignore);
+                    throw obj!;
+                }
+                else
+                {
+                    throw new SDKException("Unknown content type received", responseStatusCode, await httpResponse.Content.ReadAsStringAsync(), httpResponse);
+                }
+            }
+            else
+            {
+                throw new SDKException("Unknown status code received", responseStatusCode, await httpResponse.Content.ReadAsStringAsync(), httpResponse);
+            }
         }
 
         public async Task<ExecutePolicyResponse> ExecutePolicyAsync(ExecutePolicyRequest request)
@@ -142,7 +260,8 @@ namespace Styra.Opa.OpenApi
 
             var hookCtx = new HookContext("executePolicy", null, null);
 
-            httpRequest = await this.SDKConfiguration.hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+            httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+
             HttpResponseMessage httpResponse;
             try
             {
@@ -151,7 +270,7 @@ namespace Styra.Opa.OpenApi
 
                 if (_statusCode == 400 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
                 {
-                    var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
+                    var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
                     if (_httpResponse != null)
                     {
                         httpResponse = _httpResponse;
@@ -160,7 +279,7 @@ namespace Styra.Opa.OpenApi
             }
             catch (Exception error)
             {
-                var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
+                var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
                 if (_httpResponse != null)
                 {
                     httpResponse = _httpResponse;
@@ -171,7 +290,7 @@ namespace Styra.Opa.OpenApi
                 }
             }
 
-            httpResponse = await this.SDKConfiguration.hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
+            httpResponse = await this.SDKConfiguration.Hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
 
             var contentType = httpResponse.Content.Headers.ContentType?.MediaType;
             int responseStatusCode = (int)httpResponse.StatusCode;
@@ -245,7 +364,8 @@ namespace Styra.Opa.OpenApi
 
             var hookCtx = new HookContext("executePolicyWithInput", null, null);
 
-            httpRequest = await this.SDKConfiguration.hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+            httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+
             HttpResponseMessage httpResponse;
             try
             {
@@ -254,7 +374,7 @@ namespace Styra.Opa.OpenApi
 
                 if (_statusCode == 400 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
                 {
-                    var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
+                    var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
                     if (_httpResponse != null)
                     {
                         httpResponse = _httpResponse;
@@ -263,7 +383,7 @@ namespace Styra.Opa.OpenApi
             }
             catch (Exception error)
             {
-                var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
+                var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
                 if (_httpResponse != null)
                 {
                     httpResponse = _httpResponse;
@@ -274,7 +394,7 @@ namespace Styra.Opa.OpenApi
                 }
             }
 
-            httpResponse = await this.SDKConfiguration.hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
+            httpResponse = await this.SDKConfiguration.Hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
 
             var contentType = httpResponse.Content.Headers.ContentType?.MediaType;
             int responseStatusCode = (int)httpResponse.StatusCode;
@@ -347,7 +467,8 @@ namespace Styra.Opa.OpenApi
 
             var hookCtx = new HookContext("health", null, null);
 
-            httpRequest = await this.SDKConfiguration.hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+            httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
+
             HttpResponseMessage httpResponse;
             try
             {
@@ -356,7 +477,7 @@ namespace Styra.Opa.OpenApi
 
                 if (_statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
                 {
-                    var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
+                    var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), httpResponse, null);
                     if (_httpResponse != null)
                     {
                         httpResponse = _httpResponse;
@@ -365,7 +486,7 @@ namespace Styra.Opa.OpenApi
             }
             catch (Exception error)
             {
-                var _httpResponse = await this.SDKConfiguration.hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
+                var _httpResponse = await this.SDKConfiguration.Hooks.AfterErrorAsync(new AfterErrorContext(hookCtx), null, error);
                 if (_httpResponse != null)
                 {
                     httpResponse = _httpResponse;
@@ -376,7 +497,7 @@ namespace Styra.Opa.OpenApi
                 }
             }
 
-            httpResponse = await this.SDKConfiguration.hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
+            httpResponse = await this.SDKConfiguration.Hooks.AfterSuccessAsync(new AfterSuccessContext(hookCtx), httpResponse);
 
             var contentType = httpResponse.Content.Headers.ContentType?.MediaType;
             int responseStatusCode = (int)httpResponse.StatusCode;

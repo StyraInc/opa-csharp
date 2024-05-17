@@ -117,7 +117,26 @@ var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
-### Example
+### Example 1
+
+```csharp
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
+
+var sdk = new OpaApiClient();
+
+var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
+    input: Input.CreateInputNumber(
+8203.11D,
+),
+    pretty: false,
+    acceptEncoding: GzipAcceptEncoding.Gzip);
+
+// handle response
+```
+
+### Example 2
 
 ```csharp
 using Styra.Opa.OpenApi;
@@ -146,6 +165,7 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 
 ### [OpaApiClient SDK](docs/sdks/opaapiclient/README.md)
 
+* [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
 * [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
 * [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
 * [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
@@ -177,7 +197,7 @@ Handling errors in this SDK should largely match your expectations.  All operati
 
 | Error Object                                 | Status Code                                  | Content Type                                 |
 | -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
-| Styra.Opa.OpenApi.Models.Errors.ClientError  | 400                                          | application/json                             |
+| Styra.Opa.OpenApi.Models.Errors.ClientError  | 400,404                                      | application/json                             |
 | Styra.Opa.OpenApi.Models.Errors.ServerError  | 500                                          | application/json                             |
 | Styra.Opa.OpenApi.Models.Errors.SDKException | 4xx-5xx                                      | */*                                          |
 
@@ -192,13 +212,14 @@ using Styra.Opa.OpenApi.Models.Components;
 
 var sdk = new OpaApiClient();
 
-ExecutePolicyRequest req = new ExecutePolicyRequest() {
-    Path = "app/rbac",
-};
-
 try
 {
-    var res = await sdk.ExecutePolicyAsync(req);
+    var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
+    input: Input.CreateInputNumber(
+8203.11D,
+),
+    pretty: false,
+    acceptEncoding: GzipAcceptEncoding.Gzip);
     // handle response
 }
 catch (Exception ex)
