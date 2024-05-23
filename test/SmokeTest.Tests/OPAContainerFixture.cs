@@ -15,17 +15,20 @@ public class OPAContainerFixture : IAsyncLifetime
         // Read in the test data files.
         var policy = System.IO.File.ReadAllBytes(Path.Combine("testdata", "policy.rego"));
         var secondPolicy = System.IO.File.ReadAllBytes(Path.Combine("testdata", "weird_name.rego"));
+        var systemPolicy = System.IO.File.ReadAllBytes(Path.Combine("testdata", "simple", "system.rego"));
         var data = System.IO.File.ReadAllBytes(Path.Combine("testdata", "data.json"));
+
 
         // Create a new instance of a container.
         IContainer container = new ContainerBuilder()
           .WithImage("openpolicyagent/opa:latest")
           // Bind port 8181 of the container to a random port on the host.
           .WithPortBinding(8181, true)
-          .WithCommand("run", "--server", "policy.rego", "weird_name.rego", "data.json")
+          .WithCommand("run", "--server", "policy.rego", "weird_name.rego", "system.rego", "data.json")
           // Map our policy and data files into the container instance.
           .WithResourceMapping(policy, "policy.rego")
           .WithResourceMapping(secondPolicy, "weird_name.rego")
+          .WithResourceMapping(systemPolicy, "system.rego")
           .WithResourceMapping(data, "data.json")
           // Wait until the HTTP endpoint of the container is available.
           .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(r => r.ForPort(8181).ForPath("/health")))
