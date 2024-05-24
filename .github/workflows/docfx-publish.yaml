@@ -36,7 +36,7 @@ jobs:
         run: ./scripts/patch-readme.sh README.md ${{ env.STYRA_GH_PAGES_URL }}
 
       - name: Dotnet Setup
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
 
