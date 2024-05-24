@@ -165,7 +165,7 @@ public class OpaClient
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
     public async Task<T?> evaluate<T>(string path, List<object> input)
     {
-        return await queryMachinery<T>(path, Input.CreateArrayOfany(input));
+        return await queryMachinery<T>(path, Input.CreateArrayOfAny(input));
     }
 
     /// <summary>
@@ -176,7 +176,7 @@ public class OpaClient
     /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
     public async Task<T?> evaluate<T>(string path, Dictionary<string, object> input)
     {
-        return await queryMachinery<T>(path, Input.CreateMapOfany(input));
+        return await queryMachinery<T>(path, Input.CreateMapOfAny(input));
     }
 
     /// <exclude />
@@ -230,11 +230,11 @@ public class OpaClient
             case "str":
                 if (result.Str is T defStr) { return defStr; }
                 break;
-            case "arrayOfany":
-                if (result.ArrayOfany is T defArray) { return defArray; }
+            case "arrayOfAny":
+                if (result.ArrayOfAny is T defArray) { return defArray; }
                 break;
-            case "mapOfany":
-                if (result.MapOfany is T defObject) { return defObject; }
+            case "mapOfAny":
+                if (result.MapOfAny is T defObject) { return defObject; }
                 break;
             case null:
             default:

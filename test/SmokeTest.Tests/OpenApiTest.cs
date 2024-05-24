@@ -28,7 +28,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
       Path = "app/rbac",
       RequestBody = new ExecutePolicyWithInputRequestBody()
       {
-        Input = Input.CreateMapOfany(
+        Input = Input.CreateMapOfAny(
                     new Dictionary<string, object>() {
                     { "user", "alice" },
                     { "action", "read" },
@@ -39,7 +39,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     };
 
     var res = await client.ExecutePolicyWithInputAsync(req);
-    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfany;
+    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfAny;
 
     // Ensure we got back the expected fields from the eval.
     Assert.Equal(true, resultMap?.GetValueOrDefault("allow", false));
@@ -63,7 +63,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     };
 
     var res = await client.ExecutePolicyAsync(req);
-    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfany;
+    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfAny;
 
     Assert.Equal(true, resultMap?.GetValueOrDefault("allow", false));
   }
@@ -80,7 +80,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     // Exercise the low-level OPA C# SDK.
     ExecuteDefaultPolicyWithInputRequest req = new ExecuteDefaultPolicyWithInputRequest()
     {
-      Input = Input.CreateMapOfany(
+      Input = Input.CreateMapOfAny(
                     new Dictionary<string, object>() {
                     { "user", "alice" },
                     { "action", "read" },
@@ -92,11 +92,11 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     // Note(philip): To to how the API is generated, we have to fire off
     // requests directly-- there's no building of requests in advance for later
     // launching.
-    var res = await client.ExecuteDefaultPolicyWithInputAsync(Input.CreateMapOfany(
+    var res = await client.ExecuteDefaultPolicyWithInputAsync(Input.CreateMapOfAny(
                     new Dictionary<string, object>() {
                     { "hello", "world" },
                     }));
-    var resultMap = res.Result?.MapOfany;
+    var resultMap = res.Result?.MapOfAny;
 
     // Ensure we got back the expected fields from the eval.
     Assert.Equal("this is the default path", resultMap?.GetValueOrDefault("msg", ""));
