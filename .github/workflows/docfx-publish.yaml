@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Patch Speakeasy README docs links
         run: ./scripts/patch-readme.sh README.md ${{ env.STYRA_GH_PAGES_URL }}
