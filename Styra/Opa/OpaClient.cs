@@ -114,7 +114,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, then coerce the result to type T.
+    /// Evaluate the server's default policy, then coerce the result to type T.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
@@ -124,7 +124,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, using the provided input boolean value, then coerce the result to type T.
+    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
@@ -135,7 +135,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, using the provided input floating-point number, then coerce the result to type T.
+    /// Evaluate the server's default policy, using the provided input floating-point number, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
@@ -146,7 +146,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, using the provided input string, then coerce the result to type T.
+    /// Evaluate the server's default policy, using the provided input string, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
@@ -157,7 +157,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, using the provided input boolean value, then coerce the result to type T.
+    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
@@ -169,7 +169,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Evaluate a rule, using the provided input map, then coerce the result to type T.
+    /// Evaluate the server's default policy, using the provided input map, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
@@ -210,6 +210,117 @@ public class OpaClient
 
         // We return the default null value for type T if Result is null.
         var result = res.SuccessfulPolicyEvaluation?.Result;
+        if (result is null)
+        {
+            return default;
+        }
+
+        // We do the type-switch here, so that high-level clients don't have to.
+        // Because the Result members are nullable types, we use type testing
+        // with pattern matching to extract a non-null instance of the value if
+        // it exists.
+        switch (result.Type.ToString())
+        {
+            case "boolean":
+                if (result.Boolean is T defBoolean) { return defBoolean; }
+                break;
+            case "number":
+                if (result.Number is T defNumber) { return defNumber; }
+                break;
+            case "str":
+                if (result.Str is T defStr) { return defStr; }
+                break;
+            case "arrayOfAny":
+                if (result.ArrayOfAny is T defArray) { return defArray; }
+                break;
+            case "mapOfAny":
+                if (result.MapOfAny is T defObject) { return defObject; }
+                break;
+            case null:
+            default:
+                break;
+        }
+        // If we could not find a type present in the result that T derives
+        // from or is, we return the appropriate null type for T.
+        return default;
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, then coerce the result to type T.
+    /// </summary>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluateDefault<T>()
+    {
+        return await queryMachineryDefault<T>(Input.CreateNull());
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluateDefault<T>(bool input)
+    {
+        return await queryMachineryDefault<T>(Input.CreateBoolean(input));
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided input floating-point number, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluateDefault<T>(double input)
+    {
+        return await queryMachineryDefault<T>(Input.CreateNumber(input));
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided input string, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluateDefault<T>(string input)
+    {
+        return await queryMachineryDefault<T>(Input.CreateStr(input));
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
+    public async Task<T?> evaluateDefault<T>(List<object> input)
+    {
+        return await queryMachineryDefault<T>(Input.CreateArrayOfAny(input));
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided input map, then coerce the result to type T.
+    /// </summary>
+    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluateDefault<T>(Dictionary<string, object> input)
+    {
+        return await queryMachineryDefault<T>(Input.CreateMapOfAny(input));
+    }
+
+    /// <exclude />
+    private async Task<T?> queryMachineryDefault<T>(Input input)
+    {
+        ExecuteDefaultPolicyWithInputResponse res;
+        try
+        {
+            res = await opa.ExecuteDefaultPolicyWithInputAsync(input, policyRequestPretty);
+        }
+        catch (Exception e)
+        {
+            string msg = string.Format("executing server default policy failed due to exception '{0}'", e);
+            throw new OpaException(msg, e);
+        }
+
+        // We return the default null value for type T if Result is null.
+        var result = res.Result;
         if (result is null)
         {
             return default;

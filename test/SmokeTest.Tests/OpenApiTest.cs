@@ -77,18 +77,6 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     // Send an HTTP GET request to the specified URI and retrieve the response as a string.
     var client = new OpaApiClient(serverIndex: 0, serverUrl: requestUri.ToString());
 
-    // Exercise the low-level OPA C# SDK.
-    ExecuteDefaultPolicyWithInputRequest req = new ExecuteDefaultPolicyWithInputRequest()
-    {
-      Input = Input.CreateMapOfAny(
-                    new Dictionary<string, object>() {
-                    { "user", "alice" },
-                    { "action", "read" },
-                    { "object", "id123" },
-                    { "type", "dog" },
-                    }),
-    };
-
     // Note(philip): To to how the API is generated, we have to fire off
     // requests directly-- there's no building of requests in advance for later
     // launching.

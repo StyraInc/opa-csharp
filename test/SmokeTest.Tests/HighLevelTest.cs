@@ -86,4 +86,17 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>
 
     Assert.False(allow);
   }
+
+  [Fact]
+  public async Task EvaluateDefaultTest()
+  {
+    var client = GetOpaClient();
+
+    Dictionary<string, object>? res = await client.evaluateDefault<Dictionary<string, object>>(
+      new Dictionary<string, object>() {
+        { "hello", "world" },
+      });
+
+    Assert.Equal(new Dictionary<string, object>() { { "hello", "world" } }, res?.GetValueOrDefault("echo", ""));
+  }
 }
