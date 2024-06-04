@@ -98,13 +98,13 @@ namespace Styra.Opa.OpenApi
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _language = "csharp";
-        private const string _sdkVersion = "0.8.1";
-        private const string _sdkGenVersion = "2.335.5";
+        private const string _sdkVersion = "0.9.0";
+        private const string _sdkGenVersion = "2.338.12";
         private const string _openapiDocVersion = "0.2.0";
-        private const string _userAgent = "speakeasy-sdk/csharp 0.8.1 2.335.5 0.2.0 Styra.Opa.OpenApi";
+        private const string _userAgent = "speakeasy-sdk/csharp 0.9.0 2.338.12 0.2.0 Styra.Opa.OpenApi";
         private string _serverUrl = "";
         private int _serverIndex = 0;
-        private ISpeakeasyHttpClient _defaultClient;
+        private ISpeakeasyHttpClient _client;
 
         public OpaApiClient(int? serverIndex = null, string? serverUrl = null, Dictionary<string, string>? urlParams = null, ISpeakeasyHttpClient? client = null, RetryConfig? retryConfig = null)
         {
@@ -126,7 +126,7 @@ namespace Styra.Opa.OpenApi
                 _serverUrl = serverUrl;
             }
 
-            _defaultClient = new SpeakeasyHttpClient(client);
+            _client = client ?? new SpeakeasyHttpClient();
 
             SDKConfiguration = new SDKConfig()
             {
@@ -135,7 +135,7 @@ namespace Styra.Opa.OpenApi
                 RetryConfig = retryConfig
             };
 
-            _defaultClient = SDKConfiguration.InitHooks(_defaultClient);
+            _client = SDKConfiguration.InitHooks(_client);
         }
 
         public async Task<ExecuteDefaultPolicyWithInputResponse> ExecuteDefaultPolicyWithInputAsync(Input input, bool? pretty = null, GzipAcceptEncoding? acceptEncoding = null)
@@ -166,7 +166,7 @@ namespace Styra.Opa.OpenApi
             HttpResponseMessage httpResponse;
             try
             {
-                httpResponse = await _defaultClient.SendAsync(httpRequest);
+                httpResponse = await _client.SendAsync(httpRequest);
                 int _statusCode = (int)httpResponse.StatusCode;
 
                 if (_statusCode == 400 || _statusCode == 404 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
@@ -264,7 +264,7 @@ namespace Styra.Opa.OpenApi
             HttpResponseMessage httpResponse;
             try
             {
-                httpResponse = await _defaultClient.SendAsync(httpRequest);
+                httpResponse = await _client.SendAsync(httpRequest);
                 int _statusCode = (int)httpResponse.StatusCode;
 
                 if (_statusCode == 400 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
@@ -368,7 +368,7 @@ namespace Styra.Opa.OpenApi
             HttpResponseMessage httpResponse;
             try
             {
-                httpResponse = await _defaultClient.SendAsync(httpRequest);
+                httpResponse = await _client.SendAsync(httpRequest);
                 int _statusCode = (int)httpResponse.StatusCode;
 
                 if (_statusCode == 400 || _statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
@@ -471,7 +471,7 @@ namespace Styra.Opa.OpenApi
             HttpResponseMessage httpResponse;
             try
             {
-                httpResponse = await _defaultClient.SendAsync(httpRequest);
+                httpResponse = await _client.SendAsync(httpRequest);
                 int _statusCode = (int)httpResponse.StatusCode;
 
                 if (_statusCode >= 400 && _statusCode < 500 || _statusCode == 500 || _statusCode >= 500 && _statusCode < 600)
