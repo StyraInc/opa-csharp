@@ -39,7 +39,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     };
 
     var res = await client.ExecutePolicyWithInputAsync(req);
-    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfAny;
+    var resultMap = res.SuccessfulPolicyResponse?.Result?.MapOfAny;
 
     // Ensure we got back the expected fields from the eval.
     Assert.Equal(true, resultMap?.GetValueOrDefault("allow", false));
@@ -63,7 +63,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>
     };
 
     var res = await client.ExecutePolicyAsync(req);
-    var resultMap = res.SuccessfulPolicyEvaluation?.Result?.MapOfAny;
+    var resultMap = res.SuccessfulPolicyResponse?.Result?.MapOfAny;
 
     Assert.Equal(true, resultMap?.GetValueOrDefault("allow", false));
   }
