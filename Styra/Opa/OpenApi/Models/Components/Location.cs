@@ -7,22 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Styra.Opa.OpenApi.Models.Errors
+namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
-    using Styra.Opa.OpenApi.Models.Errors;
     using Styra.Opa.OpenApi.Utils;
     
-    public class Errors
+    public class Location
     {
 
-        [JsonProperty("code")]
-        public string Code { get; set; } = default!;
+        [JsonProperty("file")]
+        public string File { get; set; } = default!;
 
-        [JsonProperty("message")]
-        public string Message { get; set; } = default!;
+        [JsonProperty("row")]
+        public long Row { get; set; } = default!;
 
-        [JsonProperty("location")]
-        public Models.Errors.Location? Location { get; set; }
+        [JsonProperty("col")]
+        public long Col { get; set; } = default!;
     }
 }

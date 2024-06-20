@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 11b8c1e1d3f9d5dab18c36b33f81200d
+  docChecksum: a34bd1c885aa42eb3175940494581f67
   docVersion: 0.2.0
-  speakeasyVersion: 1.299.7
-  generationVersion: 2.338.12
-  releaseVersion: 1.0.0
-  configChecksum: 9df4269ceaa81c9a0ed56676e4845fc0
+  speakeasyVersion: 1.310.0
+  generationVersion: 2.347.4
+  releaseVersion: 1.0.1
+  configChecksum: 1384ef5ea24bf80b6ac93f5d303cf1ea
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
@@ -14,7 +14,7 @@ features:
   csharp:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.0.1
-    core: 3.9.3
+    core: 3.9.6
     examples: 2.81.3
     flattening: 2.81.2
     globalSecurityCallbacks: 0.1.0
@@ -51,16 +51,26 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputRequestBody.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecutePolicyWithInputResponse.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequestBody.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/HealthRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/HealthResponse.cs
   - Styra/Opa/OpenApi/Models/Components/Result.cs
   - Styra/Opa/OpenApi/Models/Components/Input.cs
   - Styra/Opa/OpenApi/Models/Components/GzipAcceptEncoding.cs
-  - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyEvaluation.cs
+  - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponse.cs
   - Styra/Opa/OpenApi/Models/Components/Revision.cs
   - Styra/Opa/OpenApi/Models/Components/Provenance.cs
   - Styra/Opa/OpenApi/Models/Components/Explain.cs
   - Styra/Opa/OpenApi/Models/Components/GzipContentEncoding.cs
+  - Styra/Opa/OpenApi/Models/Components/Location.cs
+  - Styra/Opa/OpenApi/Models/Components/Errors.cs
+  - Styra/Opa/OpenApi/Models/Components/ServerError.cs
+  - Styra/Opa/OpenApi/Models/Components/ResponsesSuccessfulPolicyResponse.cs
+  - Styra/Opa/OpenApi/Models/Components/Responses.cs
+  - Styra/Opa/OpenApi/Models/Components/BatchMixedResults.cs
+  - Styra/Opa/OpenApi/Models/Components/BatchSuccessfulPolicyEvaluation.cs
   - Styra/Opa/OpenApi/Models/Components/HealthyServer.cs
   - Styra/Opa/OpenApi/Models/Errors/Location.cs
   - Styra/Opa/OpenApi/Models/Errors/Errors.cs
@@ -68,7 +78,9 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Errors/ServerErrorLocation.cs
   - Styra/Opa/OpenApi/Models/Errors/ServerErrorErrors.cs
   - Styra/Opa/OpenApi/Models/Errors/ServerError.cs
+  - Styra/Opa/OpenApi/Models/Errors/BatchServerError.cs
   - Styra/Opa/OpenApi/Models/Errors/UnhealthyServer.cs
+  - NUGET.md
   - USAGE.md
   - .gitattributes
   - Styra/Opa/OpenApi/Hooks/SDKHooks.cs

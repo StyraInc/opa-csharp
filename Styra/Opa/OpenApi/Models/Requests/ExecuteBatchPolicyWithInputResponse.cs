@@ -15,7 +15,7 @@ namespace Styra.Opa.OpenApi.Models.Requests
     using System.Net.Http;
     using System;
     
-    public class ExecutePolicyResponse
+    public class ExecuteBatchPolicyWithInputResponse
     {
 
         /// <summary>
@@ -34,14 +34,19 @@ namespace Styra.Opa.OpenApi.Models.Requests
         public HttpResponseMessage RawResponse { get; set; } = default!;
 
         /// <summary>
-        /// Success.<br/>
+        /// All batched policy executions succeeded.<br/>
         /// 
         /// <remarks>
-        /// The server also returns 200 if the path refers to an undefined document. In this case, the response will not contain a result property.<br/>
+        /// The server also returns 200 if the path refers to an undefined document. In this case, responses will be empty.<br/>
         /// 
         /// </remarks>
         /// </summary>
-        public SuccessfulPolicyResponse? SuccessfulPolicyResponse { get; set; }
+        public BatchSuccessfulPolicyEvaluation? BatchSuccessfulPolicyEvaluation { get; set; }
+
+        /// <summary>
+        /// Mixed success and failures.
+        /// </summary>
+        public BatchMixedResults? BatchMixedResults { get; set; }
 
         public Dictionary<string, List<string>> Headers { get; set; } = default!;
     }

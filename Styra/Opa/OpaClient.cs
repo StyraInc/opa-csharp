@@ -209,7 +209,7 @@ public class OpaClient
         }
 
         // We return the default null value for type T if Result is null.
-        var result = res.SuccessfulPolicyEvaluation?.Result;
+        var result = res.SuccessfulPolicyResponse?.Result;
         if (result is null)
         {
             return default;
