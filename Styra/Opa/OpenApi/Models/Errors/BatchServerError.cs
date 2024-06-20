@@ -15,20 +15,13 @@ namespace Styra.Opa.OpenApi.Models.Errors
     using System.Collections.Generic;
     using System;
     
-    /// <summary>
-    /// Bad Request
-    /// </summary>
-    public class ClientError : Exception
+    public class BatchServerError : Exception
     {
 
-        [JsonProperty("code")]
-        public string Code { get; set; } = default!;
+        [JsonProperty("batch_decision_id")]
+        public string? BatchDecisionId { get; set; }
 
-        [JsonProperty("message")]
-        private string? _message { get; set; }
-        public override string Message { get {return _message ?? "";} }
-
-        [JsonProperty("errors")]
-        public List<Models.Errors.Errors>? Errors { get; set; }
+        [JsonProperty("responses")]
+        public Dictionary<string, Models.Errors.ServerError>? Responses { get; set; }
     }
 }

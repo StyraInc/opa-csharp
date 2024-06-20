@@ -14,7 +14,7 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
-    public class SuccessfulPolicyEvaluation
+    public class ResponsesSuccessfulPolicyResponse
     {
 
         /// <summary>
@@ -40,5 +40,8 @@ namespace Styra.Opa.OpenApi.Models.Components
         /// </summary>
         [JsonProperty("provenance")]
         public Provenance? Provenance { get; set; }
+
+        [JsonProperty("http_status_code")]
+        public string? HttpStatusCode { get; set; }
     }
 }

@@ -41,7 +41,7 @@ namespace Styra.Opa.OpenApi.Models.Requests
         /// 
         /// </remarks>
         /// </summary>
-        public SuccessfulPolicyEvaluation? SuccessfulPolicyEvaluation { get; set; }
+        public SuccessfulPolicyResponse? SuccessfulPolicyResponse { get; set; }
 
         public Dictionary<string, List<string>> Headers { get; set; } = default!;
     }

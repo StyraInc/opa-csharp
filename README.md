@@ -158,6 +158,32 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 
 // handle response
 ```
+
+### Example 3
+
+```csharp
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using System.Collections.Generic;
+using Styra.Opa.OpenApi.Models.Components;
+
+var sdk = new OpaApiClient();
+
+ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest() {
+    Path = "app/rbac",
+    RequestBody = new ExecuteBatchPolicyWithInputRequestBody() {
+        Inputs = new Dictionary<string, Input>() {
+            { "key", Input.CreateInputStr(
+            "<value>",
+            ) },
+        },
+    },
+};
+
+var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
+
+// handle response
+```
 <!-- End SDK Example Usage [usage] -->
 
 <!-- Start Available Resources and Operations [operations] -->
@@ -168,6 +194,7 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 * [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
 * [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
 * [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
+* [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
 * [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
 <!-- End Available Resources and Operations [operations] -->
 
@@ -228,7 +255,7 @@ catch (Exception ex)
     {
         // handle exception
     }
-    else if (ex is ServerError)
+    else if (ex is Models.Errors.ServerError)
     {
         // handle exception
     }
