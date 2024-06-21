@@ -12,7 +12,7 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 1.0.1
+  version: 1.0.2
   additionalDependencies: []
   author: Styra
   clientServerStatusCodesAsErrors: true
