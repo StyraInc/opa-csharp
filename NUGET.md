@@ -1,20 +1,5 @@
 # Styra.Opa.OpenApi
 
-<div align="left">
-    <a href="https://speakeasyapi.dev/"><img src="https://custom-icon-badges.demolab.com/badge/-Built%20By%20Speakeasy-212015?style=for-the-badge&logoColor=FBE331&logo=speakeasy&labelColor=545454" /></a>
-    <a href="https://opensource.org/licenses/MIT">
-        <img src="https://img.shields.io/badge/License-MIT-blue.svg" style="width: 100px; height: 28px;" />
-    </a>
-</div>
-
-
-<!-- Start Installation [installation] -->
-## Installation
-
-```bash
-dotnet add package Styra.Opa.OpenApi
-```
-<!-- End Installation [installation] -->
 
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
@@ -87,12 +72,6 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 // handle response
 ```
 <!-- End SDK Example Usage [usage] -->
-
-<!-- Start Available Resources and Operations [operations] -->
-## Available Resources and Operations
-
-- [OpaApiClient SDK](https:/github.com/StyraInc/opa-csharp/blob/main/Styra/Opa/OpenApi/github/workspace/repo/docs/sdks/opaapiclient/README.md#available-operations)
-<!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Error Handling [errors] -->
 ## Error Handling

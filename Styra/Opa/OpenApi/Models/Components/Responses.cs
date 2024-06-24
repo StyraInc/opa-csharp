@@ -13,7 +13,9 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
+    using System.Collections.Generic;
     using System.Numerics;
+    using System.Reflection;
     using System;
     
 
@@ -94,39 +96,75 @@ namespace Styra.Opa.OpenApi.Models.Components
             public override bool CanRead => true;
 
             public override object? ReadJson(JsonReader reader, System.Type objectType, object? existingValue, JsonSerializer serializer)
-            { 
+            {
                 var json = JRaw.Create(reader).ToString();
-
-                if (json == "null") {
+                if (json == "null")
+                {
                     return null;
                 }
+
+                var fallbackCandidates = new List<(System.Type, object, string)>();
                 try
                 {
-                    ResponsesSuccessfulPolicyResponse? responsesSuccessfulPolicyResponse = ResponseBodyDeserializer.Deserialize<ResponsesSuccessfulPolicyResponse>(json, missingMemberHandling: MissingMemberHandling.Error);
-                    return new Responses(ResponsesType.ResponsesSuccessfulPolicyResponse) {
-                        ResponsesSuccessfulPolicyResponse = responsesSuccessfulPolicyResponse
+                    return new Responses(ResponsesType.ResponsesSuccessfulPolicyResponse)
+                    {
+                        ResponsesSuccessfulPolicyResponse = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<ResponsesSuccessfulPolicyResponse>(json)
                     };
                 }
-                catch (Exception ex)
+                catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
-                        throw ex;
-                    }
+                    fallbackCandidates.Add((typeof(ResponsesSuccessfulPolicyResponse), new Responses(ResponsesType.ResponsesSuccessfulPolicyResponse), "ResponsesSuccessfulPolicyResponse"));
                 }
+                catch (ResponseBodyDeserializer.DeserializationException)
+                {
+                    // try next option
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            
                 try
                 {
-                    Models.Components.ServerError? serverError = ResponseBodyDeserializer.Deserialize<Models.Components.ServerError>(json, missingMemberHandling: MissingMemberHandling.Error);
-                    return new Responses(ResponsesType.ServerError) {
-                        ServerError = serverError
+                    return new Responses(ResponsesType.ServerError)
+                    {
+                        ServerError = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<Models.Components.ServerError>(json)
                     };
                 }
-                catch (Exception ex)
+                catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
-                        throw ex;
+                    fallbackCandidates.Add((typeof(Models.Components.ServerError), new Responses(ResponsesType.ServerError), "ServerError"));
+                }
+                catch (ResponseBodyDeserializer.DeserializationException)
+                {
+                    // try next option
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            
+                if (fallbackCandidates.Count > 0)
+                {
+                    fallbackCandidates.Sort((a, b) => ResponseBodyDeserializer.CompareFallbackCandidates(a.Item1, b.Item1, json));
+                    foreach(var (deserializationType, returnObject, propertyName) in fallbackCandidates)
+                    {
+                        try
+                        {
+                            return ResponseBodyDeserializer.DeserializeUndiscriminatedUnionFallback(deserializationType, returnObject, propertyName, json);
+                        }
+                        catch (ResponseBodyDeserializer.DeserializationException)
+                        {
+                            // try next fallback option
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
                     }
                 }
 
+          
                 throw new InvalidOperationException("Could not deserialize into any supported types.");
             }
 

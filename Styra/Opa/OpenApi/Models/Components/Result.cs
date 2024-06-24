@@ -14,6 +14,7 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     using System.Numerics;
+    using System.Reflection;
     using System;
     
 
@@ -132,60 +133,110 @@ namespace Styra.Opa.OpenApi.Models.Components
             public override bool CanRead => true;
 
             public override object? ReadJson(JsonReader reader, System.Type objectType, object? existingValue, JsonSerializer serializer)
-            { 
+            {
                 var json = JRaw.Create(reader).ToString();
-
-                if (json == "null") {
+                if (json == "null")
+                {
                     return null;
-                } 
-                try {
+                }
+
+                var fallbackCandidates = new List<(System.Type, object, string)>();
+
+                try
+                {
                     var converted = Convert.ToBoolean(json);
-                    return new Result(ResultType.Boolean) {
+                    return new Result(ResultType.Boolean)
+                    {
                         Boolean = converted
                     };
-                } catch (System.FormatException) {
+                }
+                catch (System.FormatException)
+                {
                     // try next option
                 }
+            
                 if (json[0] == '"' && json[^1] == '"'){
-                    return new Result(ResultType.Str) {
+                    return new Result(ResultType.Str)
+                    {
                         Str = json[1..^1]
                     };
-                } 
-                try {
+                }
+            
+
+                try
+                {
                     var converted = Convert.ToDouble(json);
-                    return new Result(ResultType.Number) {
+                    return new Result(ResultType.Number)
+                    {
                         Number = converted
                     };
-                } catch (System.FormatException) {
+                }
+                catch (System.FormatException)
+                {
                     // try next option
                 }
+            
                 try
                 {
-                    List<object>? arrayOfAny = ResponseBodyDeserializer.Deserialize<List<object>>(json, missingMemberHandling: MissingMemberHandling.Error);
-                    return new Result(ResultType.ArrayOfAny) {
-                        ArrayOfAny = arrayOfAny
+                    return new Result(ResultType.ArrayOfAny)
+                    {
+                        ArrayOfAny = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<List<object>>(json)
                     };
                 }
-                catch (Exception ex)
+                catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
-                        throw ex;
-                    }
+                    fallbackCandidates.Add((typeof(List<object>), new Result(ResultType.ArrayOfAny), "ArrayOfAny"));
                 }
+                catch (ResponseBodyDeserializer.DeserializationException)
+                {
+                    // try next option
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            
                 try
                 {
-                    Dictionary<string, object>? mapOfAny = ResponseBodyDeserializer.Deserialize<Dictionary<string, object>>(json, missingMemberHandling: MissingMemberHandling.Error);
-                    return new Result(ResultType.MapOfAny) {
-                        MapOfAny = mapOfAny
+                    return new Result(ResultType.MapOfAny)
+                    {
+                        MapOfAny = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<Dictionary<string, object>>(json)
                     };
                 }
-                catch (Exception ex)
+                catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    if (!(ex is Newtonsoft.Json.JsonReaderException || ex is Newtonsoft.Json.JsonSerializationException)) {
-                        throw ex;
+                    fallbackCandidates.Add((typeof(Dictionary<string, object>), new Result(ResultType.MapOfAny), "MapOfAny"));
+                }
+                catch (ResponseBodyDeserializer.DeserializationException)
+                {
+                    // try next option
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            
+                if (fallbackCandidates.Count > 0)
+                {
+                    fallbackCandidates.Sort((a, b) => ResponseBodyDeserializer.CompareFallbackCandidates(a.Item1, b.Item1, json));
+                    foreach(var (deserializationType, returnObject, propertyName) in fallbackCandidates)
+                    {
+                        try
+                        {
+                            return ResponseBodyDeserializer.DeserializeUndiscriminatedUnionFallback(deserializationType, returnObject, propertyName, json);
+                        }
+                        catch (ResponseBodyDeserializer.DeserializationException)
+                        {
+                            // try next fallback option
+                        }
+                        catch (Exception)
+                        {
+                            throw;
+                        }
                     }
                 }
 
+          
                 throw new InvalidOperationException("Could not deserialize into any supported types.");
             }
 
