@@ -3,10 +3,10 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: a34bd1c885aa42eb3175940494581f67
   docVersion: 0.2.0
-  speakeasyVersion: 1.314.2
-  generationVersion: 2.349.6
-  releaseVersion: 1.1.0
-  configChecksum: 33e03db7dd4fdf0946fbf31f44332870
+  speakeasyVersion: 1.321.0
+  generationVersion: 2.354.2
+  releaseVersion: 1.1.1
+  configChecksum: 64491003082e78afd0dbc6a074de872c
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
@@ -22,7 +22,7 @@ features:
     intellisenseMarkdownSupport: 0.1.0
     responseFormat: 0.0.4
     sdkHooks: 0.1.0
-    unions: 0.1.0
+    unions: 0.1.1
 generatedFiles:
   - Styra/Opa/OpenApi/OpaApiClient.cs
   - global.json
