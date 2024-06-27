@@ -24,18 +24,17 @@ namespace Styra.Opa.OpenApi.Models.Components
         private ResponsesType(string value) { Value = value; }
 
         public string Value { get; private set; }
-        public static ResponsesType ResponsesSuccessfulPolicyResponse { get { return new ResponsesType("responses_SuccessfulPolicyResponse"); } }
         
-        public static ResponsesType ServerError { get { return new ResponsesType("ServerError"); } }
-        
+        public static ResponsesType TwoHundred { get { return new ResponsesType("200"); } }
+        public static ResponsesType FiveHundred { get { return new ResponsesType("500"); } }
         public static ResponsesType Null { get { return new ResponsesType("null"); } }
 
         public override string ToString() { return Value; }
         public static implicit operator String(ResponsesType v) { return v.Value; }
         public static ResponsesType FromString(string v) {
             switch(v) {
-                case "responses_SuccessfulPolicyResponse": return ResponsesSuccessfulPolicyResponse;
-                case "ServerError": return ServerError;
+                case "200": return TwoHundred;
+                case "500": return FiveHundred;
                 case "null": return Null;
                 default: throw new ArgumentException("Invalid value for ResponsesType");
             }
@@ -67,22 +66,26 @@ namespace Styra.Opa.OpenApi.Models.Components
         public ResponsesType Type { get; set; }
 
 
-        public static Responses CreateResponsesSuccessfulPolicyResponse(ResponsesSuccessfulPolicyResponse responsesSuccessfulPolicyResponse) {
-            ResponsesType typ = ResponsesType.ResponsesSuccessfulPolicyResponse;
-
+        public static Responses CreateTwoHundred(ResponsesSuccessfulPolicyResponse twoHundred) {
+            ResponsesType typ = ResponsesType.TwoHundred;
+        
+            string typStr = ResponsesType.TwoHundred.ToString();
+            
+            twoHundred.HttpStatusCode = typStr;
             Responses res = new Responses(typ);
-            res.ResponsesSuccessfulPolicyResponse = responsesSuccessfulPolicyResponse;
+            res.ResponsesSuccessfulPolicyResponse = twoHundred;
             return res;
         }
-
-        public static Responses CreateServerError(Models.Components.ServerError serverError) {
-            ResponsesType typ = ResponsesType.ServerError;
-
+        public static Responses CreateFiveHundred(Models.Components.ServerError fiveHundred) {
+            ResponsesType typ = ResponsesType.FiveHundred;
+        
+            string typStr = ResponsesType.FiveHundred.ToString();
+            
+            fiveHundred.HttpStatusCode = typStr;
             Responses res = new Responses(typ);
-            res.ServerError = serverError;
+            res.ServerError = fiveHundred;
             return res;
         }
-
         public static Responses CreateNull() {
             ResponsesType typ = ResponsesType.Null;
             return new Responses(typ);
@@ -97,74 +100,18 @@ namespace Styra.Opa.OpenApi.Models.Components
 
             public override object? ReadJson(JsonReader reader, System.Type objectType, object? existingValue, JsonSerializer serializer)
             {
-                var json = JRaw.Create(reader).ToString();
-                if (json == "null")
+                JObject jo = JObject.Load(reader);
+                string discriminator = jo.GetValue("http_status_code")?.ToString() ?? throw new ArgumentNullException("Could not find discriminator field.");
+                if (discriminator == ResponsesType.TwoHundred.ToString())
                 {
-                    return null;
+                    ResponsesSuccessfulPolicyResponse? responsesSuccessfulPolicyResponse = ResponseBodyDeserializer.Deserialize<ResponsesSuccessfulPolicyResponse>(jo.ToString());
+                    return CreateTwoHundred(responsesSuccessfulPolicyResponse!);
                 }
-
-                var fallbackCandidates = new List<(System.Type, object, string)>();
-                try
+                if (discriminator == ResponsesType.FiveHundred.ToString())
                 {
-                    return new Responses(ResponsesType.ResponsesSuccessfulPolicyResponse)
-                    {
-                        ResponsesSuccessfulPolicyResponse = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<ResponsesSuccessfulPolicyResponse>(json)
-                    };
+                    Models.Components.ServerError? serverError = ResponseBodyDeserializer.Deserialize<Models.Components.ServerError>(jo.ToString());
+                    return CreateFiveHundred(serverError!);
                 }
-                catch (ResponseBodyDeserializer.MissingMemberException)
-                {
-                    fallbackCandidates.Add((typeof(ResponsesSuccessfulPolicyResponse), new Responses(ResponsesType.ResponsesSuccessfulPolicyResponse), "ResponsesSuccessfulPolicyResponse"));
-                }
-                catch (ResponseBodyDeserializer.DeserializationException)
-                {
-                    // try next option
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            
-                try
-                {
-                    return new Responses(ResponsesType.ServerError)
-                    {
-                        ServerError = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<Models.Components.ServerError>(json)
-                    };
-                }
-                catch (ResponseBodyDeserializer.MissingMemberException)
-                {
-                    fallbackCandidates.Add((typeof(Models.Components.ServerError), new Responses(ResponsesType.ServerError), "ServerError"));
-                }
-                catch (ResponseBodyDeserializer.DeserializationException)
-                {
-                    // try next option
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            
-                if (fallbackCandidates.Count > 0)
-                {
-                    fallbackCandidates.Sort((a, b) => ResponseBodyDeserializer.CompareFallbackCandidates(a.Item1, b.Item1, json));
-                    foreach(var (deserializationType, returnObject, propertyName) in fallbackCandidates)
-                    {
-                        try
-                        {
-                            return ResponseBodyDeserializer.DeserializeUndiscriminatedUnionFallback(deserializationType, returnObject, propertyName, json);
-                        }
-                        catch (ResponseBodyDeserializer.DeserializationException)
-                        {
-                            // try next fallback option
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
-                    }
-                }
-
-          
                 throw new InvalidOperationException("Could not deserialize into any supported types.");
             }
 

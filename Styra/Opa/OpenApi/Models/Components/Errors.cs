@@ -19,10 +19,10 @@ namespace Styra.Opa.OpenApi.Models.Components
         [JsonProperty("code")]
         public string Code { get; set; } = default!;
 
-        [JsonProperty("message")]
-        public string Message { get; set; } = default!;
-
         [JsonProperty("location")]
         public Models.Components.Location? Location { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; } = default!;
     }
 }
