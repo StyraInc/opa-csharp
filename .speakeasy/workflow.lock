@@ -1,19 +1,18 @@
-speakeasyVersion: 1.321.0
+speakeasyVersion: 1.324.0
 sources:
     openapi:
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:720be7cd7847a13dd3ad7af90228e7dcb3fb5f684fa34a8464c71a5798f03ea1
-        sourceBlobDigest: sha256:e68abe51b8f5793fb277848304e896c8611d43290e826f995c0fc19602631fb0
+        sourceRevisionDigest: sha256:1fb558a2940ef5c89003720b4c5fbed3dd061659e3c50e70bd03faeb77bf1fa6
+        sourceBlobDigest: sha256:72e3d8cd36a20c819b6c6e084ad75eb35e11cc534e0e36d8cf0e2913c014a6c1
         tags:
             - latest
-            - main
 targets:
     first-target:
         source: openapi
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:720be7cd7847a13dd3ad7af90228e7dcb3fb5f684fa34a8464c71a5798f03ea1
-        sourceBlobDigest: sha256:e68abe51b8f5793fb277848304e896c8611d43290e826f995c0fc19602631fb0
-        outLocation: /github/workspace/repo
+        sourceRevisionDigest: sha256:1fb558a2940ef5c89003720b4c5fbed3dd061659e3c50e70bd03faeb77bf1fa6
+        sourceBlobDigest: sha256:72e3d8cd36a20c819b6c6e084ad75eb35e11cc534e0e36d8cf0e2913c014a6c1
+        outLocation: /home/conradp/Downloads/Styra/__github/opa-csharp
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -21,6 +20,8 @@ workflow:
         openapi:
             inputs:
                 - location: https://raw.githubusercontent.com/StyraInc/enterprise-opa/main/openapi/openapi.yaml
+            overlays:
+                - location: ./.speakeasy/overlay.yaml
             registry:
                 location: registry.speakeasyapi.dev/styra/styra/openapi
     targets:

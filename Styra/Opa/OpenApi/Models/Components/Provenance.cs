@@ -21,19 +21,19 @@ namespace Styra.Opa.OpenApi.Models.Components
     public class Provenance
     {
 
-        [JsonProperty("version")]
-        public string? Version { get; set; }
-
         [JsonProperty("build_commit")]
         public string? BuildCommit { get; set; }
-
-        [JsonProperty("build_timestamp")]
-        public DateTime? BuildTimestamp { get; set; }
 
         [JsonProperty("build_host")]
         public string? BuildHost { get; set; }
 
+        [JsonProperty("build_timestamp")]
+        public DateTime? BuildTimestamp { get; set; }
+
         [JsonProperty("bundles")]
         public Dictionary<string, Revision>? Bundles { get; set; }
+
+        [JsonProperty("version")]
+        public string? Version { get; set; }
     }
 }
