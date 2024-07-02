@@ -1,15 +1,17 @@
 workflowVersion: 1.0.0
 speakeasyVersion: latest
 sources:
-    openapi:
-        inputs:
-            - location: https://raw.githubusercontent.com/StyraInc/enterprise-opa/main/openapi/openapi.yaml
-        registry:
-            location: registry.speakeasyapi.dev/styra/styra/openapi
+  openapi:
+    inputs:
+      - location: https://raw.githubusercontent.com/StyraInc/enterprise-opa/main/openapi/openapi.yaml
+    overlays:
+      - location: ./.speakeasy/overlay.yaml
+    registry:
+      location: registry.speakeasyapi.dev/styra/styra/openapi
 targets:
-    first-target:
-        target: csharp
-        source: openapi
-        publish:
-            nuget:
-                apiKey: $nuget_api_key
+  first-target:
+    target: csharp
+    source: openapi
+    publish:
+      nuget:
+        apiKey: $nuget_api_key

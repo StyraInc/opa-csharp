@@ -96,3 +96,6 @@ jobs:
       - name: Test
         working-directory: test
         run: dotnet test
+        env:
+          EOPA_LICENSE_TOKEN: ${{ secrets.EOPA_LICENSE_TOKEN }}
+        timeout-minutes: 5

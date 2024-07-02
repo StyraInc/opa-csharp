@@ -15,13 +15,13 @@ namespace Styra.Opa.OpenApi.Models.Errors
     public class ServerErrorLocation
     {
 
+        [JsonProperty("col")]
+        public long Col { get; set; } = default!;
+
         [JsonProperty("file")]
         public string File { get; set; } = default!;
 
         [JsonProperty("row")]
         public long Row { get; set; } = default!;
-
-        [JsonProperty("col")]
-        public long Col { get; set; } = default!;
     }
 }

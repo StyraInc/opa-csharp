@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Testcontainers" Version="3.8.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit" Version="2.8.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -31,10 +31,7 @@
 
   <!-- Ensure our data files are copied next to the test executables. -->
   <ItemGroup>
-    <None Update="testdata\data.json" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="testdata\policy.rego" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="testdata\simple\system.rego" CopyToOutputDirectory="PreserveNewest" />
-    <None Update="testdata\weird_name.rego" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="testdata\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 

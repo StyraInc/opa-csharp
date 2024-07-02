@@ -141,29 +141,6 @@ var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
 ```csharp
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Requests;
-using Styra.Opa.OpenApi.Models.Components;
-
-var sdk = new OpaApiClient();
-
-ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
-    Path = "app/rbac",
-    RequestBody = new ExecutePolicyWithInputRequestBody() {
-        Input = Input.CreateInputBoolean(
-        false,
-        ),
-    },
-};
-
-var res = await sdk.ExecutePolicyWithInputAsync(req);
-
-// handle response
-```
-
-### Example 3
-
-```csharp
-using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using System.Collections.Generic;
 using Styra.Opa.OpenApi.Models.Components;
 
@@ -184,6 +161,29 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 
 // handle response
 ```
+
+### Example 3
+
+```csharp
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
+
+var sdk = new OpaApiClient();
+
+ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
+    Path = "app/rbac",
+    RequestBody = new ExecutePolicyWithInputRequestBody() {
+        Input = Input.CreateInputBoolean(
+        false,
+        ),
+    },
+};
+
+var res = await sdk.ExecutePolicyWithInputAsync(req);
+
+// handle response
+```
 <!-- End SDK Example Usage [usage] -->
 
 <!-- Start Available Resources and Operations [operations] -->
@@ -192,10 +192,10 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 ### [OpaApiClient SDK](docs/sdks/opaapiclient/README.md)
 
 * [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
+* [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
+* [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
 * [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
 * [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
-* [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
-* [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
 <!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Server Selection [server] -->
