@@ -2,7 +2,6 @@ using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi.Models.Errors;
-using System.Net.Http.Json;
 
 namespace SmokeTest.Tests;
 
@@ -176,7 +175,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
   }
 
   [Fact]
-  public async Task OpenApiClientBatchPolicyAllFailureTest()
+  public async Task OpenApiClientBatchPolicyMixedTest()
   {
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
@@ -237,7 +236,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
   }
 
   [Fact]
-  public async Task OpenApiClientBatchPolicyMixedTest()
+  public async Task OpenApiClientBatchPolicyAllFailureTest()
   {
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
@@ -270,48 +269,63 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       }
     };
 
+    // We populate this variable later in the catch block, otherwise this would
+    // not be a terribly good idea.
+    Dictionary<string, Styra.Opa.OpenApi.Models.Errors.ServerError> responsesMap = null!;
     try
     {
       var res = await client.ExecuteBatchPolicyWithInputAsync(req);
-      // Assert we get the expected "success" response
-      Assert.Equal(500, res.StatusCode);
     }
     catch (Exception ex)
     {
-      if (ex is ClientError)
+      if (ex is ClientError ce)
       {
-        Console.WriteLine("ClientError:", ex.Message, ex.Data);
+        Assert.Fail(String.Format("ClientError: {0}, Message: {1}", ce.Code, ce.Message));
       }
-      else if (ex is Styra.Opa.OpenApi.Models.Errors.ServerError)
+      else if (ex is BatchServerError bse)
       {
-        Console.WriteLine("ServerError:", ex.Message, ex.Data);
+        Assert.NotNull(bse.Responses);
+        responsesMap = bse.Responses;
       }
-      else if (ex is Styra.Opa.OpenApi.Models.Errors.SDKException)
+      else if (ex is SDKException sdke)
       {
-        Console.WriteLine("SDKException: {0}, {1}", ex.Message, ex.StackTrace);
+        Assert.Fail(String.Format("SDKException: {0}, Message: {1}", sdke.Body, sdke.Message));
+      }
+      else
+      {
+        Assert.Fail(String.Format("Unknown Error: {0}, Message: {1}", ex, ex.Message));
       }
     }
-    Assert.Fail();
 
-
-    // {
-    //   var resp = responsesMap?.GetValueOrDefault("AAA");
-    //   Assert.NotNull(resp);
-    //   Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.ResponsesSuccessfulPolicyResponse?.Result?.MapOfAny?.GetValueOrDefault("p"));
-    //   Assert.Equal("200", resp?.ResponsesSuccessfulPolicyResponse?.HttpStatusCode);
-    // }
-    // {
-    //   var resp = responsesMap?.GetValueOrDefault("BBB");
-    //   Assert.NotNull(resp?.ServerError);
-    //   Assert.Equal("internal_error", resp?.ServerError?.Code);
-    //   Assert.Equal("500", resp?.ServerError?.HttpStatusCode);
-    //   Assert.Equal("object insert conflict", resp?.ServerError?.Message);
-    // }
-    // {
-    //   var resp = responsesMap?.GetValueOrDefault("CCC");
-    //   Assert.NotNull(resp);
-    //   Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.ResponsesSuccessfulPolicyResponse?.Result?.MapOfAny?.GetValueOrDefault("p"));
-    //   Assert.Equal("200", resp?.ResponsesSuccessfulPolicyResponse?.HttpStatusCode);
-    // }
+    {
+      var resp = responsesMap?.GetValueOrDefault("AAA");
+      Assert.NotNull(resp);
+      Assert.Equal("internal_error", resp?.Code);
+      if (resp!.Message.Contains("eval_conflict_error"))
+      {
+        Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
+      }
+      Assert.Contains("object insert conflict", resp?.Message);
+    }
+    {
+      var resp = responsesMap?.GetValueOrDefault("BBB");
+      Assert.NotNull(resp);
+      Assert.Equal("internal_error", resp?.Code);
+      if (resp!.Message.Contains("eval_conflict_error"))
+      {
+        Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
+      }
+      Assert.Equal("object insert conflict", resp?.Message);
+    }
+    {
+      var resp = responsesMap?.GetValueOrDefault("CCC");
+      Assert.NotNull(resp);
+      Assert.Equal("internal_error", resp?.Code);
+      if (resp!.Message.Contains("eval_conflict_error"))
+      {
+        Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
+      }
+      Assert.Equal("object insert conflict", resp?.Message);
+    }
   }
 }
