@@ -270,3 +270,7 @@ catch (Exception ex)
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->
 
+## Community
+
+For questions, discussions and announcements related to Styra products, services and open source projects, please join
+the Styra community on [Slack](https://communityinviter.com/apps/styracommunity/signup)!
