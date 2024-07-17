@@ -1,7 +1,7 @@
-using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
+﻿using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi.Models.Errors;
+using Styra.Opa.OpenApi.Models.Requests;
 
 namespace SmokeTest.Tests;
 
@@ -40,7 +40,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     var client = GetOpaApiClient();
 
     // Exercise the low-level OPA C# SDK.
-    ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest()
+    var req = new ExecutePolicyWithInputRequest()
     {
       Path = "app/rbac",
       RequestBody = new ExecutePolicyWithInputRequestBody()
@@ -70,7 +70,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     var client = GetOpaApiClient();
 
     // Exercise the low-level OPA C# SDK.
-    ExecutePolicyRequest req = new ExecutePolicyRequest()
+    var req = new ExecutePolicyRequest()
     {
       Path = "this/is%2fallowed/pkg",
     };
@@ -106,7 +106,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
 
-    ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest()
+    var req = new ExecuteBatchPolicyWithInputRequest()
     {
       Path = "app/rbac",
       RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
@@ -131,7 +131,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
 
-    ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest()
+    var req = new ExecuteBatchPolicyWithInputRequest()
     {
       Path = "app/rbac",
       RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
@@ -168,6 +168,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       Assert.NotNull(resp);
       Assert.Equal(true, resp?.Result?.MapOfAny?.GetValueOrDefault("allow"));
     }
+
     {
       var resp = responsesMap?.GetValueOrDefault("BBB");
       Assert.Equal(false, resp?.Result?.MapOfAny?.GetValueOrDefault("allow"));
@@ -180,7 +181,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
 
-    ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest()
+    var req = new ExecuteBatchPolicyWithInputRequest()
     {
       Path = "testmod/condfail",
       RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
@@ -220,6 +221,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.ResponsesSuccessfulPolicyResponse?.Result?.MapOfAny?.GetValueOrDefault("p"));
       Assert.Equal("200", resp?.ResponsesSuccessfulPolicyResponse?.HttpStatusCode);
     }
+
     {
       var resp = responsesMap?.GetValueOrDefault("BBB");
       Assert.NotNull(resp?.ServerError);
@@ -227,6 +229,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       Assert.Equal("500", resp?.ServerError?.HttpStatusCode);
       Assert.Equal("object insert conflict", resp?.ServerError?.Message);
     }
+
     {
       var resp = responsesMap?.GetValueOrDefault("CCC");
       Assert.NotNull(resp);
@@ -241,7 +244,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     // Currently, this API only exists in Enterprise OPA.
     var client = GetEOpaApiClient();
 
-    ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest()
+    var req = new ExecuteBatchPolicyWithInputRequest()
     {
       Path = "testmod/condfail",
       RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
@@ -280,7 +283,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     {
       if (ex is ClientError ce)
       {
-        Assert.Fail(String.Format("ClientError: {0}, Message: {1}", ce.Code, ce.Message));
+        Assert.Fail(string.Format("ClientError: {0}, Message: {1}", ce.Code, ce.Message));
       }
       else if (ex is BatchServerError bse)
       {
@@ -289,11 +292,11 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       }
       else if (ex is SDKException sdke)
       {
-        Assert.Fail(String.Format("SDKException: {0}, Message: {1}", sdke.Body, sdke.Message));
+        Assert.Fail(string.Format("SDKException: {0}, Message: {1}", sdke.Body, sdke.Message));
       }
       else
       {
-        Assert.Fail(String.Format("Unknown Error: {0}, Message: {1}", ex, ex.Message));
+        Assert.Fail(string.Format("Unknown Error: {0}, Message: {1}", ex, ex.Message));
       }
     }
 
@@ -305,8 +308,10 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       {
         Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
       }
+
       Assert.Contains("object insert conflict", resp?.Message);
     }
+
     {
       var resp = responsesMap?.GetValueOrDefault("BBB");
       Assert.NotNull(resp);
@@ -315,8 +320,10 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       {
         Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
       }
+
       Assert.Equal("object insert conflict", resp?.Message);
     }
+
     {
       var resp = responsesMap?.GetValueOrDefault("CCC");
       Assert.NotNull(resp);
@@ -325,6 +332,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
       {
         Assert.Fail("Test failure due to OPA Fallback mode. Please check the EOPA license environment variables.");
       }
+
       Assert.Equal("object insert conflict", resp?.Message);
     }
   }
