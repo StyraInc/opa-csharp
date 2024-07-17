@@ -1,17 +1,64 @@
-namespace Styra.Opa;
-
-using OpenApi;
-using OpenApi.Models.Requests;
-using OpenApi.Models.Components;
-using OpenApi.Models.Errors;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization;
 using System;
-using System.IO;
 using Newtonsoft.Json;
+using Styra.Opa.OpenApi.Models.Components;
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Errors;
 
-public class OpaResult : SuccessfulPolicyResponse { }
+namespace Styra.Opa;
+public class OpaResult
+{
+    /// <summary>
+    /// If decision logging is enabled, this field contains a string that uniquely identifies the decision. The identifier will be included in the decision log event for this decision. Callers can use the identifier for correlation purposes.
+    /// </summary>
+    [JsonProperty("decision_id")]
+    public string? DecisionId { get; set; }
+
+    /// <summary>
+    /// If query metrics are enabled, this field contains query performance metrics collected during the parse, compile, and evaluation steps.
+    /// </summary>
+    [JsonProperty("metrics")]
+    public Dictionary<string, object>? Metrics { get; set; }
+
+    /// <summary>
+    /// Provenance information can be requested on individual API calls and are returned inline with the API response. To obtain provenance information on an API call, specify the `provenance=true` query parameter when executing the API call.
+    /// </summary>
+    [JsonProperty("provenance")]
+    public Provenance? Provenance { get; set; }
+
+    /// <summary>
+    /// The base or virtual document referred to by the URL path. If the path is undefined, this key will be omitted.
+    /// </summary>
+    [JsonProperty("result")]
+    public Result? Result { get; set; }
+
+    [JsonProperty("http_status_code")]
+    public string? HttpStatusCode { get; set; }
+
+    public OpaResult() { }
+
+    public OpaResult(ResponsesSuccessfulPolicyResponse resp)
+    {
+        DecisionId = resp.DecisionId;
+        Metrics = resp.Metrics;
+        Provenance = resp.Provenance;
+        Result = resp.Result;
+        HttpStatusCode = resp.HttpStatusCode;
+    }
+
+    public OpaResult(SuccessfulPolicyResponse resp)
+    {
+        DecisionId = resp.DecisionId;
+        Metrics = resp.Metrics;
+        Provenance = resp.Provenance;
+        Result = resp.Result;
+    }
+
+    public static explicit operator OpaResult(ResponsesSuccessfulPolicyResponse e) => new OpaResult(e);
+    public static explicit operator OpaResult(SuccessfulPolicyResponse e) => new OpaResult(e);
+}
 
 public class OpaError
 {
@@ -45,12 +92,59 @@ public class OpaError
         Message = err.Message;
         HttpStatusCode = "500";
     }
+
+    public static explicit operator OpaError(OpenApi.Models.Components.ServerError e) => new OpaError(e);
+    public static explicit operator OpaError(OpenApi.Models.Errors.ServerError e) => new OpaError(e);
 }
+
+public class OpaBatchInputs : Dictionary<string, Dictionary<string, object>> { }
 
 public class OpaBatchResults : Dictionary<string, OpaResult> { }
 
 public class OpaBatchErrors : Dictionary<string, OpaError> { }
 
+public static class DictionaryExtensions
+{
+    public static Dictionary<string, Input> ToOpaBatchInputRaw(this Dictionary<string, Dictionary<string, object>> inputs)
+    {
+        var opaBatchInputs = new Dictionary<string, Input>();
+        foreach (var kvp in inputs)
+        {
+            opaBatchInputs[kvp.Key] = Input.CreateMapOfAny(kvp.Value);
+        }
+        return opaBatchInputs;
+    }
+
+    public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Errors.ServerError> errors)
+    {
+        var opaBatchErrors = new OpaBatchErrors();
+        foreach (var kvp in errors)
+        {
+            opaBatchErrors[kvp.Key] = new OpaError(kvp.Value);
+        }
+        return opaBatchErrors;
+    }
+
+    public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Components.ServerError> errors)
+    {
+        var opaBatchErrors = new OpaBatchErrors();
+        foreach (var kvp in errors)
+        {
+            opaBatchErrors[kvp.Key] = new OpaError(kvp.Value);
+        }
+        return opaBatchErrors;
+    }
+
+    public static OpaBatchResults ToOpaBatchResults(this Dictionary<string, SuccessfulPolicyResponse> responses)
+    {
+        var opaBatchResults = new OpaBatchResults();
+        foreach (var kvp in responses)
+        {
+            opaBatchResults[kvp.Key] = (OpaResult)kvp.Value;
+        }
+        return opaBatchResults;
+    }
+}
 
 /// <summary>
 /// OpaClient provides high-level convenience APIs for interacting with an OPA server.
@@ -236,7 +330,7 @@ public class OpaClient
         }
         catch (Exception e)
         {
-            string msg = string.Format("executing policy at '{0}' with failed due to exception '{1}'", path, e);
+            var msg = string.Format("executing policy at '{0}' with failed due to exception '{1}'", path, e);
             throw new OpaException(msg, e);
         }
 
@@ -347,7 +441,7 @@ public class OpaClient
         }
         catch (Exception e)
         {
-            string msg = string.Format("executing server default policy failed due to exception '{0}'", e);
+            var msg = string.Format("executing server default policy failed due to exception '{0}'", e);
             throw new OpaException(msg, e);
         }
 
@@ -398,13 +492,13 @@ public class OpaClient
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
     /// <param name="inputs">The input Dictionary OPA will use for evaluating the rule. The keys are arbitrary ID strings, the values are the input values intended for each query.</param>
     /// <returns>A pair of mappings, between string keys, and SuccessfulPolicyResponses, or ServerErrors.</returns>
-    public async Task<(OpaBatchResults, OpaBatchErrors)> evaluateBatch(string path, Dictionary<string, Input> inputs)
+    public async Task<(OpaBatchResults, OpaBatchErrors)> evaluateBatch(string path, Dictionary<string, Dictionary<string, object>> inputs)
     {
         return await queryMachineryBatch(path, inputs);
     }
 
     /// <exclude />
-    private async Task<(OpaBatchResults, OpaBatchErrors)> queryMachineryBatch(string path, Dictionary<string, Input> inputs)
+    private async Task<(OpaBatchResults, OpaBatchErrors)> queryMachineryBatch(string path, Dictionary<string, Dictionary<string, object>> inputs)
     {
         OpaBatchResults successResults = new();
         OpaBatchErrors failureResults = new();
@@ -412,12 +506,12 @@ public class OpaClient
         // Attempt using the /v1/batch/data endpoint. If we ever receive a 404, then it's a vanilla OPA instance, and we should skip straight to fallback mode.
         if (opaSupportsBatchQueryAPI)
         {
-            ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest()
+            var req = new ExecuteBatchPolicyWithInputRequest()
             {
                 Path = path,
                 RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
                 {
-                    Inputs = inputs,
+                    Inputs = inputs.ToOpaBatchInputRaw(),
                 },
                 Pretty = policyRequestPretty,
                 Provenance = policyRequestProvenance,
@@ -442,10 +536,7 @@ public class OpaClient
                 }
                 else if (ex is BatchServerError bse)
                 {
-                    foreach (var (key, value) in bse.Responses!) // Should not be null here.
-                    {
-                        failureResults.Add(key, new OpaError(value));
-                    }
+                    failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
                     return (successResults, failureResults);
                 }
                 else
@@ -457,38 +548,31 @@ public class OpaClient
             // All-success case.
             if (res.StatusCode == 200)
             {
-                foreach (var (key, value) in res.BatchSuccessfulPolicyEvaluation?.Responses!) // Should not be null here.
-                {
-                    successResults.Add(key, value as OpaResult);
-                }
+                successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults(); // Should not be null here.
                 return (successResults, failureResults);
             }
 
             // Mixed results case.
             if (res.StatusCode == 207)
             {
-                Dictionary<string, Responses> mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
+                var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
                 foreach (var (key, value) in mixedResponses)
                 {
                     switch (value.Type.ToString())
                     {
                         case "200":
-                            successResults.Add(key, new OpaResult()
-                            {
-                                DecisionId = value.ResponsesSuccessfulPolicyResponse?.DecisionId,
-                                Metrics = value.ResponsesSuccessfulPolicyResponse?.Metrics,
-                                Provenance = value.ResponsesSuccessfulPolicyResponse?.Provenance,
-                                Result = value.ResponsesSuccessfulPolicyResponse?.Result,
-                            });
+                            successResults.Add(key, (OpaResult)value.ResponsesSuccessfulPolicyResponse!);
                             break;
                         case "500":
-                            failureResults.Add(key, new OpaError(value.ServerError!)); // Should not be null.
+                            failureResults.Add(key, (OpaError)value.ServerError!); // Should not be null.
                             break;
                     }
                 }
                 return (successResults, failureResults);
             }
             // TODO: Throw exception if we reach the end of this block without a successful return.
+            // This *should* never happen. It means we didn't return from the batch or fallback handler blocks earlier.
+            throw new Exception("Impossible error");
         }
 
         // Fall back to sequential queries against the OPA instance.
@@ -499,19 +583,23 @@ public class OpaClient
                 ExecutePolicyWithInputResponse res;
                 try
                 {
-                    res = await evalPolicySingle(path, value);
+                    res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
+                    successResults.Add(key, (OpaResult)res.SuccessfulPolicyResponse!);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    string msg = string.Format("executing policy at '{0}' with failed due to exception '{1}'", path, e);
-                    throw new OpaException(msg, e);
-                }
-
-                // We return the default null value for type T if Result is null.
-                var result = res.SuccessfulPolicyResponse?.Result;
-                if (result is null)
-                {
-                    return default;
+                    if (ex is ClientError ce)
+                    {
+                        throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                    }
+                    else if (ex is Styra.Opa.OpenApi.Models.Errors.ServerError se)
+                    {
+                        failureResults.Add(key, (OpaError)se);
+                    }
+                    else
+                    {
+                        throw; // Something unexpected blew up. Rethrow.
+                    }
                 }
             }
             return (successResults, failureResults);
@@ -524,7 +612,7 @@ public class OpaClient
     /// <exclude />
     private async Task<ExecutePolicyWithInputResponse> evalPolicySingle(string path, Input input)
     {
-        ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest()
+        var req = new ExecutePolicyWithInputRequest()
         {
             Path = path,
             RequestBody = new ExecutePolicyWithInputRequestBody()
