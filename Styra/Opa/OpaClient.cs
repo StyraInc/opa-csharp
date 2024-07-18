@@ -8,6 +8,7 @@ using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Errors;
 
 namespace Styra.Opa;
+
 public class OpaResult
 {
     /// <summary>
@@ -34,6 +35,9 @@ public class OpaResult
     [JsonProperty("result")]
     public Result? Result { get; set; }
 
+    /// <summary>
+    /// The HTTP status code for the request. Limited to "200" or "500".
+    /// </summary>
     [JsonProperty("http_status_code")]
     public string? HttpStatusCode { get; set; }
 
@@ -67,15 +71,27 @@ public class OpaResult
 
 public class OpaError
 {
+    /// <summary>
+    /// The short-form category of error, such as "internal_error", "invalid_policy_or_data", etc.
+    /// </summary>
     [JsonProperty("code")]
     public string Code { get; set; } = default!;
 
+    /// <summary>
+    /// If decision logging is enabled, this field contains a string that uniquely identifies the decision. The identifier will be included in the decision log event for this decision. Callers can use the identifier for correlation purposes.
+    /// </summary>
     [JsonProperty("decision_id")]
     public string? DecisionId { get; set; }
 
+    /// <summary>
+    /// The long-form error message from the OPA instance, describing what went wrong.
+    /// </summary>
     [JsonProperty("message")]
     public string Message { get; set; } = default!;
 
+    /// <summary>
+    /// The HTTP status code for the request. Limited to "200" or "500".
+    /// </summary>
     [JsonProperty("http_status_code")]
     public string? HttpStatusCode { get; set; }
 
@@ -131,7 +147,7 @@ public class OpaBatchErrors : Dictionary<string, OpaError>
     }
 }
 
-// Used for preparing inputs to the Batch Query API, and converting result types
+// Used for converting inputs for the Batch Query API, and converting result types
 // into useful higher-level types.
 public static class DictionaryExtensions
 {
