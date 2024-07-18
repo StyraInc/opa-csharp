@@ -557,106 +557,88 @@ public class OpaClient
             try
             {
                 res = await opa.ExecuteBatchPolicyWithInputAsync(req);
+                switch (res.StatusCode)
+                {
+                    // All-success case.
+                    case 200:
+                        successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults(); // Should not be null here.
+                        return (successResults, failureResults);
+                    // Mixed results case.
+                    case 207:
+                        var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
+                        foreach (var (key, value) in mixedResponses)
+                        {
+                            switch (value.Type.ToString())
+                            {
+                                case "200":
+                                    successResults.Add(key, (OpaResult)value.ResponsesSuccessfulPolicyResponse!);
+                                    break;
+                                case "500":
+                                    failureResults.Add(key, (OpaError)value.ServerError!); // Should not be null.
+                                    break;
+                            }
+                        }
+                        return (successResults, failureResults);
+                    default:
+                        // TODO: Throw exception if we reach the end of this block without a successful return.
+                        // This *should* never happen. It means we didn't return from the batch or fallback handler blocks earlier.
+                        throw new Exception("Impossible error");
+                }
             }
-            catch (Exception ex)
+            catch (ClientError ce)
             {
-                if (ex is ClientError ce)
-                {
-                    throw ce; // Rethrow for the caller to deal with. Request was malformed.
-                }
-                else if (ex is BatchServerError bse)
-                {
-                    failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
-                    return (successResults, failureResults);
-                }
-                else if (ex is SDKException se)
-                {
-                    if (se.StatusCode == 404)
-                    {
-                        // We know we've got an issue now, try calling again.
-                        opaSupportsBatchQueryAPI = false;
-                        return await queryMachineryBatch(path, inputs);
-                    }
-                    // Implicit else:
-                    throw;
-                }
-                else
-                {
-                    throw; // Something unexpected blew up. Rethrow.
-                }
+                throw ce; // Rethrow for the caller to deal with. Request was malformed.
             }
-
-            // All-success case.
-            if (res.StatusCode == 200)
+            catch (BatchServerError bse)
             {
-                successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults(); // Should not be null here.
+                failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
                 return (successResults, failureResults);
             }
-
-            // Mixed results case.
-            if (res.StatusCode == 207)
+            catch (SDKException se) when (se.StatusCode == 404)
             {
-                var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
-                foreach (var (key, value) in mixedResponses)
-                {
-                    switch (value.Type.ToString())
-                    {
-                        case "200":
-                            successResults.Add(key, (OpaResult)value.ResponsesSuccessfulPolicyResponse!);
-                            break;
-                        case "500":
-                            failureResults.Add(key, (OpaError)value.ServerError!); // Should not be null.
-                            break;
-                    }
-                }
-                return (successResults, failureResults);
+                // We know we've got an issue now, try calling again.
+                opaSupportsBatchQueryAPI = false;
+                return await queryMachineryBatch(path, inputs);
             }
-            // TODO: Throw exception if we reach the end of this block without a successful return.
-            // This *should* never happen. It means we didn't return from the batch or fallback handler blocks earlier.
-            throw new Exception("Impossible error");
         }
+        // Implicitly allow other exceptions through.
 
         // Fall back to sequential queries against the OPA instance.
         if (!opaSupportsBatchQueryAPI)
         {
             foreach (var (key, value) in inputs)
             {
-                //ExecutePolicyWithInputResponse res;
                 try
                 {
                     var res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
                     successResults.Add(key, (OpaResult)res.SuccessfulPolicyResponse!);
                 }
-                catch (Exception ex)
+                catch (ClientError ce)
                 {
-                    if (ex is ClientError ce)
-                    {
-                        throw ce; // Rethrow for the caller to deal with. Request was malformed.
-                    }
-                    else if (ex is Styra.Opa.OpenApi.Models.Errors.ServerError se)
-                    {
-                        failureResults.Add(key, (OpaError)se);
-                    }
-                    else
-                    {
-                        throw; // Something unexpected blew up. Rethrow.
-                    }
+                    throw ce; // Rethrow for the caller to deal with. Request was malformed.
                 }
+                catch (Styra.Opa.OpenApi.Models.Errors.ServerError se)
+                {
+                    failureResults.Add(key, (OpaError)se);
+                }
+                // Implicitly rethrow all other exceptions.
             }
+
             // If we have the mixed case, add the HttpStatusCode fields.
             if (successResults.Count > 0 && failureResults.Count > 0)
             {
                 // Modifying the dictionary element while iterating is a language feature since 2020, apparently.
                 // Ref: https://github.com/dotnet/runtime/pull/34667
-                foreach (var (key, _) in successResults)
+                foreach (var key in successResults.Keys)
                 {
                     successResults[key].HttpStatusCode = "200";
                 }
-                foreach (var (key, _) in failureResults)
+                foreach (var key in failureResults.Keys)
                 {
                     failureResults[key].HttpStatusCode = "500";
                 }
             }
+
             return (successResults, failureResults);
         }
 
