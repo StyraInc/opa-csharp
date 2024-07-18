@@ -58,6 +58,11 @@ public class OpaResult
 
     public static explicit operator OpaResult(ResponsesSuccessfulPolicyResponse e) => new OpaResult(e);
     public static explicit operator OpaResult(SuccessfulPolicyResponse e) => new OpaResult(e);
+
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
 }
 
 public class OpaError
@@ -95,14 +100,39 @@ public class OpaError
 
     public static explicit operator OpaError(OpenApi.Models.Components.ServerError e) => new OpaError(e);
     public static explicit operator OpaError(OpenApi.Models.Errors.ServerError e) => new OpaError(e);
+
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
 }
 
-public class OpaBatchInputs : Dictionary<string, Dictionary<string, object>> { }
+public class OpaBatchInputs : Dictionary<string, Dictionary<string, object>>
+{
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
+}
 
-public class OpaBatchResults : Dictionary<string, OpaResult> { }
+public class OpaBatchResults : Dictionary<string, OpaResult>
+{
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
+}
 
-public class OpaBatchErrors : Dictionary<string, OpaError> { }
+public class OpaBatchErrors : Dictionary<string, OpaError>
+{
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
+}
 
+// Used for preparing inputs to the Batch Query API, and converting result types
+// into useful higher-level types.
 public static class DictionaryExtensions
 {
     public static Dictionary<string, Input> ToOpaBatchInputRaw(this Dictionary<string, Dictionary<string, object>> inputs)
