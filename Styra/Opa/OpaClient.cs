@@ -568,7 +568,6 @@ public class OpaClient
             };
 
             // Launch query. The all-errors case is handled in the exception handler block.
-            // The other two possibilities (mixed and all-success) are handled further down.
             ExecuteBatchPolicyWithInputResponse res;
             try
             {
@@ -612,12 +611,12 @@ public class OpaClient
             }
             catch (SDKException se) when (se.StatusCode == 404)
             {
-                // We know we've got an issue now, try calling again.
+                // We know we've got an issue now.
                 opaSupportsBatchQueryAPI = false;
-                return await queryMachineryBatch(path, inputs);
+                // Fall-through to the "unsupported" case.
             }
         }
-        // Implicitly allow other exceptions through.
+        // Implicitly rethrow all other exceptions.
 
         // Fall back to sequential queries against the OPA instance.
         if (!opaSupportsBatchQueryAPI)
