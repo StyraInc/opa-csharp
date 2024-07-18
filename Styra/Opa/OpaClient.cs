@@ -111,7 +111,6 @@ public class OpaError
         Code = err.Code;
         DecisionId = err.DecisionId;
         Message = err.Message;
-        HttpStatusCode = "500";
     }
 
     public static explicit operator OpaError(OpenApi.Models.Components.ServerError e) => new OpaError(e);
@@ -593,6 +592,7 @@ public class OpaClient
                                     break;
                             }
                         }
+
                         return (successResults, failureResults);
                     default:
                         // TODO: Throw exception if we reach the end of this block without a successful return.

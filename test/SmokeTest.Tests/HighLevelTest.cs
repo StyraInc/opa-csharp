@@ -210,7 +210,6 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     {
       Code = "internal_error",
       DecisionId = null,
-      HttpStatusCode = "500",
       Message = "object insert conflict"
     };
 
@@ -222,6 +221,42 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
       { "BBB", expError },
       { "CCC", expError },
     }, failures);
+
+  }
+
+  [Fact]
+  public async Task RBACBatchAllSuccessFallbackTest()
+  {
+    var client = GetOpaClient();
+
+    var goodInput = new Dictionary<string, object>() {
+      { "x", new List<int> {1, 1, 3} },
+      { "y", new List<int> {1, 1, 1} },
+    };
+
+    var (successes, failures) = await client.evaluateBatch("testmod/condfail", new Dictionary<string, Dictionary<string, object>>() {
+      {"AAA", goodInput },
+      {"BBB", goodInput },
+      {"CCC", goodInput },
+    });
+
+    var expSuccess = new OpaResult()
+    {
+      Result = Result.CreateMapOfAny(
+        new Dictionary<string, object>() {
+          {"p", new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } } }
+        }
+      )
+    };
+
+    // Assert that the failures dictionary has all expected elements, and the
+    // successes dictionary is empty.
+    Assert.Equivalent(new OpaBatchResults() {
+      { "BBB", expSuccess },
+      { "AAA", expSuccess },
+      { "CCC", expSuccess }
+    }, successes);
+    Assert.Empty(failures);
 
   }
 
@@ -268,6 +303,40 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     Assert.Equivalent(new OpaBatchResults() { { "BBB", expSuccess } }, successes);
     Assert.Equivalent(new Dictionary<string, OpaError>() {
       { "AAA", expError },
+      { "CCC", expError },
+    }, failures);
+
+  }
+
+  [Fact]
+  public async Task RBACBatchAllFailuresFallbackTest()
+  {
+    var client = GetOpaClient();
+
+    var badInput = new Dictionary<string, object>() {
+      { "x", new List<int> {1, 1, 3} },
+      { "y", new List<int> {1, 2, 1} },
+    };
+
+    var (successes, failures) = await client.evaluateBatch("testmod/condfail", new Dictionary<string, Dictionary<string, object>>() {
+      {"AAA", badInput },
+      {"BBB", badInput },
+      {"CCC", badInput },
+    });
+
+    var expError = new OpaError()
+    {
+      Code = "internal_error",
+      DecisionId = null,
+      Message = "error(s) occurred while evaluating query" // Note: different error message for OPA mode.
+    };
+
+    // Assert that the failures dictionary has all expected elements, and the
+    // successes dictionary is empty.
+    Assert.Empty(successes);
+    Assert.Equivalent(new Dictionary<string, OpaError>() {
+      { "AAA", expError },
+      { "BBB", expError },
       { "CCC", expError },
     }, failures);
 
