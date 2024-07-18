@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Styra.Opa;
+﻿using Styra.Opa;
 using Styra.Opa.OpenApi.Models.Components;
 
 namespace SmokeTest.Tests;
@@ -221,6 +220,54 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     Assert.Equivalent(new Dictionary<string, OpaError>() {
       { "AAA", expError },
       { "BBB", expError },
+      { "CCC", expError },
+    }, failures);
+
+  }
+
+  [Fact]
+  public async Task RBACBatchMixedFallbackTest()
+  {
+    var client = GetOpaClient();
+
+    var goodInput = new Dictionary<string, object>() {
+      { "x", new List<int> {1, 1, 3} },
+      { "y", new List<int> {1, 1, 1} },
+    };
+
+    var badInput = new Dictionary<string, object>() {
+      { "x", new List<int> {1, 1, 3} },
+      { "y", new List<int> {1, 2, 1} },
+    };
+
+    var (successes, failures) = await client.evaluateBatch("testmod/condfail", new Dictionary<string, Dictionary<string, object>>() {
+      {"AAA", badInput },
+      {"BBB", goodInput },
+      {"CCC", badInput },
+    });
+
+    var expSuccess = new OpaResult()
+    {
+      HttpStatusCode = "200",
+      Result = Result.CreateMapOfAny(
+        new Dictionary<string, object>() {
+          {"p", new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } } }
+        }
+      )
+    };
+    var expError = new OpaError()
+    {
+      Code = "internal_error",
+      DecisionId = null,
+      HttpStatusCode = "500",
+      Message = "error(s) occurred while evaluating query" // Note: different error message for OPA mode.
+    };
+
+    // Assert that the failures dictionary has all expected elements, and the
+    // successes dictionary is empty.
+    Assert.Equivalent(new OpaBatchResults() { { "BBB", expSuccess } }, successes);
+    Assert.Equivalent(new Dictionary<string, OpaError>() {
+      { "AAA", expError },
       { "CCC", expError },
     }, failures);
 

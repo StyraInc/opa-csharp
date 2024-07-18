@@ -539,6 +539,17 @@ public class OpaClient
                     failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
                     return (successResults, failureResults);
                 }
+                else if (ex is SDKException se)
+                {
+                    if (se.StatusCode == 404)
+                    {
+                        // We know we've got an issue now, try calling again.
+                        opaSupportsBatchQueryAPI = false;
+                        return await queryMachineryBatch(path, inputs);
+                    }
+                    // Implicit else:
+                    throw;
+                }
                 else
                 {
                     throw; // Something unexpected blew up. Rethrow.
@@ -580,10 +591,10 @@ public class OpaClient
         {
             foreach (var (key, value) in inputs)
             {
-                ExecutePolicyWithInputResponse res;
+                //ExecutePolicyWithInputResponse res;
                 try
                 {
-                    res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
+                    var res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
                     successResults.Add(key, (OpaResult)res.SuccessfulPolicyResponse!);
                 }
                 catch (Exception ex)
@@ -600,6 +611,20 @@ public class OpaClient
                     {
                         throw; // Something unexpected blew up. Rethrow.
                     }
+                }
+            }
+            // If we have the mixed case, add the HttpStatusCode fields.
+            if (successResults.Count > 0 && failureResults.Count > 0)
+            {
+                // Modifying the dictionary element while iterating is a language feature since 2020, apparently.
+                // Ref: https://github.com/dotnet/runtime/pull/34667
+                foreach (var (key, _) in successResults)
+                {
+                    successResults[key].HttpStatusCode = "200";
+                }
+                foreach (var (key, _) in failureResults)
+                {
+                    failureResults[key].HttpStatusCode = "500";
                 }
             }
             return (successResults, failureResults);

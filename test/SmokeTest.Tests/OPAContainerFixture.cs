@@ -13,6 +13,7 @@ public class OPAContainerFixture : IAsyncLifetime
             "testdata/policy.rego",
             "testdata/weird_name.rego",
             "testdata/simple/system.rego",
+            "testdata/condfail.rego",
             "testdata/data.json"
         };
     string[] opaCmd = { "run", "--server" };
