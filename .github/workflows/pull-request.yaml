@@ -63,6 +63,18 @@ jobs:
           git commit -am "Update project file to version ${SE_VERSION}"
           git push
 
+  docs-updates-needed:
+    name: Docs Update Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tune GitHub-hosted runner network
+        uses: smorimoto/tune-github-hosted-runner-network@v1
+      - uses: actions/checkout@v4
+      - name: Patch Speakeasy README docs links
+        run: ./scripts/patch-readme.sh README.md http://localhost:8000
+      - name: Check for any unpatched docs links
+        run: ./scripts/find-unpatched-links.sh README.md
+
   build:
     name: Build
     runs-on: ubuntu-latest
