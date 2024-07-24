@@ -100,6 +100,41 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
+  public async Task DictionaryTypeCoerceTest()
+  {
+    //var client = GetOpaClient();
+    var client = new OpaClient(serverUrl: "http://localhost:8181");
+
+    var input = new Dictionary<string, string>() {
+      { "user", "alice" },
+      { "action", "read" },
+      { "object", "id123" },
+      { "type", "dog" },
+    };
+
+    var result = new Dictionary<string, object>();
+
+    try
+    {
+      result = await client.evaluate<Dictionary<string, object>>("app/rbac", input);
+    }
+    catch (OpaException e)
+    {
+      Console.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new Dictionary<string, object>() {
+      { "allow", true },
+      { "user_is_admin", true },
+      { "user_is_granted", new List<object>()},
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+    Assert.Equal(expected.Count, result.Count);
+  }
+
+  [Fact]
   public async Task EvaluateDefaultTest()
   {
     var client = GetOpaClient();

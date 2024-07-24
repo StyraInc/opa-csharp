@@ -365,6 +365,33 @@ public class OpaClient
         return await queryMachinery<T>(path, Input.CreateMapOfAny(input));
     }
 
+    /// <summary>
+    /// Evaluate a policy, using the provided object, then coerce the result to
+    /// type T. This will round-trip an object through Newtonsoft.JsonConvert,
+    /// in order to generate the input object for the eventual OPA API call.
+    /// </summary>
+    /// <param name="input">The input IDictionary OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    public async Task<T?> evaluate<T>(string path, object input)
+    {
+        if (input == null)
+        {
+            return default;
+        }
+
+        // Round-trip through JSON conversion, and deserialize it back to Dictionary<string, object>
+        var jsonInput = JsonConvert.SerializeObject(input);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonInput);
+
+        if (roundTrippedInput is null)
+        {
+            return default;
+        }
+
+        return await queryMachinery<T>(path, Input.CreateMapOfAny(roundTrippedInput));
+    }
+
     /// <exclude />
     private async Task<T?> queryMachinery<T>(string path, Input input)
     {
