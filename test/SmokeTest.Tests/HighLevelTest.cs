@@ -269,6 +269,16 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
+  public async Task EvaluateDefaultWithAnonymousObjectTest()
+  {
+    var client = GetOpaClient();
+
+    var res = await client.evaluateDefault<Dictionary<string, object>>(new { hello = "world" });
+
+    Assert.Equal(new Dictionary<string, object>() { { "hello", "world" } }, res?.GetValueOrDefault("echo", ""));
+  }
+
+  [Fact]
   public async Task RBACBatchAllSuccessTest()
   {
     var client = GetEOpaClient();
