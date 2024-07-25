@@ -1,17 +1,51 @@
-﻿using Styra.Opa;
+﻿using Newtonsoft.Json;
+using Styra.Opa;
 using Styra.Opa.OpenApi.Models.Components;
+using Xunit.Abstractions;
 
 namespace SmokeTest.Tests;
 
+// Note(philip): Run with `--logger "console;verbosity=detailed"` to see logged messages.
 public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOPAContainerFixture>
 {
+  private readonly ITestOutputHelper _testOutput;
   public IContainer _containerOpa;
   public IContainer _containerEopa;
 
-  public HighLevelTest(OPAContainerFixture opaFixture, EOPAContainerFixture eopaFixture)
+  private class CustomRBACObject
+  {
+
+    [JsonProperty("user")]
+    public string User = "";
+
+    [JsonProperty("action")]
+    public string Action = "";
+
+    [JsonProperty("object")]
+    public string Object = "";
+
+    [JsonProperty("type")]
+    public string Type = "";
+
+    [JsonIgnore]
+    public string UUID = System.Guid.NewGuid().ToString();
+
+    public CustomRBACObject() { }
+
+    public CustomRBACObject(string user, string action, string obj, string type)
+    {
+      User = user;
+      Action = action;
+      Object = obj;
+      Type = type;
+    }
+  }
+
+  public HighLevelTest(OPAContainerFixture opaFixture, EOPAContainerFixture eopaFixture, ITestOutputHelper output)
   {
     _containerOpa = opaFixture.GetContainer();
     _containerEopa = eopaFixture.GetContainer();
+    _testOutput = output;
   }
 
   private OpaClient GetOpaClient()
@@ -102,8 +136,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   [Fact]
   public async Task DictionaryTypeCoerceTest()
   {
-    //var client = GetOpaClient();
-    var client = new OpaClient(serverUrl: "http://localhost:8181");
+    var client = GetOpaClient();
 
     var input = new Dictionary<string, string>() {
       { "user", "alice" },
@@ -120,7 +153,64 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     }
     catch (OpaException e)
     {
-      Console.WriteLine("exception while making request against OPA: " + e.Message);
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new Dictionary<string, object>() {
+      { "allow", true },
+      { "user_is_admin", true },
+      { "user_is_granted", new List<object>()},
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+    Assert.Equal(expected.Count, result.Count);
+  }
+
+  [Fact]
+  public async Task BooleanTypeCoerceTest()
+  {
+    var client = GetOpaClient();
+
+    var input = false;
+
+    var result = new Dictionary<string, object>();
+
+    try
+    {
+      result = await client.evaluate<Dictionary<string, object>>("app/rbac", input);
+    }
+    catch (OpaException e)
+    {
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new Dictionary<string, object>() {
+      { "allow", false },
+      { "user_is_granted", new List<object>()},
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+    Assert.Equal(expected.Count, result.Count);
+  }
+
+  [Fact]
+  public async Task CustomClassTypeCoerceTest()
+  {
+    var client = GetOpaClient();
+
+    var input = new CustomRBACObject("alice", "read", "id123", "dog"); ;
+
+    var result = new Dictionary<string, object>();
+
+    try
+    {
+      result = await client.evaluate<Dictionary<string, object>>("app/rbac", input);
+    }
+    catch (OpaException e)
+    {
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
     }
 
     var expected = new Dictionary<string, object>() {
