@@ -200,7 +200,38 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var client = GetOpaClient();
 
-    var input = new CustomRBACObject("alice", "read", "id123", "dog"); ;
+    var input = new CustomRBACObject("alice", "read", "id123", "dog");
+
+    var result = new Dictionary<string, object>();
+
+    try
+    {
+      result = await client.evaluate<Dictionary<string, object>>("app/rbac", input);
+    }
+    catch (OpaException e)
+    {
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new Dictionary<string, object>() {
+      { "allow", true },
+      { "user_is_admin", true },
+      { "user_is_granted", new List<object>()},
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+    Assert.Equal(expected.Count, result.Count);
+  }
+
+  [Fact]
+  public async Task AnonymousObjectTypeCoerceTest()
+  {
+    var client = GetOpaClient();
+
+    // Relies on Newtonsoft.Json's default serialization rules. `object` is unused by
+    // the policy, thankfully, so we can get away with mangling that field's name.
+    var input = new { user = "alice", action = "read", _object = "id123", type = "dog" };
 
     var result = new Dictionary<string, object>();
 
