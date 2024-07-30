@@ -12,7 +12,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   public IContainer _containerOpa;
   public IContainer _containerEopa;
 
-  private class CustomRBACObject
+  private class CustomRBACInputObject
   {
 
     [JsonProperty("user")]
@@ -30,15 +30,29 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     [JsonIgnore]
     public string UUID = System.Guid.NewGuid().ToString();
 
-    public CustomRBACObject() { }
+    public CustomRBACInputObject() { }
 
-    public CustomRBACObject(string user, string action, string obj, string type)
+    public CustomRBACInputObject(string user, string action, string obj, string type)
     {
       User = user;
       Action = action;
       Object = obj;
       Type = type;
     }
+  }
+
+  public class CustomRBACOutputObject
+  {
+    [JsonProperty("allow")]
+    public bool Allow = false;
+
+    [JsonProperty("user_is_admin")]
+    public bool? IsAdmin;
+
+    [JsonProperty("user_is_granted")]
+    public List<object>? Grants;
+
+    public CustomRBACOutputObject() { }
   }
 
   public HighLevelTest(OPAContainerFixture opaFixture, EOPAContainerFixture eopaFixture, ITestOutputHelper output)
@@ -168,7 +182,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
-  public async Task BooleanTypeCoerceTest()
+  public async Task BooleanInputTypeCoerceTest()
   {
     var client = GetOpaClient();
 
@@ -196,11 +210,11 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
-  public async Task CustomClassTypeCoerceTest()
+  public async Task CustomClassInputTypeCoerceTest()
   {
     var client = GetOpaClient();
 
-    var input = new CustomRBACObject("alice", "read", "id123", "dog");
+    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
 
     var result = new Dictionary<string, object>();
 
@@ -225,7 +239,54 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
-  public async Task AnonymousObjectTypeCoerceTest()
+  public async Task CustomClassOutputTypeCoerceTest()
+  {
+    var client = GetOpaClient();
+
+    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
+
+    var result = new CustomRBACOutputObject();
+    try
+    {
+      var res = await client.evaluate<CustomRBACOutputObject>("app/rbac", input);
+      if (res is CustomRBACOutputObject value)
+      {
+        result = value;
+      }
+      else
+      {
+        Assert.Fail("Test did not deserialize to a custom C# type properly.");
+      }
+    }
+    catch (OpaException e)
+    {
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new CustomRBACOutputObject()
+    {
+      Allow = true,
+      IsAdmin = true,
+      Grants = new List<object>(),
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+  }
+
+  [Fact]
+  public async Task BadOutputTypeCoerceTest()
+  {
+    var client = GetOpaClient();
+
+    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
+
+    // Attempt to coerce an object return type into a bool. This should always fail!
+    await Assert.ThrowsAsync<OpaException>(async () => { var res = await client.evaluate<bool>("app/rbac", input); });
+  }
+
+  [Fact]
+  public async Task AnonymousObjectInputTypeCoerceTest()
   {
     var client = GetOpaClient();
 
@@ -269,7 +330,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
-  public async Task EvaluateDefaultWithAnonymousObjectTest()
+  public async Task EvaluateDefaultWithAnonymousObjectInputTest()
   {
     var client = GetOpaClient();
 
