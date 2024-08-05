@@ -73,14 +73,21 @@ For the `evaluate` method, the output type is configurable using generics, as sh
 ```csharp
 string path = "authz/accounts/max_limit";
 
-double? maxLimit = opa.evaluate<double>(path, "example");
+double maxLimit
+try {
+    maxLimit = opa.evaluate<double?>(path, "example");
+}
+catch (OpaException) {
+    maxLimit = 0.0f;
+}
 ```
 
-For cases where a default value is appropriate, you can avoid the nullable `double` type in the example like so:
+Nullable types are also allowed for output types, and if an error occurs during evaluation, a null result will be returned to the caller.
+
 ```csharp
 string path = "authz/accounts/max_limit";
 
-double maxLimit = opa.evaluate<double>(path, "example") ?? 0.0f;
+double? maxLimit = opa.evaluate<double?>(path, "example");
 ```
 
 If the selected return type `<T>` is possible to deserialize from the returned JSON, `evaluate<T>` will attempt to populate the variable with the value(s) present.
@@ -103,8 +110,13 @@ var input = new Dictionary<string, object>() {
     { "action", "read" },
 };
 
-// (local variable) AuthzStatus status
-var status = opa.evaluate<AuthzStatus>(path, input) ?? AuthzStatus(false);
+AuthzStatus status;
+try {
+    status = opa.evaluate<AuthzStatus>(path, input);
+}
+catch (OpaException) {
+    status = new AuthzStatus(false);
+}
 ```
 
 > [!NOTE]
