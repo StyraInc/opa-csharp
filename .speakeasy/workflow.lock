@@ -1,18 +1,19 @@
-speakeasyVersion: 1.324.0
+speakeasyVersion: 1.352.1
 sources:
     openapi:
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:1fb558a2940ef5c89003720b4c5fbed3dd061659e3c50e70bd03faeb77bf1fa6
-        sourceBlobDigest: sha256:72e3d8cd36a20c819b6c6e084ad75eb35e11cc534e0e36d8cf0e2913c014a6c1
+        sourceRevisionDigest: sha256:af9e761d51d050c23804340c60038738137bf7ff5c4790b7467e2bc882b600eb
+        sourceBlobDigest: sha256:ebd6e340f431768e91038e18c9a697211f005b39f9ff1b467084c0a6760b2633
         tags:
             - latest
+            - main
 targets:
     first-target:
         source: openapi
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:1fb558a2940ef5c89003720b4c5fbed3dd061659e3c50e70bd03faeb77bf1fa6
-        sourceBlobDigest: sha256:72e3d8cd36a20c819b6c6e084ad75eb35e11cc534e0e36d8cf0e2913c014a6c1
-        outLocation: /home/conradp/Downloads/Styra/__github/opa-csharp
+        sourceRevisionDigest: sha256:af9e761d51d050c23804340c60038738137bf7ff5c4790b7467e2bc882b600eb
+        sourceBlobDigest: sha256:ebd6e340f431768e91038e18c9a697211f005b39f9ff1b467084c0a6760b2633
+        outLocation: /github/workspace/repo
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
