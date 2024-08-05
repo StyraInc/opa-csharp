@@ -12,13 +12,14 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: false
 csharp:
-  version: 1.1.2
+  version: 1.2.0
   additionalDependencies: []
   author: Styra
   clientServerStatusCodesAsErrors: true
   company: Styra
   disableNamespacePascalCasingApr2024: true
   dotnetVersion: net6.0
+  enableSourceLink: false
   flattenGlobalSecurity: true
   imports:
     option: openapi
@@ -28,9 +29,11 @@ csharp:
       operations: Models/Requests
       shared: Models/Components
       webhooks: Models/Webhooks
+  includeDebugSymbols: false
   inputModelSuffix: input
   maxMethodParams: 4
   outputModelSuffix: output
   packageName: Styra.Opa.OpenApi
+  packageTags: ""
   product: ""
   responseFormat: envelope
