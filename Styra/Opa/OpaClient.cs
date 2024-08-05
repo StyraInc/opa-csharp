@@ -236,7 +236,7 @@ public class OpaClient
     /// Simple allow/deny-style check against a rule, using the provided input mapping.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     public async Task<bool> check(string path)
     {
         return await evaluate<bool>(path);
@@ -247,7 +247,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     public async Task<bool> check(string path, bool input)
     {
         return await evaluate<bool>(path, input);
@@ -258,7 +258,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     public async Task<bool> check(string path, double input)
     {
         return await evaluate<bool>(path, input);
@@ -269,7 +269,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     public async Task<bool> check(string path, string input)
     {
         return await evaluate<bool>(path, input);
@@ -280,7 +280,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
     public async Task<bool> check(string path, List<object> input)
     {
@@ -292,7 +292,7 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean, or null in the case of a query failure.</returns>
+    /// <returns>Result, as a boolean</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
     public async Task<bool> check(string path, Dictionary<string, object> input)
     {
@@ -303,8 +303,8 @@ public class OpaClient
     /// Evaluate a policy, then coerce the result to type T.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path)
     {
         return await queryMachinery<T>(path, Input.CreateNull());
     }
@@ -314,8 +314,8 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, bool input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path, bool input)
     {
         return await queryMachinery<T>(path, Input.CreateBoolean(input));
     }
@@ -325,8 +325,8 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, double input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path, double input)
     {
         return await queryMachinery<T>(path, Input.CreateNumber(input));
     }
@@ -336,8 +336,8 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, string input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path, string input)
     {
         return await queryMachinery<T>(path, Input.CreateStr(input));
     }
@@ -347,9 +347,9 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    /// <returns>Result, as an instance of T</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public async Task<T?> evaluate<T>(string path, List<object> input)
+    public async Task<T> evaluate<T>(string path, List<object> input)
     {
         return await queryMachinery<T>(path, Input.CreateArrayOfAny(input));
     }
@@ -359,8 +359,8 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, Dictionary<string, object> input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path, Dictionary<string, object> input)
     {
         return await queryMachinery<T>(path, Input.CreateMapOfAny(input));
     }
@@ -372,28 +372,18 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluate<T>(string path, object input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluate<T>(string path, object input)
     {
-        if (input == null)
-        {
-            return default;
-        }
-
-        // Round-trip through JSON conversion, and deserialize it back to Dictionary<string, object>
+        // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input);
-        var roundTrippedInput = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonInput);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
 
-        if (roundTrippedInput is null)
-        {
-            return default;
-        }
-
-        return await queryMachinery<T>(path, Input.CreateMapOfAny(roundTrippedInput));
+        return await queryMachinery<T>(path, roundTrippedInput);
     }
 
     /// <exclude />
-    private async Task<T?> queryMachinery<T>(string path, Input input)
+    private async Task<T> queryMachinery<T>(string path, Input input)
     {
         ExecutePolicyWithInputResponse res;
         try
@@ -406,48 +396,20 @@ public class OpaClient
             throw new OpaException(msg, e);
         }
 
-        // We return the default null value for type T if Result is null.
         var result = res.SuccessfulPolicyResponse?.Result;
         if (result is null)
         {
-            return default;
+            var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with a result", path);
+            throw new OpaException(msg);
         }
-
-        // We do the type-switch here, so that high-level clients don't have to.
-        // Because the Result members are nullable types, we use type testing
-        // with pattern matching to extract a non-null instance of the value if
-        // it exists.
-        switch (result.Type.ToString())
-        {
-            case "boolean":
-                if (result.Boolean is T defBoolean) { return defBoolean; }
-                break;
-            case "number":
-                if (result.Number is T defNumber) { return defNumber; }
-                break;
-            case "str":
-                if (result.Str is T defStr) { return defStr; }
-                break;
-            case "arrayOfAny":
-                if (result.ArrayOfAny is T defArray) { return defArray; }
-                break;
-            case "mapOfAny":
-                if (result.MapOfAny is T defObject) { return defObject; }
-                break;
-            case null:
-            default:
-                break;
-        }
-        // If we could not find a type present in the result that T derives
-        // from or is, we return the appropriate null type for T.
-        return default;
+        return convertResult<T>(result);
     }
 
     /// <summary>
     /// Evaluate the server's default policy, then coerce the result to type T.
     /// </summary>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>()
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>()
     {
         return await queryMachineryDefault<T>(Input.CreateNull());
     }
@@ -456,8 +418,8 @@ public class OpaClient
     /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>(bool input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(bool input)
     {
         return await queryMachineryDefault<T>(Input.CreateBoolean(input));
     }
@@ -466,8 +428,8 @@ public class OpaClient
     /// Evaluate the server's default policy, using the provided input floating-point number, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>(double input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(double input)
     {
         return await queryMachineryDefault<T>(Input.CreateNumber(input));
     }
@@ -476,8 +438,8 @@ public class OpaClient
     /// Evaluate the server's default policy, using the provided input string, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>(string input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(string input)
     {
         return await queryMachineryDefault<T>(Input.CreateStr(input));
     }
@@ -486,9 +448,9 @@ public class OpaClient
     /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
+    /// <returns>Result, as an instance of T</returns>
     /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public async Task<T?> evaluateDefault<T>(List<object> input)
+    public async Task<T> evaluateDefault<T>(List<object> input)
     {
         return await queryMachineryDefault<T>(Input.CreateArrayOfAny(input));
     }
@@ -497,8 +459,8 @@ public class OpaClient
     /// Evaluate the server's default policy, using the provided input map, then coerce the result to type T.
     /// </summary>
     /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>(Dictionary<string, object> input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(Dictionary<string, object> input)
     {
         return await queryMachineryDefault<T>(Input.CreateMapOfAny(input));
     }
@@ -510,28 +472,18 @@ public class OpaClient
     /// eventual OPA API call.
     /// </summary>
     /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T, or null in the case of a query failure.</returns>
-    public async Task<T?> evaluateDefault<T>(object input)
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(object input)
     {
-        if (input == null)
-        {
-            return default;
-        }
-
-        // Round-trip through JSON conversion, and deserialize it back to Dictionary<string, object>
+        // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input);
-        var roundTrippedInput = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonInput);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
 
-        if (roundTrippedInput is null)
-        {
-            return default;
-        }
-
-        return await queryMachineryDefault<T>(Input.CreateMapOfAny(roundTrippedInput));
+        return await queryMachineryDefault<T>(roundTrippedInput);
     }
 
     /// <exclude />
-    private async Task<T?> queryMachineryDefault<T>(Input input)
+    private async Task<T> queryMachineryDefault<T>(Input input)
     {
         ExecuteDefaultPolicyWithInputResponse res;
         try
@@ -544,41 +496,13 @@ public class OpaClient
             throw new OpaException(msg, e);
         }
 
-        // We return the default null value for type T if Result is null.
         var result = res.Result;
         if (result is null)
         {
-            return default;
+            var msg = string.Format("executing server default policy succeeded, but OPA did not reply with a result");
+            throw new OpaException(msg);
         }
-
-        // We do the type-switch here, so that high-level clients don't have to.
-        // Because the Result members are nullable types, we use type testing
-        // with pattern matching to extract a non-null instance of the value if
-        // it exists.
-        switch (result.Type.ToString())
-        {
-            case "boolean":
-                if (result.Boolean is T defBoolean) { return defBoolean; }
-                break;
-            case "number":
-                if (result.Number is T defNumber) { return defNumber; }
-                break;
-            case "str":
-                if (result.Str is T defStr) { return defStr; }
-                break;
-            case "arrayOfAny":
-                if (result.ArrayOfAny is T defArray) { return defArray; }
-                break;
-            case "mapOfAny":
-                if (result.MapOfAny is T defObject) { return defObject; }
-                break;
-            case null:
-            default:
-                break;
-        }
-        // If we could not find a type present in the result that T derives
-        // from or is, we return the appropriate null type for T.
-        return default;
+        return convertResult<T>(result);
     }
 
     /// <summary>
@@ -735,4 +659,63 @@ public class OpaClient
 
         return await opa.ExecutePolicyWithInputAsync(req);
     }
+
+    /// <exclude />
+    // Designed to respect the nullability of the incoming generic type when possible.
+    private static T convertResult<T>(Result resultValue)
+    {
+        // We check to see if T maps to any of the core JSON types.
+        // We do the type-switch here, so that high-level clients don't have to.
+        // Because the Result members are nullable types, we use type testing
+        // with pattern matching to extract a non-null instance of the value if
+        // it exists.
+        switch (resultValue.Type.ToString())
+        {
+            case "boolean":
+                if (resultValue.Boolean is T defBoolean) { return defBoolean; }
+                // If not a perfect match, we return null.
+                return IsNullable(typeof(T)) ? default! : throw new OpaException(string.Format("Could not convert bool result to type {0}", typeof(T).FullName));
+            case "number":
+                if (resultValue.Number is T defNumber) { return defNumber; }
+                // If not a perfect match, we return null.
+                return IsNullable(typeof(T)) ? default! : throw new OpaException(string.Format("Could not convert number result to type {0}", typeof(T).FullName));
+            case "str":
+                if (resultValue.Str is T defStr) { return defStr; }
+                // If not a perfect match, we return null.
+                return IsNullable(typeof(T)) ? default! : throw new OpaException(string.Format("Could not convert string result to type {0}", typeof(T).FullName));
+            case "arrayOfAny":
+                if (resultValue.ArrayOfAny is T defArray) { return defArray; }
+                break; // Fall through to the JSON round-trip path.
+            case "mapOfAny":
+                if (resultValue.MapOfAny is T defObject) { return defObject; }
+                break; // Fall through to the JSON round-trip path.
+            case null:
+                return IsNullable(typeof(T)) ? default! : throw new OpaException(string.Format("Could not convert null result to type {0}", typeof(T).FullName));
+            default:
+                break;
+        }
+
+        // At this point, T must be a C# object type, and we'll attempt to
+        // deserialize to it.
+        try
+        {
+            var temp = JsonConvert.SerializeObject(resultValue);
+            var converted = JsonConvert.DeserializeObject<T>(temp);
+
+            if (converted is null)
+            {
+                return IsNullable(typeof(T)) ? converted! : throw new OpaException(string.Format("Could not convert result array/object to type {0}", typeof(T).FullName));
+            }
+
+            // Not null, successful conversion.
+            return converted;
+        }
+        catch (Exception e)
+        {
+            throw new OpaException(string.Format("Exception occurred while converting result array/object to type {0}", typeof(T).FullName), e);
+        }
+    }
+
+    /// <exclude />
+    private static bool IsNullable(Type type) => Nullable.GetUnderlyingType(type) != null;
 }
