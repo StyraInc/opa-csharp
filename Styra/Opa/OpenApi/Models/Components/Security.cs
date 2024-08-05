@@ -9,13 +9,12 @@
 #nullable enable
 namespace Styra.Opa.OpenApi.Models.Components
 {
-    using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Utils;
     
-    public class Revision
+    public class Security
     {
 
-        [JsonProperty("revision")]
-        public string RevisionValue { get; set; } = default!;
+        [SpeakeasyMetadata("security:scheme=true,type=http,subType=bearer,name=Authorization")]
+        public string? BearerAuth { get; set; }
     }
 }
