@@ -1,9 +1,34 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Styra.Opa;
 using Styra.Opa.OpenApi.Models.Components;
 using Xunit.Abstractions;
 
 namespace SmokeTest.Tests;
+
+// Used to verify presence of log messages in tests.
+public class ListLogger : ILogger<OpaClient>
+{
+  public List<string> Logs { get; } = new List<string>();
+
+  IDisposable ILogger.BeginScope<TState>(TState state)
+  {
+    return null!;
+  }
+
+  public bool IsEnabled(LogLevel logLevel) => true;
+
+  public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+  {
+    if (formatter == null) { throw new ArgumentNullException(nameof(formatter)); };
+
+    var message = formatter(state, exception);
+    if (!string.IsNullOrEmpty(message))
+    {
+      Logs.Add(message);
+    }
+  }
+}
 
 // Note(philip): Run with `--logger "console;verbosity=detailed"` to see logged messages.
 public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOPAContainerFixture>
@@ -69,6 +94,15 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
 
     // Send an HTTP GET request to the specified URI and retrieve the response as a string.
     return new OpaClient(serverUrl: requestUri.ToString());
+  }
+
+  private OpaClient GetOpaClientWithLogger(ILogger<OpaClient> logger)
+  {
+    // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
+    var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerOpa.Hostname, _containerOpa.GetMappedPublicPort(8181)).Uri;
+
+    // Send an HTTP GET request to the specified URI and retrieve the response as a string.
+    return new OpaClient(serverUrl: requestUri.ToString(), logger: logger);
   }
 
   private OpaClient GetEOpaClient()
@@ -567,5 +601,30 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
       { "CCC", expError },
     }, failures);
 
+  }
+
+  [Fact]
+  public async Task LogsExistTest()
+  {
+    var logger = new ListLogger();
+    var client = GetOpaClientWithLogger(logger);
+
+    var badInput = new Dictionary<string, object>() {
+      { "x", new List<int> {1, 1, 3} },
+      { "y", new List<int> {1, 2, 1} },
+    };
+
+    try
+    {
+      var result = await client.evaluate<bool>("testmod/condfail", badInput);
+    }
+    catch (OpaException e)
+    {
+      // Do nothing.
+      _testOutput.WriteLine(e.Message);
+    }
+
+    Assert.Single(logger.Logs);
+    Assert.Contains("executing policy 'testmod/condfail' failed with exception: ", logger.Logs[0]);
   }
 }
