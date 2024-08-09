@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi;
@@ -26,12 +28,14 @@ public class OpaClient
     private bool opaSupportsBatchQueryAPI = true;
 
     // Values to use when generating requests.
-    private bool policyRequestPretty = false;
-    private bool policyRequestProvenance = false;
-    private Explain policyRequestExplain = Explain.Notes;
-    private bool policyRequestMetrics = false;
-    private bool policyRequestInstrument = false;
-    private bool policyRequestStrictBuiltinErrors = false;
+    private bool requestPretty = false;
+    private bool requestProvenance = false;
+    private Explain requestExplain = Explain.Notes;
+    private bool requestMetrics = false;
+    private bool requestInstrument = false;
+    private bool requestStrictBuiltinErrors = false;
+
+    private readonly ILogger _logger;
 
     /// <summary>
     /// Constructs a default OpaClient, connecting to a server on the default host and port.
@@ -39,6 +43,7 @@ public class OpaClient
     public OpaClient()
     {
         opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
+        _logger = new NullLogger<OpaClient>();
     }
 
     /// <summary>
@@ -48,6 +53,28 @@ public class OpaClient
     public OpaClient(string serverUrl)
     {
         opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
+        _logger = new NullLogger<OpaClient>();
+    }
+
+    /// <summary>
+    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// </summary>
+    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
+    public OpaClient(ILogger<OpaClient> logger)
+    {
+        opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// </summary>
+    /// <param name="serverUrl">The URL for connecting to the OPA server instance.</param>
+    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
+    public OpaClient(string serverUrl, ILogger<OpaClient> logger)
+    {
+        opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
+        _logger = logger;
     }
 
     /// <summary>
@@ -210,6 +237,7 @@ public class OpaClient
         }
         catch (Exception e)
         {
+            LogMessages.LogQueryError(_logger, path, e.Message);
             var msg = string.Format("executing policy at '{0}' with failed due to exception '{1}'", path, e);
             throw new OpaException(msg, e);
         }
@@ -217,6 +245,7 @@ public class OpaClient
         var result = res.SuccessfulPolicyResponse?.Result;
         if (result is null)
         {
+            LogMessages.LogQueryNullResult(_logger, path);
             var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with a result", path);
             throw new OpaException(msg);
         }
@@ -306,10 +335,11 @@ public class OpaClient
         ExecuteDefaultPolicyWithInputResponse res;
         try
         {
-            res = await opa.ExecuteDefaultPolicyWithInputAsync(input, policyRequestPretty);
+            res = await opa.ExecuteDefaultPolicyWithInputAsync(input, requestPretty);
         }
         catch (Exception e)
         {
+            LogMessages.LogDefaultQueryError(_logger, e.Message);
             var msg = string.Format("executing server default policy failed due to exception '{0}'", e);
             throw new OpaException(msg, e);
         }
@@ -317,6 +347,7 @@ public class OpaClient
         var result = res.Result;
         if (result is null)
         {
+            LogMessages.LogDefaultQueryNullResult(_logger);
             var msg = string.Format("executing server default policy succeeded, but OPA did not reply with a result");
             throw new OpaException(msg);
         }
@@ -354,12 +385,12 @@ public class OpaClient
                 {
                     Inputs = inputs.ToOpaBatchInputRaw(),
                 },
-                Pretty = policyRequestPretty,
-                Provenance = policyRequestProvenance,
-                Explain = policyRequestExplain,
-                Metrics = policyRequestMetrics,
-                Instrument = policyRequestInstrument,
-                StrictBuiltinErrors = policyRequestStrictBuiltinErrors,
+                Pretty = requestPretty,
+                Provenance = requestProvenance,
+                Explain = requestExplain,
+                Metrics = requestMetrics,
+                Instrument = requestInstrument,
+                StrictBuiltinErrors = requestStrictBuiltinErrors,
             };
 
             // Launch query. The all-errors case is handled in the exception handler block.
@@ -409,6 +440,7 @@ public class OpaClient
             {
                 // We know we've got an issue now.
                 opaSupportsBatchQueryAPI = false;
+                LogMessages.LogBatchQueryFallback(_logger);
                 // Fall-through to the "unsupported" case.
             }
         }
@@ -467,12 +499,12 @@ public class OpaClient
             {
                 Input = input
             },
-            Pretty = policyRequestPretty,
-            Provenance = policyRequestProvenance,
-            Explain = policyRequestExplain,
-            Metrics = policyRequestMetrics,
-            Instrument = policyRequestInstrument,
-            StrictBuiltinErrors = policyRequestStrictBuiltinErrors,
+            Pretty = requestPretty,
+            Provenance = requestProvenance,
+            Explain = requestExplain,
+            Metrics = requestMetrics,
+            Instrument = requestInstrument,
+            StrictBuiltinErrors = requestStrictBuiltinErrors,
         };
 
         return await opa.ExecutePolicyWithInputAsync(req);
