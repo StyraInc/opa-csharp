@@ -25,7 +25,7 @@ public class OpaResult
     public Provenance? Provenance { get; set; }
 
     /// <summary>
-    /// The base or virtual document referred to by the URL path. If the path is undefined, this key will be omitted.
+    /// The Result from the OPA query. This field will be null if the query path was undefined.
     /// </summary>
     [JsonProperty("result")]
     public Result? Result { get; set; }

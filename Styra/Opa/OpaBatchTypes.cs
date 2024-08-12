@@ -42,6 +42,7 @@ public static class DictionaryExtensions
         return opaBatchInputs;
     }
 
+    // The OpenApi.Models.Errors variant of the ServerError type.
     public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Errors.ServerError> errors)
     {
         var opaBatchErrors = new OpaBatchErrors();
@@ -52,6 +53,7 @@ public static class DictionaryExtensions
         return opaBatchErrors;
     }
 
+    // The OpenApi.Models.Components variant of the ServerError type.
     public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Components.ServerError> errors)
     {
         var opaBatchErrors = new OpaBatchErrors();

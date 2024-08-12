@@ -91,26 +91,18 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerOpa.Hostname, _containerOpa.GetMappedPublicPort(8181)).Uri;
-
-    // Send an HTTP GET request to the specified URI and retrieve the response as a string.
     return new OpaClient(serverUrl: requestUri.ToString());
   }
 
   private OpaClient GetOpaClientWithLogger(ILogger<OpaClient> logger)
   {
-    // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerOpa.Hostname, _containerOpa.GetMappedPublicPort(8181)).Uri;
-
-    // Send an HTTP GET request to the specified URI and retrieve the response as a string.
     return new OpaClient(serverUrl: requestUri.ToString(), logger: logger);
   }
 
   private OpaClient GetEOpaClient()
   {
-    // Construct the request URI by specifying the scheme, hostname, assigned random host port, and the endpoint "uuid".
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerEopa.Hostname, _containerEopa.GetMappedPublicPort(8181)).Uri;
-
-    // Send an HTTP GET request to the specified URI and retrieve the response as a string.
     return new OpaClient(serverUrl: requestUri.ToString());
   }
 

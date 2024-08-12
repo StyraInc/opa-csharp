@@ -38,7 +38,7 @@ public class OpaClient
     private readonly ILogger _logger;
 
     /// <summary>
-    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// Constructs a default OpaClient, connecting to a specified server address.
     /// </summary>
     public OpaClient()
     {
@@ -57,7 +57,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// Constructs a default OpaClient, connecting to a specified server address.
     /// </summary>
     /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
     public OpaClient(ILogger<OpaClient> logger)
@@ -67,7 +67,7 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// Constructs a default OpaClient, connecting to a specified server address.
     /// </summary>
     /// <param name="serverUrl">The URL for connecting to the OPA server instance.</param>
     /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
