@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi;
@@ -8,188 +10,6 @@ using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Errors;
 
 namespace Styra.Opa;
-
-public class OpaResult
-{
-    /// <summary>
-    /// If decision logging is enabled, this field contains a string that uniquely identifies the decision. The identifier will be included in the decision log event for this decision. Callers can use the identifier for correlation purposes.
-    /// </summary>
-    [JsonProperty("decision_id")]
-    public string? DecisionId { get; set; }
-
-    /// <summary>
-    /// If query metrics are enabled, this field contains query performance metrics collected during the parse, compile, and evaluation steps.
-    /// </summary>
-    [JsonProperty("metrics")]
-    public Dictionary<string, object>? Metrics { get; set; }
-
-    /// <summary>
-    /// Provenance information can be requested on individual API calls and are returned inline with the API response. To obtain provenance information on an API call, specify the `provenance=true` query parameter when executing the API call.
-    /// </summary>
-    [JsonProperty("provenance")]
-    public Provenance? Provenance { get; set; }
-
-    /// <summary>
-    /// The base or virtual document referred to by the URL path. If the path is undefined, this key will be omitted.
-    /// </summary>
-    [JsonProperty("result")]
-    public Result? Result { get; set; }
-
-    /// <summary>
-    /// The HTTP status code for the request. Limited to "200" or "500".
-    /// </summary>
-    [JsonProperty("http_status_code")]
-    public string? HttpStatusCode { get; set; }
-
-    public OpaResult() { }
-
-    public OpaResult(ResponsesSuccessfulPolicyResponse resp)
-    {
-        DecisionId = resp.DecisionId;
-        Metrics = resp.Metrics;
-        Provenance = resp.Provenance;
-        Result = resp.Result;
-        HttpStatusCode = resp.HttpStatusCode;
-    }
-
-    public OpaResult(SuccessfulPolicyResponse resp)
-    {
-        DecisionId = resp.DecisionId;
-        Metrics = resp.Metrics;
-        Provenance = resp.Provenance;
-        Result = resp.Result;
-    }
-
-    public static explicit operator OpaResult(ResponsesSuccessfulPolicyResponse e) => new OpaResult(e);
-    public static explicit operator OpaResult(SuccessfulPolicyResponse e) => new OpaResult(e);
-
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
-}
-
-public class OpaError
-{
-    /// <summary>
-    /// The short-form category of error, such as "internal_error", "invalid_policy_or_data", etc.
-    /// </summary>
-    [JsonProperty("code")]
-    public string Code { get; set; } = default!;
-
-    /// <summary>
-    /// If decision logging is enabled, this field contains a string that uniquely identifies the decision. The identifier will be included in the decision log event for this decision. Callers can use the identifier for correlation purposes.
-    /// </summary>
-    [JsonProperty("decision_id")]
-    public string? DecisionId { get; set; }
-
-    /// <summary>
-    /// The long-form error message from the OPA instance, describing what went wrong.
-    /// </summary>
-    [JsonProperty("message")]
-    public string Message { get; set; } = default!;
-
-    /// <summary>
-    /// The HTTP status code for the request. Limited to "200" or "500".
-    /// </summary>
-    [JsonProperty("http_status_code")]
-    public string? HttpStatusCode { get; set; }
-
-    public OpaError()
-    {
-
-    }
-    public OpaError(Styra.Opa.OpenApi.Models.Components.ServerError err)
-    {
-        Code = err.Code;
-        DecisionId = err.DecisionId;
-        Message = err.Message;
-        HttpStatusCode = err.HttpStatusCode;
-    }
-    public OpaError(Styra.Opa.OpenApi.Models.Errors.ServerError err)
-    {
-        Code = err.Code;
-        DecisionId = err.DecisionId;
-        Message = err.Message;
-    }
-
-    public static explicit operator OpaError(OpenApi.Models.Components.ServerError e) => new OpaError(e);
-    public static explicit operator OpaError(OpenApi.Models.Errors.ServerError e) => new OpaError(e);
-
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
-}
-
-public class OpaBatchInputs : Dictionary<string, Dictionary<string, object>>
-{
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
-}
-
-public class OpaBatchResults : Dictionary<string, OpaResult>
-{
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
-}
-
-public class OpaBatchErrors : Dictionary<string, OpaError>
-{
-    public override string ToString()
-    {
-        return JsonConvert.SerializeObject(this);
-    }
-}
-
-// Used for converting inputs for the Batch Query API, and converting result types
-// into useful higher-level types.
-public static class DictionaryExtensions
-{
-    public static Dictionary<string, Input> ToOpaBatchInputRaw(this Dictionary<string, Dictionary<string, object>> inputs)
-    {
-        var opaBatchInputs = new Dictionary<string, Input>();
-        foreach (var kvp in inputs)
-        {
-            opaBatchInputs[kvp.Key] = Input.CreateMapOfAny(kvp.Value);
-        }
-        return opaBatchInputs;
-    }
-
-    public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Errors.ServerError> errors)
-    {
-        var opaBatchErrors = new OpaBatchErrors();
-        foreach (var kvp in errors)
-        {
-            opaBatchErrors[kvp.Key] = new OpaError(kvp.Value);
-        }
-        return opaBatchErrors;
-    }
-
-    public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Components.ServerError> errors)
-    {
-        var opaBatchErrors = new OpaBatchErrors();
-        foreach (var kvp in errors)
-        {
-            opaBatchErrors[kvp.Key] = new OpaError(kvp.Value);
-        }
-        return opaBatchErrors;
-    }
-
-    public static OpaBatchResults ToOpaBatchResults(this Dictionary<string, SuccessfulPolicyResponse> responses)
-    {
-        var opaBatchResults = new OpaBatchResults();
-        foreach (var kvp in responses)
-        {
-            opaBatchResults[kvp.Key] = (OpaResult)kvp.Value;
-        }
-        return opaBatchResults;
-    }
-}
 
 /// <summary>
 /// OpaClient provides high-level convenience APIs for interacting with an OPA server.
@@ -208,19 +28,22 @@ public class OpaClient
     private bool opaSupportsBatchQueryAPI = true;
 
     // Values to use when generating requests.
-    private bool policyRequestPretty = false;
-    private bool policyRequestProvenance = false;
-    private Explain policyRequestExplain = Explain.Notes;
-    private bool policyRequestMetrics = false;
-    private bool policyRequestInstrument = false;
-    private bool policyRequestStrictBuiltinErrors = false;
+    private bool requestPretty = false;
+    private bool requestProvenance = false;
+    private Explain requestExplain = Explain.Notes;
+    private bool requestMetrics = false;
+    private bool requestInstrument = false;
+    private bool requestStrictBuiltinErrors = false;
+
+    private readonly ILogger _logger;
 
     /// <summary>
-    /// Constructs a default OpaClient, connecting to a server on the default host and port.
+    /// Constructs a default OpaClient, connecting to a specified server address.
     /// </summary>
     public OpaClient()
     {
         opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
+        _logger = new NullLogger<OpaClient>();
     }
 
     /// <summary>
@@ -230,6 +53,28 @@ public class OpaClient
     public OpaClient(string serverUrl)
     {
         opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
+        _logger = new NullLogger<OpaClient>();
+    }
+
+    /// <summary>
+    /// Constructs a default OpaClient, connecting to a specified server address.
+    /// </summary>
+    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
+    public OpaClient(ILogger<OpaClient> logger)
+    {
+        opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Constructs a default OpaClient, connecting to a specified server address.
+    /// </summary>
+    /// <param name="serverUrl">The URL for connecting to the OPA server instance.</param>
+    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
+    public OpaClient(string serverUrl, ILogger<OpaClient> logger)
+    {
+        opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
+        _logger = logger;
     }
 
     /// <summary>
@@ -392,6 +237,7 @@ public class OpaClient
         }
         catch (Exception e)
         {
+            LogMessages.LogQueryError(_logger, path, e.Message);
             var msg = string.Format("executing policy at '{0}' with failed due to exception '{1}'", path, e);
             throw new OpaException(msg, e);
         }
@@ -399,6 +245,7 @@ public class OpaClient
         var result = res.SuccessfulPolicyResponse?.Result;
         if (result is null)
         {
+            LogMessages.LogQueryNullResult(_logger, path);
             var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with a result", path);
             throw new OpaException(msg);
         }
@@ -488,10 +335,11 @@ public class OpaClient
         ExecuteDefaultPolicyWithInputResponse res;
         try
         {
-            res = await opa.ExecuteDefaultPolicyWithInputAsync(input, policyRequestPretty);
+            res = await opa.ExecuteDefaultPolicyWithInputAsync(input, requestPretty);
         }
         catch (Exception e)
         {
+            LogMessages.LogDefaultQueryError(_logger, e.Message);
             var msg = string.Format("executing server default policy failed due to exception '{0}'", e);
             throw new OpaException(msg, e);
         }
@@ -499,6 +347,7 @@ public class OpaClient
         var result = res.Result;
         if (result is null)
         {
+            LogMessages.LogDefaultQueryNullResult(_logger);
             var msg = string.Format("executing server default policy succeeded, but OPA did not reply with a result");
             throw new OpaException(msg);
         }
@@ -536,12 +385,12 @@ public class OpaClient
                 {
                     Inputs = inputs.ToOpaBatchInputRaw(),
                 },
-                Pretty = policyRequestPretty,
-                Provenance = policyRequestProvenance,
-                Explain = policyRequestExplain,
-                Metrics = policyRequestMetrics,
-                Instrument = policyRequestInstrument,
-                StrictBuiltinErrors = policyRequestStrictBuiltinErrors,
+                Pretty = requestPretty,
+                Provenance = requestProvenance,
+                Explain = requestExplain,
+                Metrics = requestMetrics,
+                Instrument = requestInstrument,
+                StrictBuiltinErrors = requestStrictBuiltinErrors,
             };
 
             // Launch query. The all-errors case is handled in the exception handler block.
@@ -591,6 +440,7 @@ public class OpaClient
             {
                 // We know we've got an issue now.
                 opaSupportsBatchQueryAPI = false;
+                LogMessages.LogBatchQueryFallback(_logger);
                 // Fall-through to the "unsupported" case.
             }
         }
@@ -649,12 +499,12 @@ public class OpaClient
             {
                 Input = input
             },
-            Pretty = policyRequestPretty,
-            Provenance = policyRequestProvenance,
-            Explain = policyRequestExplain,
-            Metrics = policyRequestMetrics,
-            Instrument = policyRequestInstrument,
-            StrictBuiltinErrors = policyRequestStrictBuiltinErrors,
+            Pretty = requestPretty,
+            Provenance = requestProvenance,
+            Explain = requestExplain,
+            Metrics = requestMetrics,
+            Instrument = requestInstrument,
+            StrictBuiltinErrors = requestStrictBuiltinErrors,
         };
 
         return await opa.ExecutePolicyWithInputAsync(req);
