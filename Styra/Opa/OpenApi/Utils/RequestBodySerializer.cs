@@ -399,11 +399,31 @@ namespace Styra.Opa.OpenApi.Utils
                                 form[metadata.Name] = new List<string>();
                             }
 
-                            form[metadata.Name].Add(Utilities.ValueToString(val));
+                            if (Utilities.IsList(val))
+                            {
+                                foreach(var item in (IEnumerable)val)
+                                {
+                                    form[metadata.Name].Add(Utilities.ValueToString(item));
+                                }
+                            }
+                            else
+                            {
+                              form[metadata.Name].Add(Utilities.ValueToString(val));
+                            }
                         }
                         else
                         {
-                            items.Add($"{metadata.Name},{Utilities.ValueToString(val)}");
+                            if (Utilities.IsList(val))
+                            {
+                                foreach(var item in (IEnumerable)val)
+                                {
+                                    items.Add($"{metadata.Name},{Utilities.ValueToString(item)}");
+                                }
+                            }
+                            else
+                            {
+                              items.Add($"{metadata.Name},{Utilities.ValueToString(val)}");
+                            }
                         }
                     }
 

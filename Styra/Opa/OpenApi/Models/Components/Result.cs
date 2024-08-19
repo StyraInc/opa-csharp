@@ -72,10 +72,20 @@ namespace Styra.Opa.OpenApi.Models.Components
         public Result(ResultType type) {
             Type = type;
         }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public bool? Boolean { get; set; }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public string? Str { get; set; }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public double? Number { get; set; }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public List<object>? ArrayOfAny { get; set; }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public Dictionary<string, object>? MapOfAny { get; set; }
 
         public ResultType Type { get; set; }

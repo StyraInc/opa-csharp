@@ -157,7 +157,7 @@ This SDK supports the following security scheme globally:
 | ------------ | ------------ | ------------ |
 | `BearerAuth` | http         | HTTP Bearer  |
 
-To authenticate with the API the `Null` parameter must be set when initializing the SDK client instance. For example:
+To authenticate with the API the `BearerAuth` parameter must be set when initializing the SDK client instance. For example:
 ```csharp
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Requests;

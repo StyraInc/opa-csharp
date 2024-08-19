@@ -40,7 +40,8 @@ namespace Styra.Opa.OpenApi.Utils
             var extensionType = System.Type.GetType(objectType.FullName + "Extension");
 
             if (Nullable.GetUnderlyingType(objectType) != null) {
-                extensionType = System.Type.GetType(Nullable.GetUnderlyingType(objectType)!.FullName + "Extension");
+                objectType = Nullable.GetUnderlyingType(objectType)!;
+                extensionType = System.Type.GetType(objectType!.FullName + "Extension");
             }
 
             if (extensionType == null)
