@@ -208,6 +208,10 @@ namespace Styra.Opa.OpenApi.Utils
                 }
                 return (string)(method.Invoke(null, new[] { value }) ?? "");
             }
+            else if (IsDictionary(value))
+            {
+                return JsonConvert.SerializeObject(value, GetDefaultJsonSerializerSettings());
+            }
 
             return value.ToString() ?? "";
         }

@@ -60,7 +60,11 @@ namespace Styra.Opa.OpenApi.Models.Components
         public Responses(ResponsesType type) {
             Type = type;
         }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public ResponsesSuccessfulPolicyResponse? ResponsesSuccessfulPolicyResponse { get; set; }
+
+        [SpeakeasyMetadata("form:explode=true")]
         public Models.Components.ServerError? ServerError { get; set; }
 
         public ResponsesType Type { get; set; }
