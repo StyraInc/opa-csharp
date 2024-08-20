@@ -7,14 +7,14 @@
 [Serializable]
 public class OpaException : Exception
 {
-  public OpaException()
-  { }
+    public OpaException()
+    { }
 
-  public OpaException(string message)
-      : base(message)
-  { }
+    public OpaException(string message)
+        : base(message)
+    { }
 
-  public OpaException(string message, Exception innerException)
-      : base(message, innerException)
-  { }
+    public OpaException(string message, Exception innerException)
+        : base(message, innerException)
+    { }
 }

@@ -256,3 +256,13 @@ Based on:
 - [csharp v1.3.0] .
 ### Releases
 - [NuGet v1.3.0] https://www.nuget.org/packages/Styra.Opa.OpenApi/1.3.0 - .
+
+## 2024-08-20 20:26:52
+### Changes
+Based on:
+- OpenAPI Doc  
+- Speakeasy CLI 1.376.1 (2.402.5) https://github.com/speakeasy-api/speakeasy
+### Generated
+- [csharp v1.3.4] .
+### Releases
+- [NuGet v1.3.4] https://www.nuget.org/packages/Styra.Opa.OpenApi/1.3.4 - .
