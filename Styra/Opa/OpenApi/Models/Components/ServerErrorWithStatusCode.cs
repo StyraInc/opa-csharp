@@ -14,8 +14,11 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
-    public class ServerError
+    public class ServerErrorWithStatusCode
     {
+
+        [JsonProperty("http_status_code")]
+        public string? HttpStatusCode { get; set; }
 
         [JsonProperty("code")]
         public string Code { get; set; } = default!;
@@ -28,8 +31,5 @@ namespace Styra.Opa.OpenApi.Models.Components
 
         [JsonProperty("decision_id")]
         public string? DecisionId { get; set; }
-
-        [JsonProperty("http_status_code")]
-        public string? HttpStatusCode { get; set; }
     }
 }

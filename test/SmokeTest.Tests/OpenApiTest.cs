@@ -218,23 +218,23 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     {
       var resp = responsesMap?.GetValueOrDefault("AAA");
       Assert.NotNull(resp);
-      Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.ResponsesSuccessfulPolicyResponse?.Result?.MapOfAny?.GetValueOrDefault("p"));
-      Assert.Equal("200", resp?.ResponsesSuccessfulPolicyResponse?.HttpStatusCode);
+      Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.SuccessfulPolicyResponseWithStatusCode?.Result?.MapOfAny?.GetValueOrDefault("p"));
+      Assert.Equal("200", resp?.SuccessfulPolicyResponseWithStatusCode?.HttpStatusCode);
     }
 
     {
       var resp = responsesMap?.GetValueOrDefault("BBB");
-      Assert.NotNull(resp?.ServerError);
-      Assert.Equal("internal_error", resp?.ServerError?.Code);
-      Assert.Equal("500", resp?.ServerError?.HttpStatusCode);
-      Assert.Equal("object insert conflict", resp?.ServerError?.Message);
+      Assert.NotNull(resp?.ServerErrorWithStatusCode);
+      Assert.Equal("internal_error", resp?.ServerErrorWithStatusCode?.Code);
+      Assert.Equal("500", resp?.ServerErrorWithStatusCode?.HttpStatusCode);
+      Assert.Equal("object insert conflict", resp?.ServerErrorWithStatusCode?.Message);
     }
 
     {
       var resp = responsesMap?.GetValueOrDefault("CCC");
       Assert.NotNull(resp);
-      Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.ResponsesSuccessfulPolicyResponse?.Result?.MapOfAny?.GetValueOrDefault("p"));
-      Assert.Equal("200", resp?.ResponsesSuccessfulPolicyResponse?.HttpStatusCode);
+      Assert.Equivalent(new Dictionary<string, object>() { { "1", 2 }, { "3", 4 } }, resp?.SuccessfulPolicyResponseWithStatusCode?.Result?.MapOfAny?.GetValueOrDefault("p"));
+      Assert.Equal("200", resp?.SuccessfulPolicyResponseWithStatusCode?.HttpStatusCode);
     }
   }
 

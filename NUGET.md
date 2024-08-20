@@ -114,7 +114,7 @@ catch (Exception ex)
     {
         // handle exception
     }
-    else if (ex is Models.Errors.ServerError)
+    else if (ex is ServerError)
     {
         // handle exception
     }
