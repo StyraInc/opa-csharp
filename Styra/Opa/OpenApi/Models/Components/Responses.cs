@@ -62,32 +62,32 @@ namespace Styra.Opa.OpenApi.Models.Components
         }
 
         [SpeakeasyMetadata("form:explode=true")]
-        public ResponsesSuccessfulPolicyResponse? ResponsesSuccessfulPolicyResponse { get; set; }
+        public SuccessfulPolicyResponseWithStatusCode? SuccessfulPolicyResponseWithStatusCode { get; set; }
 
         [SpeakeasyMetadata("form:explode=true")]
-        public Models.Components.ServerError? ServerError { get; set; }
+        public ServerErrorWithStatusCode? ServerErrorWithStatusCode { get; set; }
 
         public ResponsesType Type { get; set; }
 
 
-        public static Responses CreateTwoHundred(ResponsesSuccessfulPolicyResponse twoHundred) {
+        public static Responses CreateTwoHundred(SuccessfulPolicyResponseWithStatusCode twoHundred) {
             ResponsesType typ = ResponsesType.TwoHundred;
         
             string typStr = ResponsesType.TwoHundred.ToString();
             
             twoHundred.HttpStatusCode = typStr;
             Responses res = new Responses(typ);
-            res.ResponsesSuccessfulPolicyResponse = twoHundred;
+            res.SuccessfulPolicyResponseWithStatusCode = twoHundred;
             return res;
         }
-        public static Responses CreateFiveHundred(Models.Components.ServerError fiveHundred) {
+        public static Responses CreateFiveHundred(ServerErrorWithStatusCode fiveHundred) {
             ResponsesType typ = ResponsesType.FiveHundred;
         
             string typStr = ResponsesType.FiveHundred.ToString();
             
             fiveHundred.HttpStatusCode = typStr;
             Responses res = new Responses(typ);
-            res.ServerError = fiveHundred;
+            res.ServerErrorWithStatusCode = fiveHundred;
             return res;
         }
         public static Responses CreateNull() {
@@ -108,13 +108,13 @@ namespace Styra.Opa.OpenApi.Models.Components
                 string discriminator = jo.GetValue("http_status_code")?.ToString() ?? throw new ArgumentNullException("Could not find discriminator field.");
                 if (discriminator == ResponsesType.TwoHundred.ToString())
                 {
-                    ResponsesSuccessfulPolicyResponse? responsesSuccessfulPolicyResponse = ResponseBodyDeserializer.Deserialize<ResponsesSuccessfulPolicyResponse>(jo.ToString());
-                    return CreateTwoHundred(responsesSuccessfulPolicyResponse!);
+                    SuccessfulPolicyResponseWithStatusCode? successfulPolicyResponseWithStatusCode = ResponseBodyDeserializer.Deserialize<SuccessfulPolicyResponseWithStatusCode>(jo.ToString());
+                    return CreateTwoHundred(successfulPolicyResponseWithStatusCode!);
                 }
                 if (discriminator == ResponsesType.FiveHundred.ToString())
                 {
-                    Models.Components.ServerError? serverError = ResponseBodyDeserializer.Deserialize<Models.Components.ServerError>(jo.ToString());
-                    return CreateFiveHundred(serverError!);
+                    ServerErrorWithStatusCode? serverErrorWithStatusCode = ResponseBodyDeserializer.Deserialize<ServerErrorWithStatusCode>(jo.ToString());
+                    return CreateFiveHundred(serverErrorWithStatusCode!);
                 }
 
                 throw new InvalidOperationException("Could not deserialize into any supported types.");
@@ -132,14 +132,14 @@ namespace Styra.Opa.OpenApi.Models.Components
                     writer.WriteRawValue("null");
                     return;
                 }
-                if (res.ResponsesSuccessfulPolicyResponse != null)
+                if (res.SuccessfulPolicyResponseWithStatusCode != null)
                 {
-                    writer.WriteRawValue(Utilities.SerializeJSON(res.ResponsesSuccessfulPolicyResponse));
+                    writer.WriteRawValue(Utilities.SerializeJSON(res.SuccessfulPolicyResponseWithStatusCode));
                     return;
                 }
-                if (res.ServerError != null)
+                if (res.ServerErrorWithStatusCode != null)
                 {
-                    writer.WriteRawValue(Utilities.SerializeJSON(res.ServerError));
+                    writer.WriteRawValue(Utilities.SerializeJSON(res.ServerErrorWithStatusCode));
                     return;
                 }
 

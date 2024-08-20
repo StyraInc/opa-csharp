@@ -22,6 +22,6 @@ namespace Styra.Opa.OpenApi.Models.Errors
         public string? BatchDecisionId { get; set; }
 
         [JsonProperty("responses")]
-        public Dictionary<string, Models.Errors.ServerError>? Responses { get; set; }
+        public Dictionary<string, ServerError>? Responses { get; set; }
     }
 }
