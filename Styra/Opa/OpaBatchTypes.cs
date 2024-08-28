@@ -20,6 +20,14 @@ public class OpaBatchResults : Dictionary<string, OpaResult>
     }
 }
 
+public class OpaBatchResultGeneric<T> : Dictionary<string, T>
+{
+    public override string ToString()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
+}
+
 public class OpaBatchErrors : Dictionary<string, OpaError>
 {
     public override string ToString()
@@ -72,5 +80,15 @@ public static class DictionaryExtensions
             opaBatchResults[kvp.Key] = (OpaResult)kvp.Value;
         }
         return opaBatchResults;
+    }
+
+    public static OpaBatchResultGeneric<T> ToOpaBatchResults<T>(this Dictionary<string, SuccessfulPolicyResponse> responses)
+    {
+        var output = new OpaBatchResultGeneric<T>();
+        foreach (var kvp in responses)
+        {
+            output[kvp.Key] = OpaClient.convertResult<T>(kvp.Value.Result!);
+        }
+        return output;
     }
 }

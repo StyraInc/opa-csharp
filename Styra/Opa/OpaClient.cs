@@ -489,6 +489,137 @@ public class OpaClient
         throw new Exception("Impossible error");
     }
 
+    /// <summary>
+    /// Evaluate a policy, using the provided map of query inputs. Results will
+    /// be returned in an identically-structured pair of maps, one for
+    /// successful evals, and one for errors. In the event that the OPA server
+    /// does not support the /v1/batch/data endpoint, this method will fall back
+    /// to performing sequential queries against the OPA server.
+    /// </summary>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <param name="inputs">The input Dictionary OPA will use for evaluating the rule. The keys are arbitrary ID strings, the values are the input values intended for each query.</param>
+    /// <returns>A pair of mappings, between string keys, and generic type T, or ServerErrors.</returns>
+    public async Task<(OpaBatchResultGeneric<T>, OpaBatchErrors)> evaluateBatch<T>(string path, Dictionary<string, Dictionary<string, object>> inputs)
+    {
+        return await queryMachineryBatch<T>(path, inputs);
+    }
+
+    /// <exclude />
+    private async Task<(OpaBatchResultGeneric<T>, OpaBatchErrors)> queryMachineryBatch<T>(string path, Dictionary<string, Dictionary<string, object>> inputs)
+    {
+        OpaBatchResultGeneric<T> successResults = new();
+        OpaBatchErrors failureResults = new();
+
+        // Attempt using the /v1/batch/data endpoint. If we ever receive a 404, then it's a vanilla OPA instance, and we should skip straight to fallback mode.
+        if (opaSupportsBatchQueryAPI)
+        {
+            var req = new ExecuteBatchPolicyWithInputRequest()
+            {
+                Path = path,
+                RequestBody = new ExecuteBatchPolicyWithInputRequestBody()
+                {
+                    Inputs = inputs.ToOpaBatchInputRaw(),
+                },
+                Pretty = requestPretty,
+                Provenance = requestProvenance,
+                Explain = requestExplain,
+                Metrics = requestMetrics,
+                Instrument = requestInstrument,
+                StrictBuiltinErrors = requestStrictBuiltinErrors,
+            };
+
+            // Launch query. The all-errors case is handled in the exception handler block.
+            ExecuteBatchPolicyWithInputResponse res;
+            try
+            {
+                res = await opa.ExecuteBatchPolicyWithInputAsync(req);
+                switch (res.StatusCode)
+                {
+                    // All-success case.
+                    case 200:
+                        successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults<T>(); // Should not be null here.
+                        return (successResults, failureResults);
+                    // Mixed results case.
+                    case 207:
+                        var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
+                        foreach (var (key, value) in mixedResponses)
+                        {
+                            switch (value.Type.ToString())
+                            {
+                                case "200":
+                                    successResults.Add(key, convertResult<T>(value.SuccessfulPolicyResponseWithStatusCode!.Result!));
+                                    break;
+                                case "500":
+                                    failureResults.Add(key, (OpaError)value.ServerErrorWithStatusCode!); // Should not be null.
+                                    break;
+                            }
+                        }
+
+                        return (successResults, failureResults);
+                    default:
+                        // TODO: Throw exception if we reach the end of this block without a successful return.
+                        // This *should* never happen. It means we didn't return from the batch or fallback handler blocks earlier.
+                        throw new Exception("Impossible error");
+                }
+            }
+            catch (ClientError ce)
+            {
+                throw ce; // Rethrow for the caller to deal with. Request was malformed.
+            }
+            catch (BatchServerError bse)
+            {
+                failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
+                return (successResults, failureResults);
+            }
+            catch (SDKException se) when (se.StatusCode == 404)
+            {
+                // We know we've got an issue now.
+                opaSupportsBatchQueryAPI = false;
+                LogMessages.LogBatchQueryFallback(_logger);
+                // Fall-through to the "unsupported" case.
+            }
+        }
+        // Implicitly rethrow all other exceptions.
+
+        // Fall back to sequential queries against the OPA instance.
+        if (!opaSupportsBatchQueryAPI)
+        {
+            foreach (var (key, value) in inputs)
+            {
+                try
+                {
+                    var res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
+                    successResults.Add(key, convertResult<T>(res.SuccessfulPolicyResponse!.Result!));
+                }
+                catch (ClientError ce)
+                {
+                    throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                }
+                catch (Styra.Opa.OpenApi.Models.Errors.ServerError se)
+                {
+                    failureResults.Add(key, (OpaError)se);
+                }
+                // Implicitly rethrow all other exceptions.
+            }
+
+            // If we have the mixed case, add the HttpStatusCode fields.
+            if (successResults.Count > 0 && failureResults.Count > 0)
+            {
+                // Modifying the dictionary element while iterating is a language feature since 2020, apparently.
+                // Ref: https://github.com/dotnet/runtime/pull/34667
+                foreach (var key in failureResults.Keys)
+                {
+                    failureResults[key].HttpStatusCode = "500";
+                }
+            }
+
+            return (successResults, failureResults);
+        }
+
+        // This *should* never happen. It means we didn't return from the batch or fallback handler blocks earlier.
+        throw new Exception("Impossible error");
+    }
+
     /// <exclude />
     private async Task<ExecutePolicyWithInputResponse> evalPolicySingle(string path, Input input)
     {
@@ -512,7 +643,7 @@ public class OpaClient
 
     /// <exclude />
     // Designed to respect the nullability of the incoming generic type when possible.
-    private static T convertResult<T>(Result resultValue)
+    protected internal static T convertResult<T>(Result resultValue)
     {
         // We check to see if T maps to any of the core JSON types.
         // We do the type-switch here, so that high-level clients don't have to.
