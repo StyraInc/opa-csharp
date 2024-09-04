@@ -16,10 +16,11 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-8203.11D
-),
+    8203.11D
+    ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+);
 
 // handle response
 ```
@@ -101,11 +102,13 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 try
 {
     var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
-    input: Input.CreateNumber(
-8203.11D
-),
-    pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+        input: Input.CreateNumber(
+        8203.11D
+        ),
+        pretty: false,
+        acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+    );
+
     // handle response
 }
 catch (Exception ex)
@@ -123,7 +126,6 @@ catch (Exception ex)
         // handle exception
     }
 }
-
 ```
 <!-- End Error Handling [errors] -->
 
@@ -168,10 +170,11 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-8203.11D
-),
+    8203.11D
+    ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+);
 
 // handle response
 ```

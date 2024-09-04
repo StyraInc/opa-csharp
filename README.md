@@ -126,6 +126,23 @@ catch (OpaException) {
 
 # OPA OpenAPI SDK (low-level)
 
+<!-- Start Summary [summary] -->
+## Summary
+
+For more information about the API: [Enterprise OPA documentation](https://docs.styra.com/enterprise-opa)
+<!-- End Summary [summary] -->
+
+<!-- Start Table of Contents [toc] -->
+## Table of Contents
+
+* [SDK Installation](#sdk-installation)
+* [SDK Example Usage](#sdk-example-usage)
+* [Available Resources and Operations](#available-resources-and-operations)
+* [Error Handling](#error-handling)
+* [Server Selection](#server-selection)
+* [Authentication](#authentication)
+<!-- End Table of Contents [toc] -->
+
 <!-- Start SDK Example Usage [usage] -->
 ## SDK Example Usage
 
@@ -141,10 +158,11 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-8203.11D
-),
+    8203.11D
+    ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+);
 
 // handle response
 ```
@@ -257,11 +275,13 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 try
 {
     var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
-    input: Input.CreateNumber(
-8203.11D
-),
-    pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+        input: Input.CreateNumber(
+        8203.11D
+        ),
+        pretty: false,
+        acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+    );
+
     // handle response
 }
 catch (Exception ex)
@@ -279,7 +299,6 @@ catch (Exception ex)
         // handle exception
     }
 }
-
 ```
 <!-- End Error Handling [errors] -->
 
@@ -305,10 +324,11 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-8203.11D
-),
+    8203.11D
+    ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip);
+    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+);
 
 // handle response
 ```
