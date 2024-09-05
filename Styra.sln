@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Styra", "Styra", "{1E225F02
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Styra.Opa", "Styra\Opa\Styra.Opa.csproj", "{0C84144D-0438-4D9B-A93B-0176B11DCACC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{38C0D109-B1F2-4DCA-9FAB-43B56DD425D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.Tests", "test\SmokeTest.Tests\SmokeTest.Tests.csproj", "{49AB856D-E432-4B07-BC38-AD2B105593FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,8 +33,21 @@ Global
 		{0C84144D-0438-4D9B-A93B-0176B11DCACC}.Release|x64.Build.0 = Release|Any CPU
 		{0C84144D-0438-4D9B-A93B-0176B11DCACC}.Release|x86.ActiveCfg = Release|Any CPU
 		{0C84144D-0438-4D9B-A93B-0176B11DCACC}.Release|x86.Build.0 = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|x64.Build.0 = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|x64.Build.0 = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{49AB856D-E432-4B07-BC38-AD2B105593FC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0C84144D-0438-4D9B-A93B-0176B11DCACC} = {1E225F02-3F08-4DA9-A156-C97A4A3B034D}
+		{49AB856D-E432-4B07-BC38-AD2B105593FC} = {38C0D109-B1F2-4DCA-9FAB-43B56DD425D9}
 	EndGlobalSection
 EndGlobal
