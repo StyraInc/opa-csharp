@@ -145,6 +145,23 @@ public class OpaClient
     }
 
     /// <summary>
+    /// Simple allow/deny-style check against a rule, using the provided object,
+    /// This will round-trip an object through Newtonsoft.JsonConvert, in order
+    /// to generate the input object for the eventual OPA API call.
+    /// </summary>
+    /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
+    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <returns>Result, as a boolean</returns>
+    public async Task<bool> check(string path, object input)
+    {
+        // Round-trip through JSON conversion, such that it becomes an Input.
+        var jsonInput = JsonConvert.SerializeObject(input);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+
+        return await evaluate<bool>(path, roundTrippedInput);
+    }
+
+    /// <summary>
     /// Evaluate a policy, then coerce the result to type T.
     /// </summary>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
