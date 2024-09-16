@@ -158,7 +158,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-    8203.11D
+        8203.11D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -181,7 +181,7 @@ ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
         Input = Input.CreateBoolean(
-        false
+            false
         ),
     },
 };
@@ -206,7 +206,7 @@ ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest(
     RequestBody = new ExecuteBatchPolicyWithInputRequestBody() {
         Inputs = new Dictionary<string, Input>() {
             { "key", Input.CreateStr(
-            "<value>"
+                "<value>"
             ) },
         },
     },
@@ -221,6 +221,9 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 <!-- Start Available Resources and Operations [operations] -->
 ## Available Resources and Operations
 
+<details open>
+<summary>Available methods</summary>
+
 ### [OpaApiClient SDK](docs/sdks/opaapiclient/README.md)
 
 * [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
@@ -228,6 +231,8 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 * [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
 * [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
 * [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
+
+</details>
 <!-- End Available Resources and Operations [operations] -->
 
 <!-- Start Server Selection [server] -->
@@ -276,7 +281,7 @@ try
 {
     var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
         input: Input.CreateNumber(
-        8203.11D
+            8203.11D
         ),
         pretty: false,
         acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -324,7 +329,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-    8203.11D
+        8203.11D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
