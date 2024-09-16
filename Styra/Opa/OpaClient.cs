@@ -53,153 +53,21 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input mapping.
-    /// </summary>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    public async Task<bool> check(string path)
-    {
-        return await evaluate<bool>(path);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input boolean value.
-    /// </summary>
-    /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    public async Task<bool> check(string path, bool input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided floating-point number.
-    /// </summary>
-    /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    public async Task<bool> check(string path, double input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input string.
-    /// </summary>
-    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    public async Task<bool> check(string path, string input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input list.
-    /// </summary>
-    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public async Task<bool> check(string path, List<object> input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
-    /// Simple allow/deny-style check against a rule, using the provided input mapping.
-    /// </summary>
-    /// <param name="input">The input Dictionary value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as a boolean</returns>
-    /// <remarks>The closest idiomatic type mapping to a JSON Object type for .NET is a Dictionary, so we use that here.</remarks>
-    public async Task<bool> check(string path, Dictionary<string, object> input)
-    {
-        return await evaluate<bool>(path, input);
-    }
-
-    /// <summary>
     /// Simple allow/deny-style check against a rule, using the provided object,
     /// This will round-trip an object through Newtonsoft.JsonConvert, in order
     /// to generate the input object for the eventual OPA API call.
     /// </summary>
     /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
     /// <returns>Result, as a boolean</returns>
-    public async Task<bool> check(string path, object input)
+    public async Task<bool> check(string path, object? input, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         // Round-trip through JSON conversion, such that it becomes an Input.
-        var jsonInput = JsonConvert.SerializeObject(input);
-        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+        var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
 
         return await evaluate<bool>(path, roundTrippedInput);
-    }
-
-    /// <summary>
-    /// Evaluate a policy, then coerce the result to type T.
-    /// </summary>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path)
-    {
-        return await queryMachinery<T>(path, Input.CreateNull());
-    }
-
-    /// <summary>
-    /// Evaluate a policy, using the provided input boolean value, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path, bool input)
-    {
-        return await queryMachinery<T>(path, Input.CreateBoolean(input));
-    }
-
-    /// <summary>
-    /// Evaluate a policy, using the provided input floating-point number, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path, double input)
-    {
-        return await queryMachinery<T>(path, Input.CreateNumber(input));
-    }
-
-    /// <summary>
-    /// Evaluate a policy, using the provided input string, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path, string input)
-    {
-        return await queryMachinery<T>(path, Input.CreateStr(input));
-    }
-
-    /// <summary>
-    /// Evaluate a policy, using the provided input boolean value, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public async Task<T> evaluate<T>(string path, List<object> input)
-    {
-        return await queryMachinery<T>(path, Input.CreateArrayOfAny(input));
-    }
-
-    /// <summary>
-    /// Evaluate a policy, using the provided input map, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
-    /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path, Dictionary<string, object> input)
-    {
-        return await queryMachinery<T>(path, Input.CreateMapOfAny(input));
     }
 
     /// <summary>
@@ -209,14 +77,33 @@ public class OpaClient
     /// </summary>
     /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
     /// <param name="path">The rule to evaluate. (Example: "app/rbac")</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
     /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluate<T>(string path, object input)
+    public async Task<T> evaluate<T>(string path, object? input, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         // Round-trip through JSON conversion, such that it becomes an Input.
-        var jsonInput = JsonConvert.SerializeObject(input);
-        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+        var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
 
         return await queryMachinery<T>(path, roundTrippedInput);
+    }
+
+    /// <summary>
+    /// Evaluate the server's default policy, using the provided object, then
+    /// coerce the result to type T. This will round-trip an object through
+    /// Newtonsoft.JsonConvert, in order to generate the input object for the
+    /// eventual OPA API call.
+    /// </summary>
+    /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
+    /// <returns>Result, as an instance of T</returns>
+    public async Task<T> evaluateDefault<T>(object? input, JsonSerializerSettings? jsonSerializerSettings = null)
+    {
+        // Round-trip through JSON conversion, such that it becomes an Input.
+        var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+
+        return await queryMachineryDefault<T>(roundTrippedInput);
     }
 
     /// <exclude />
@@ -242,83 +129,6 @@ public class OpaClient
             throw new OpaException(msg);
         }
         return convertResult<T>(result);
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, then coerce the result to type T.
-    /// </summary>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>()
-    {
-        return await queryMachineryDefault<T>(Input.CreateNull());
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input boolean value OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>(bool input)
-    {
-        return await queryMachineryDefault<T>(Input.CreateBoolean(input));
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided input floating-point number, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input floating-point number OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>(double input)
-    {
-        return await queryMachineryDefault<T>(Input.CreateNumber(input));
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided input string, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input string OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>(string input)
-    {
-        return await queryMachineryDefault<T>(Input.CreateStr(input));
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided input boolean value, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input List value OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    /// <remarks>The closest idiomatic type mapping to a JSON Array type for .NET is a List, so we use that here.</remarks>
-    public async Task<T> evaluateDefault<T>(List<object> input)
-    {
-        return await queryMachineryDefault<T>(Input.CreateArrayOfAny(input));
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided input map, then coerce the result to type T.
-    /// </summary>
-    /// <param name="input">The input Dictionary OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>(Dictionary<string, object> input)
-    {
-        return await queryMachineryDefault<T>(Input.CreateMapOfAny(input));
-    }
-
-    /// <summary>
-    /// Evaluate the server's default policy, using the provided object, then
-    /// coerce the result to type T. This will round-trip an object through
-    /// Newtonsoft.JsonConvert, in order to generate the input object for the
-    /// eventual OPA API call.
-    /// </summary>
-    /// <param name="input">The input C# object OPA will use for evaluating the rule.</param>
-    /// <returns>Result, as an instance of T</returns>
-    public async Task<T> evaluateDefault<T>(object input)
-    {
-        // Round-trip through JSON conversion, such that it becomes an Input.
-        var jsonInput = JsonConvert.SerializeObject(input);
-        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
-
-        return await queryMachineryDefault<T>(roundTrippedInput);
     }
 
     /// <exclude />

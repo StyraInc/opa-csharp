@@ -128,7 +128,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var client = GetOpaClient();
 
-    var allow = await client.check("app/rbac/allow");
+    var allow = await client.check("app/rbac/allow", null);
 
     Assert.False(allow);
   }
