@@ -16,7 +16,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-    8203.11D
+        8203.11D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -39,7 +39,7 @@ ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
     RequestBody = new ExecutePolicyWithInputRequestBody() {
         Input = Input.CreateBoolean(
-        false
+            false
         ),
     },
 };
@@ -64,7 +64,7 @@ ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest(
     RequestBody = new ExecuteBatchPolicyWithInputRequestBody() {
         Inputs = new Dictionary<string, Input>() {
             { "key", Input.CreateStr(
-            "<value>"
+                "<value>"
             ) },
         },
     },
@@ -103,7 +103,7 @@ try
 {
     var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
         input: Input.CreateNumber(
-        8203.11D
+            8203.11D
         ),
         pretty: false,
         acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -170,7 +170,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-    8203.11D
+        8203.11D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
