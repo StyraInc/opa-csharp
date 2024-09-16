@@ -37,44 +37,19 @@ public class OpaClient
 
     private readonly ILogger _logger;
 
-    /// <summary>
-    /// Constructs a default OpaClient, connecting to a specified server address.
-    /// </summary>
-    public OpaClient()
-    {
-        opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
-        _logger = new NullLogger<OpaClient>();
-    }
+    private readonly JsonSerializerSettings? _jsonSerializerSettings;
 
     /// <summary>
-    /// Constructs an OpaClient using the provided server URL.
+    /// Constructs an OpaClient, connecting to a specified server address if provided.
     /// </summary>
-    /// <param name="serverUrl">The URL for connecting to the OPA server instance.</param>
-    public OpaClient(string serverUrl)
+    /// <param name="serverUrl">The URL for connecting to the OPA server instance. (default: "http://localhost:8181")</param>
+    /// <param name="logger">The ILogger instance to use for this OpaClient. (default: NullLogger)</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings to use as the default for serializing inputs for OPA. (default: none)</param>
+    public OpaClient(string? serverUrl = null, ILogger<OpaClient>? logger = null, JsonSerializerSettings? jsonSerializerSettings = null)
     {
-        opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
-        _logger = new NullLogger<OpaClient>();
-    }
-
-    /// <summary>
-    /// Constructs a default OpaClient, connecting to a specified server address.
-    /// </summary>
-    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
-    public OpaClient(ILogger<OpaClient> logger)
-    {
-        opa = new OpaApiClient(serverIndex: 0, serverUrl: sdkServerUrl);
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Constructs a default OpaClient, connecting to a specified server address.
-    /// </summary>
-    /// <param name="serverUrl">The URL for connecting to the OPA server instance.</param>
-    /// <param name="logger">The ILogger instance to use for this OpaClient.</param>
-    public OpaClient(string serverUrl, ILogger<OpaClient> logger)
-    {
-        opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl);
-        _logger = logger;
+        opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl ?? sdkServerUrl);
+        _logger = logger ?? new NullLogger<OpaClient>();
+        _jsonSerializerSettings = jsonSerializerSettings;
     }
 
     /// <summary>
