@@ -63,10 +63,13 @@ public class OpaClient
     /// <returns>Result, as a boolean</returns>
     public async Task<bool> check(string path, object? input, JsonSerializerSettings? jsonSerializerSettings = null)
     {
+        if (input is null)
+        {
+            return await evaluate<bool>(path, input);
+        }
         // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
         var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
-
         return await evaluate<bool>(path, roundTrippedInput);
     }
 
@@ -81,10 +84,13 @@ public class OpaClient
     /// <returns>Result, as an instance of T</returns>
     public async Task<T> evaluate<T>(string path, object? input, JsonSerializerSettings? jsonSerializerSettings = null)
     {
+        if (input is null)
+        {
+            return await queryMachinery<T>(path, Input.CreateNull());
+        }
         // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
         var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
-
         return await queryMachinery<T>(path, roundTrippedInput);
     }
 
@@ -99,10 +105,13 @@ public class OpaClient
     /// <returns>Result, as an instance of T</returns>
     public async Task<T> evaluateDefault<T>(object? input, JsonSerializerSettings? jsonSerializerSettings = null)
     {
+        if (input is null)
+        {
+            return await queryMachineryDefault<T>(Input.CreateNull());
+        }
         // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
         var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
-
         return await queryMachineryDefault<T>(roundTrippedInput);
     }
 
