@@ -41,29 +41,21 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
 
     [JsonProperty("user")]
-    public string User = "";
+    public string? User;
 
     [JsonProperty("action")]
-    public string Action = "";
+    public string? Action;
 
     [JsonProperty("object")]
-    public string Object = "";
+    public string? Object;
 
     [JsonProperty("type")]
-    public string Type = "";
+    public string? Type;
 
     [JsonIgnore]
     public string UUID = System.Guid.NewGuid().ToString();
 
     public CustomRBACInputObject() { }
-
-    public CustomRBACInputObject(string user, string action, string obj, string type)
-    {
-      User = user;
-      Action = action;
-      Object = obj;
-      Type = type;
-    }
   }
 
   public class CustomRBACOutputObject
@@ -256,7 +248,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var client = GetOpaClient();
 
-    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
+    var input = new CustomRBACInputObject() { User = "alice", Action = "read", Object = "id123", Type = "dog" };
 
     var result = new Dictionary<string, object>();
 
@@ -285,7 +277,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var client = GetOpaClient();
 
-    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
+    var input = new CustomRBACInputObject() { User = "alice", Action = "read", Object = "id123", Type = "dog" };
 
     var result = new CustomRBACOutputObject();
     try
@@ -321,10 +313,41 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var client = GetOpaClient();
 
-    var input = new CustomRBACInputObject("alice", "read", "id123", "dog");
+    var input = new CustomRBACInputObject() { User = "alice", Action = "read", Object = "id123", Type = "dog" };
 
     // Attempt to coerce an object return type into a bool. This should always fail!
     await Assert.ThrowsAsync<OpaException>(async () => { var res = await client.evaluate<bool>("app/rbac", input); });
+  }
+
+  [Fact]
+  public async Task CustomClassInputTypeCoerceJsonSettingsTest()
+  {
+    var client = GetOpaClient();
+
+    var input = new { a = "A", b = (object)null!, c = 2 }; // We will ensure the null field is not serialized.
+
+    var result = new Dictionary<string, object>();
+
+    try
+    {
+      result = await client.evaluate<Dictionary<string, object>>("system/main", input, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+    }
+    catch (OpaException e)
+    {
+      _testOutput.WriteLine("exception while making request against OPA: " + e.Message);
+    }
+
+    var expected = new Dictionary<string, object>() {
+      { "msg", "this is the default path" },
+      { "echo", new Dictionary<string, object>() {
+        { "a", "A" },
+        { "c", 2 },
+      } },
+    };
+
+    Assert.NotNull(result);
+    Assert.Equivalent(expected, result);
+    Assert.Equal(expected.Count, result.Count);
   }
 
   [Fact]
