@@ -238,9 +238,9 @@ public class OpaClient
                         throw new Exception("Impossible error");
                 }
             }
-            catch (ClientError ce)
+            catch (ClientError)
             {
-                throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                throw; // Rethrow for the caller to deal with. Request was malformed.
             }
             catch (BatchServerError bse)
             {
@@ -267,9 +267,9 @@ public class OpaClient
                     var res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
                     successResults.Add(key, (OpaResult)res.SuccessfulPolicyResponse!);
                 }
-                catch (ClientError ce)
+                catch (ClientError)
                 {
-                    throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                    throw; // Rethrow for the caller to deal with. Request was malformed.
                 }
                 catch (Styra.Opa.OpenApi.Models.Errors.ServerError se)
                 {
@@ -373,9 +373,9 @@ public class OpaClient
                         throw new Exception("Impossible error");
                 }
             }
-            catch (ClientError ce)
+            catch (ClientError)
             {
-                throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                throw; // Rethrow for the caller to deal with. Request was malformed.
             }
             catch (BatchServerError bse)
             {
@@ -402,9 +402,9 @@ public class OpaClient
                     var res = await evalPolicySingle(path, Input.CreateMapOfAny(value));
                     successResults.Add(key, convertResult<T>(res.SuccessfulPolicyResponse!.Result!));
                 }
-                catch (ClientError ce)
+                catch (ClientError)
                 {
-                    throw ce; // Rethrow for the caller to deal with. Request was malformed.
+                    throw; // Rethrow for the caller to deal with. Request was malformed.
                 }
                 catch (Styra.Opa.OpenApi.Models.Errors.ServerError se)
                 {
