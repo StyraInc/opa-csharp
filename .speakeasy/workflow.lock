@@ -1,18 +1,20 @@
-speakeasyVersion: 1.397.2
+speakeasyVersion: 1.441.0
 sources:
     openapi:
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:73a88dbd66b64f892379599b38bf0bc1a328404bc49b9d244124544c4ef1ca86
+        sourceRevisionDigest: sha256:45e57cd464bfe75e6a1de3212b01a6b3be58716eb31fc1eb3691944b60a4769b
         sourceBlobDigest: sha256:f76f9d1e8be466eef2d0e9612845ce19f9a5f507682e92d7a4355b3b13eaa921
         tags:
             - latest
-            - main
+            - speakeasy-sdk-regen-1731969825
 targets:
     first-target:
         source: openapi
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:73a88dbd66b64f892379599b38bf0bc1a328404bc49b9d244124544c4ef1ca86
+        sourceRevisionDigest: sha256:45e57cd464bfe75e6a1de3212b01a6b3be58716eb31fc1eb3691944b60a4769b
         sourceBlobDigest: sha256:f76f9d1e8be466eef2d0e9612845ce19f9a5f507682e92d7a4355b3b13eaa921
+        codeSamplesNamespace: openapi-code-samples
+        codeSamplesRevisionDigest: sha256:1bb9d7b51457be2e9a2d59848fc30a4e4a8e7ff3394c0d7aac6fca3dc11d7990
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -29,3 +31,7 @@ workflow:
             publish:
                 nuget:
                     apiKey: $nuget_api_key
+            codeSamples:
+                registry:
+                    location: registry.speakeasyapi.dev/styra/styra/openapi-code-samples
+                blocking: false
