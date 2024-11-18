@@ -14,6 +14,9 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
+    /// <summary>
+    /// Mixed success and failures.
+    /// </summary>
     public class BatchMixedResults
     {
 

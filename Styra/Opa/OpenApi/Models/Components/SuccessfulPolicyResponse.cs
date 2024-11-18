@@ -14,6 +14,14 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
+    /// <summary>
+    /// Success.<br/>
+    /// 
+    /// <remarks>
+    /// The server also returns 200 if the path refers to an undefined document. In this case, the response will not contain a result property.<br/>
+    /// 
+    /// </remarks>
+    /// </summary>
     public class SuccessfulPolicyResponse
     {
 

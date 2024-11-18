@@ -11,16 +11,19 @@ generation:
     requestResponseComponentNamesFeb2024: true
   auth:
     oAuth2ClientCredentialsEnabled: false
+    oAuth2PasswordEnabled: false
 csharp:
-  version: 1.3.7
+  version: 1.4.0
   additionalDependencies: []
   author: Styra
   clientServerStatusCodesAsErrors: true
   company: Styra
+  defaultErrorName: SDKException
   disableNamespacePascalCasingApr2024: true
-  dotnetVersion: net6.0
+  dotnetVersion: net8.0
   enableSourceLink: false
   flattenGlobalSecurity: true
+  flatteningOrder: ""
   imports:
     option: openapi
     paths:
@@ -32,8 +35,10 @@ csharp:
   includeDebugSymbols: false
   inputModelSuffix: input
   maxMethodParams: 4
+  methodArguments: infer-optional-args
   outputModelSuffix: output
   packageName: Styra.Opa.OpenApi
   packageTags: ""
   product: ""
   responseFormat: envelope
+  sourceDirectory: ""

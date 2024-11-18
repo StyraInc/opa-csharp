@@ -1,4 +1,5 @@
-﻿using Styra.Opa.OpenApi;
+﻿using Styra.Opa;
+using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi.Models.Errors;
 using Styra.Opa.OpenApi.Models.Requests;
@@ -274,7 +275,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
 
         // We populate this variable later in the catch block, otherwise this would
         // not be a terribly good idea.
-        Dictionary<string, Styra.Opa.OpenApi.Models.Errors.ServerError> responsesMap = null!;
+        Dictionary<string, OpaError> responsesMap = null!;
         try
         {
             var res = await client.ExecuteBatchPolicyWithInputAsync(req);
@@ -288,7 +289,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
             else if (ex is BatchServerError bse)
             {
                 Assert.NotNull(bse.Responses);
-                responsesMap = bse.Responses;
+                responsesMap = bse.Responses.ToOpaBatchErrors();
             }
             else if (ex is SDKException sdke)
             {

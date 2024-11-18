@@ -3,28 +3,29 @@ id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
   docChecksum: 54d33facef3aa19f358d15ab44e34141
   docVersion: 0.2.0
-  speakeasyVersion: 1.397.2
-  generationVersion: 2.415.8
-  releaseVersion: 1.3.7
-  configChecksum: 4b87e08fd57be3ea8915050d1a96f16b
-  repoURL: https://github.com/StyraInc/opa-csharp.git
+  speakeasyVersion: 1.441.0
+  generationVersion: 2.460.1
+  releaseVersion: 1.4.0
+  configChecksum: 2e42be5c6bac9686dc03b50dfbc95bd0
+  repoURL: https://github.com/StyraInc/opa-csharp
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
 features:
   csharp:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.0.1
-    core: 3.9.19
+    core: 3.10.5
     examples: 2.81.3
-    flattening: 2.81.2
+    flattening: 2.81.3
     globalSecurity: 2.83.6
     globalSecurityCallbacks: 0.1.0
     globalSecurityFlattening: 0.1.0
     globalServerURLs: 2.82.3
     intellisenseMarkdownSupport: 0.1.0
+    methodArguments: 0.1.0
     responseFormat: 0.0.4
     sdkHooks: 0.1.0
-    unions: 0.2.1
+    unions: 0.2.2
 generatedFiles:
   - .gitattributes
   - CONTRIBUTING.md
@@ -42,9 +43,12 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Components/Location.cs
   - Styra/Opa/OpenApi/Models/Components/Provenance.cs
   - Styra/Opa/OpenApi/Models/Components/Responses.cs
+  - Styra/Opa/OpenApi/Models/Components/ResponsesErrors.cs
+  - Styra/Opa/OpenApi/Models/Components/ResponsesLocation.cs
   - Styra/Opa/OpenApi/Models/Components/Result.cs
   - Styra/Opa/OpenApi/Models/Components/Revision.cs
   - Styra/Opa/OpenApi/Models/Components/Security.cs
+  - Styra/Opa/OpenApi/Models/Components/ServerError.cs
   - Styra/Opa/OpenApi/Models/Components/ServerErrorWithStatusCode.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponse.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponseWithStatusCode.cs
@@ -90,6 +94,24 @@ generatedFiles:
   - USAGE.md
   - global.json
 examples:
+  executeBatchPolicyWithInput:
+    speakeasy-default-execute-batch-policy-with-input:
+      parameters:
+        path:
+          path: "app/rbac"
+        query: {}
+        header: {}
+      requestBody:
+        application/json: {"inputs": {"key": []}}
+      responses:
+        "200":
+          application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": "<value>"}, "key1": {"result": []}}}
+        "207":
+          application/json: {"responses": {"key": {"http_status_code": "200", "result": "<value>"}}}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
+        "500":
+          application/json: {"responses": {}}
   executeDefaultPolicyWithInput:
     speakeasy-default-execute-default-policy-with-input:
       requestBody:
@@ -123,7 +145,7 @@ examples:
         query: {}
         header: {}
       requestBody:
-        application/json: {"input": false}
+        application/json: {"input": true}
       responses:
         "200":
           application/json: {"result": "<value>"}
@@ -131,23 +153,5 @@ examples:
           application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
-  executeBatchPolicyWithInput:
-    speakeasy-default-execute-batch-policy-with-input:
-      parameters:
-        path:
-          path: "app/rbac"
-        query: {}
-        header: {}
-      requestBody:
-        application/json: {"inputs": {"key": []}}
-      responses:
-        "200":
-          application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": {"allow": true, "user_is_admin": true, "user_is_granted": []}}, "key1": {"result": []}}}
-        "207":
-          application/json: {"responses": {"key": {"http_status_code": "200", "result": "<value>"}}}
-        "400":
-          application/json: {"code": "<value>", "message": "<value>"}
-        "500":
-          application/json: {"responses": {}}
   health:
     speakeasy-default-health: {}

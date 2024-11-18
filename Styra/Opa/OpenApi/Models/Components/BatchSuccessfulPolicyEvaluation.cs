@@ -14,6 +14,14 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
+    /// <summary>
+    /// All batched policy executions succeeded.<br/>
+    /// 
+    /// <remarks>
+    /// The server also returns 200 if the path refers to an undefined document. In this case, responses will be empty.<br/>
+    /// 
+    /// </remarks>
+    /// </summary>
     public class BatchSuccessfulPolicyEvaluation
     {
 

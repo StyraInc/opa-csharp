@@ -32,6 +32,7 @@ public class OpaError
     {
 
     }
+
     public OpaError(Styra.Opa.OpenApi.Models.Components.ServerErrorWithStatusCode err)
     {
         Code = err.Code;
@@ -39,6 +40,14 @@ public class OpaError
         Message = err.Message;
         HttpStatusCode = err.HttpStatusCode;
     }
+
+    public OpaError(Styra.Opa.OpenApi.Models.Components.ServerError err)
+    {
+        Code = err.Code;
+        DecisionId = err.DecisionId;
+        Message = err.Message;
+    }
+
     public OpaError(Styra.Opa.OpenApi.Models.Errors.ServerError err)
     {
         Code = err.Code;
