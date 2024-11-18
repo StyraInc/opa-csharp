@@ -9,7 +9,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-        8203.11D
+        4963.69D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip

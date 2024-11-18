@@ -72,6 +72,16 @@ public static class DictionaryExtensions
         return opaBatchErrors;
     }
 
+    public static OpaBatchErrors ToOpaBatchErrors(this Dictionary<string, Styra.Opa.OpenApi.Models.Components.ServerError> errors)
+    {
+        var opaBatchErrors = new OpaBatchErrors();
+        foreach (var kvp in errors)
+        {
+            opaBatchErrors[kvp.Key] = new OpaError(kvp.Value);
+        }
+        return opaBatchErrors;
+    }
+
     public static OpaBatchResults ToOpaBatchResults(this Dictionary<string, SuccessfulPolicyResponse> responses)
     {
         var opaBatchResults = new OpaBatchResults();

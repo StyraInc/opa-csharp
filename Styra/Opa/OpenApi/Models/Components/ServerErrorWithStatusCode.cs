@@ -27,7 +27,7 @@ namespace Styra.Opa.OpenApi.Models.Components
         public string Message { get; set; } = default!;
 
         [JsonProperty("errors")]
-        public List<Models.Components.Errors>? Errors { get; set; }
+        public List<ResponsesErrors>? Errors { get; set; }
 
         [JsonProperty("decision_id")]
         public string? DecisionId { get; set; }

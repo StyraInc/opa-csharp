@@ -10,11 +10,18 @@
 namespace Styra.Opa.OpenApi.Models.Errors
 {
     using Newtonsoft.Json;
-    using Styra.Opa.OpenApi.Models.Errors;
+    using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     using System;
     
+    /// <summary>
+    /// Server Error. All requests returned a 500 error.<br/>
+    /// 
+    /// <remarks>
+    /// 
+    /// </remarks>
+    /// </summary>
     public class BatchServerError : Exception
     {
 
@@ -22,6 +29,6 @@ namespace Styra.Opa.OpenApi.Models.Errors
         public string? BatchDecisionId { get; set; }
 
         [JsonProperty("responses")]
-        public Dictionary<string, ServerError>? Responses { get; set; }
+        public Dictionary<string, Models.Components.ServerError>? Responses { get; set; }
     }
 }

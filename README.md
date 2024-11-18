@@ -158,7 +158,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-        8203.11D
+        4963.69D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -238,32 +238,53 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 <!-- Start Server Selection [server] -->
 ## Server Selection
 
-### Select Server by Index
-
-You can override the default server globally by passing a server index to the `serverIndex: number` optional parameter when initializing the SDK client instance. The selected server will then be used as the default on the operations that use it. This table lists the indexes associated with the available servers:
-
-| # | Server | Variables |
-| - | ------ | --------- |
-| 0 | `http://localhost:8181` | None |
-
-
-
-
 ### Override Server URL Per-Client
 
-The default server can also be overridden globally by passing a URL to the `serverUrl: str` optional parameter when initializing the SDK client instance. For example:
+The default server can also be overridden globally by passing a URL to the `serverUrl: string` optional parameter when initializing the SDK client instance. For example:
+```csharp
+using Styra.Opa.OpenApi;
+using Styra.Opa.OpenApi.Models.Requests;
+using Styra.Opa.OpenApi.Models.Components;
+using System.Collections.Generic;
+
+var sdk = new OpaApiClient(
+    serverUrl: "http://localhost:8181",
+    bearerAuth: "<YOUR_BEARER_TOKEN_HERE>"
+);
+
+var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
+    input: Input.CreateNumber(
+        4963.69D
+    ),
+    pretty: false,
+    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+);
+
+// handle response
+```
 <!-- End Server Selection [server] -->
 
 <!-- Start Error Handling [errors] -->
 ## Error Handling
 
-Handling errors in this SDK should largely match your expectations.  All operations return a response object or thow an exception.  If Error objects are specified in your OpenAPI Spec, the SDK will raise the appropriate type.
+Handling errors in this SDK should largely match your expectations. All operations return a response object or throw an exception.
 
-| Error Object                                 | Status Code                                  | Content Type                                 |
-| -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
-| Styra.Opa.OpenApi.Models.Errors.ClientError  | 400,404                                      | application/json                             |
-| Styra.Opa.OpenApi.Models.Errors.ServerError  | 500                                          | application/json                             |
-| Styra.Opa.OpenApi.Models.Errors.SDKException | 4xx-5xx                                      | */*                                          |
+By default, an API error will raise a `Styra.Opa.OpenApi.Models.Errors.SDKException` exception, which has the following properties:
+
+| Property      | Type                  | Description           |
+|---------------|-----------------------|-----------------------|
+| `Message`     | *string*              | The error message     |
+| `StatusCode`  | *int*                 | The HTTP status code  |
+| `RawResponse` | *HttpResponseMessage* | The raw HTTP response |
+| `Body`        | *string*              | The response content  |
+
+When custom error responses are specified for an operation, the SDK may also throw their associated exceptions. You can refer to respective *Errors* tables in SDK docs for more details on possible exception types for each operation. For example, the `ExecuteDefaultPolicyWithInputAsync` method throws the following exceptions:
+
+| Error Type                                   | Status Code | Content Type     |
+| -------------------------------------------- | ----------- | ---------------- |
+| Styra.Opa.OpenApi.Models.Errors.ClientError  | 400, 404    | application/json |
+| Styra.Opa.OpenApi.Models.Errors.ServerError  | 500         | application/json |
+| Styra.Opa.OpenApi.Models.Errors.SDKException | 4XX, 5XX    | \*/\*            |
 
 ### Example
 
@@ -281,7 +302,7 @@ try
 {
     var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
         input: Input.CreateNumber(
-            8203.11D
+            4963.69D
         ),
         pretty: false,
         acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
@@ -293,15 +314,18 @@ catch (Exception ex)
 {
     if (ex is ClientError)
     {
-        // handle exception
+        // Handle exception data
+        throw;
     }
-    else if (ex is ServerError)
+    else if (ex is Models.Errors.ServerError)
     {
-        // handle exception
+        // Handle exception data
+        throw;
     }
     else if (ex is Styra.Opa.OpenApi.Models.Errors.SDKException)
     {
-        // handle exception
+        // Handle default exception
+        throw;
     }
 }
 ```
@@ -314,9 +338,9 @@ catch (Exception ex)
 
 This SDK supports the following security scheme globally:
 
-| Name         | Type         | Scheme       |
-| ------------ | ------------ | ------------ |
-| `BearerAuth` | http         | HTTP Bearer  |
+| Name         | Type | Scheme      |
+| ------------ | ---- | ----------- |
+| `BearerAuth` | http | HTTP Bearer |
 
 To authenticate with the API the `BearerAuth` parameter must be set when initializing the SDK client instance. For example:
 ```csharp
@@ -329,7 +353,7 @@ var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
-        8203.11D
+        4963.69D
     ),
     pretty: false,
     acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip

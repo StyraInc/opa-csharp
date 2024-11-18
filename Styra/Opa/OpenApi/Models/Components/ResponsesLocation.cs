@@ -7,19 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Styra.Opa.OpenApi.Models.Errors
+namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Utils;
-    using System;
     
-    /// <summary>
-    /// OPA service is not healthy. If the bundles option is specified this can mean any of the configured bundles have not yet been activated. If the plugins option is specified then at least one plugin is in a non-OK state.
-    /// </summary>
-    public class UnhealthyServer : Exception
+    public class ResponsesLocation
     {
 
-        [JsonProperty("code")]
-        public string? Code { get; set; }
+        [JsonProperty("file")]
+        public string File { get; set; } = default!;
+
+        [JsonProperty("row")]
+        public long Row { get; set; } = default!;
+
+        [JsonProperty("col")]
+        public long Col { get; set; } = default!;
     }
 }
