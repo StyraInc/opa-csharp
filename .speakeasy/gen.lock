@@ -5,9 +5,9 @@ management:
   docVersion: 0.2.0
   speakeasyVersion: 1.441.0
   generationVersion: 2.460.1
-  releaseVersion: 1.4.0
-  configChecksum: 2e42be5c6bac9686dc03b50dfbc95bd0
-  repoURL: https://github.com/StyraInc/opa-csharp
+  releaseVersion: 1.4.1
+  configChecksum: 9416034850a1892009e0e11da8086df5
+  repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
 features:
