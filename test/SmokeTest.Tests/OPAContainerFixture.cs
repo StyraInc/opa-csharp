@@ -16,7 +16,7 @@ public class OPAContainerFixture : IAsyncLifetime
             "testdata/condfail.rego",
             "testdata/data.json"
         };
-        string[] opaCmd = { "run", "--server" };
+        string[] opaCmd = { "run", "--server", "--addr=0.0.0.0:8181" };
         var startupCommand = new List<string>().Concat(opaCmd).Concat(startupFiles).ToArray();
 
         // Create a new instance of a container.
