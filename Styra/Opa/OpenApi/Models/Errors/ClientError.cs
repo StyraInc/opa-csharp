@@ -12,8 +12,8 @@ namespace Styra.Opa.OpenApi.Models.Errors
     using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Models.Errors;
     using Styra.Opa.OpenApi.Utils;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
     
     /// <summary>
     /// Bad Request

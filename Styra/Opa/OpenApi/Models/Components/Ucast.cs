@@ -7,28 +7,26 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 #nullable enable
-namespace Styra.Opa.OpenApi.Models.Errors
+namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
-    using System;
     using System.Collections.Generic;
     
-    /// <summary>
-    /// Server Error. All requests returned a 500 error.<br/>
-    /// 
-    /// <remarks>
-    /// 
-    /// </remarks>
-    /// </summary>
-    public class BatchServerError : Exception
+    public class Ucast
     {
 
-        [JsonProperty("batch_decision_id")]
-        public string? BatchDecisionId { get; set; }
+        /// <summary>
+        /// UCAST JSON object describing the conditions under which the query is true.
+        /// </summary>
+        [JsonProperty("query")]
+        public CompileResultMultitargetQuery? Query { get; set; }
 
-        [JsonProperty("responses")]
-        public Dictionary<string, Models.Components.ServerError>? Responses { get; set; }
+        /// <summary>
+        /// Column masking functions, where the key is the column name, and the value describes which masking function to use.
+        /// </summary>
+        [JsonProperty("masks")]
+        public Dictionary<string, MaskingRule>? Masks { get; set; }
     }
 }

@@ -13,16 +13,16 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
     
-    public class ResponsesErrors
+    /// <summary>
+    /// The partially evaluated result of the query. Result will be empty if the query is never true.
+    /// </summary>
+    public class CompileResultJSON
     {
 
-        [JsonProperty("code")]
-        public string Code { get; set; } = default!;
-
-        [JsonProperty("message")]
-        public string Message { get; set; } = default!;
-
-        [JsonProperty("location")]
-        public ResponsesLocation? Location { get; set; }
+        /// <summary>
+        /// The partially evaluated result of the query.
+        /// </summary>
+        [JsonProperty("result")]
+        public CompileResultJSONResult? Result { get; set; }
     }
 }

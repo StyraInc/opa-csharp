@@ -12,8 +12,8 @@ namespace Styra.Opa.OpenApi.Models.Components
     using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
     
     /// <summary>
     /// Provenance information can be requested on individual API calls and are returned inline with the API response. To obtain provenance information on an API call, specify the `provenance=true` query parameter when executing the API call.

@@ -12,10 +12,9 @@ namespace Styra.Opa.OpenApi.Models.Requests
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
     using System;
-    using System.Collections.Generic;
     using System.Net.Http;
     
-    public class ExecutePolicyWithInputResponse
+    public class CompileQueryWithPartialEvaluationResponse
     {
 
         /// <summary>
@@ -34,15 +33,23 @@ namespace Styra.Opa.OpenApi.Models.Requests
         public HttpResponseMessage RawResponse { get; set; } = default!;
 
         /// <summary>
-        /// Success.<br/>
-        /// 
-        /// <remarks>
-        /// The server also returns 200 if the path refers to an undefined document. In this case, the response will not contain a result property.<br/>
-        /// 
-        /// </remarks>
+        /// Successful response
         /// </summary>
-        public SuccessfulPolicyResponse? SuccessfulPolicyResponse { get; set; }
+        public CompileResultJSON? CompileResultJSON { get; set; }
 
-        public Dictionary<string, List<string>> Headers { get; set; } = default!;
+        /// <summary>
+        /// Successful response
+        /// </summary>
+        public CompileResultMultitarget? CompileResultMultitarget { get; set; }
+
+        /// <summary>
+        /// Successful response
+        /// </summary>
+        public CompileResultUCAST? CompileResultUCAST { get; set; }
+
+        /// <summary>
+        /// Successful response
+        /// </summary>
+        public CompileResultSQL? CompileResultSQL { get; set; }
     }
 }

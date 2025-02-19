@@ -9,13 +9,13 @@
 #nullable enable
 namespace Styra.Opa.OpenApi.Models.Components
 {
-    using Newtonsoft.Json.Linq;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using Styra.Opa.OpenApi.Utils;
+    using System;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Reflection;
-    using System;
     
 
     public class ResultType

@@ -20,6 +20,13 @@ namespace Styra.Opa.OpenApi.Models.Errors
     {
 
         [JsonProperty("code")]
-        public string? Code { get; set; }
+        public string Code { get; set; } = default!;
+
+        [JsonProperty("error")]
+        public string? Error { get; set; }
+
+        [JsonProperty("message")]
+        private string? _message { get; set; }
+        public override string Message { get {return _message ?? "";} }
     }
 }

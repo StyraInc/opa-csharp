@@ -1,39 +1,53 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 54d33facef3aa19f358d15ab44e34141
+  docChecksum: 59e61ed3e99e4e9a49731cb41f562cd6
   docVersion: 0.2.0
-  speakeasyVersion: 1.441.0
-  generationVersion: 2.460.1
-  releaseVersion: 1.4.1
-  configChecksum: 9416034850a1892009e0e11da8086df5
+  speakeasyVersion: 1.495.1
+  generationVersion: 2.515.4
+  releaseVersion: 1.5.0
+  configChecksum: ccc0b5f70a3c6f833e6970e32dc05f10
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
 features:
   csharp:
     additionalDependencies: 0.1.0
+    additionalProperties: 0.0.1
     constsAndDefaults: 0.0.1
-    core: 3.10.5
-    examples: 2.81.3
+    core: 3.10.13
+    examples: 2.81.5
     flattening: 2.81.3
-    globalSecurity: 2.83.6
+    globalSecurity: 2.83.7
     globalSecurityCallbacks: 0.1.0
     globalSecurityFlattening: 0.1.0
     globalServerURLs: 2.82.3
     intellisenseMarkdownSupport: 0.1.0
-    methodArguments: 0.1.0
+    methodArguments: 0.2.0
     responseFormat: 0.0.4
     sdkHooks: 0.1.0
     unions: 0.2.2
 generatedFiles:
   - .gitattributes
-  - CONTRIBUTING.md
   - NUGET.md
   - Styra/Opa/OpenApi/Hooks/HookTypes.cs
   - Styra/Opa/OpenApi/Hooks/SDKHooks.cs
   - Styra/Opa/OpenApi/Models/Components/BatchMixedResults.cs
   - Styra/Opa/OpenApi/Models/Components/BatchSuccessfulPolicyEvaluation.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileOptions.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultJSON.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultJSONResult.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitarget.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetMysql.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetPostgresql.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetQuery.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetResult.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetSqlserver.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultSQL.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultSQLResult.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultUCAST.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultUCASTQuery.cs
+  - Styra/Opa/OpenApi/Models/Components/CompileResultUCASTResult.cs
   - Styra/Opa/OpenApi/Models/Components/Errors.cs
   - Styra/Opa/OpenApi/Models/Components/Explain.cs
   - Styra/Opa/OpenApi/Models/Components/GzipAcceptEncoding.cs
@@ -41,17 +55,27 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Components/HealthyServer.cs
   - Styra/Opa/OpenApi/Models/Components/Input.cs
   - Styra/Opa/OpenApi/Models/Components/Location.cs
+  - Styra/Opa/OpenApi/Models/Components/MaskingRule.cs
+  - Styra/Opa/OpenApi/Models/Components/Mysql.cs
+  - Styra/Opa/OpenApi/Models/Components/One.cs
+  - Styra/Opa/OpenApi/Models/Components/Postgresql.cs
   - Styra/Opa/OpenApi/Models/Components/Provenance.cs
+  - Styra/Opa/OpenApi/Models/Components/Query.cs
+  - Styra/Opa/OpenApi/Models/Components/Replace.cs
   - Styra/Opa/OpenApi/Models/Components/Responses.cs
-  - Styra/Opa/OpenApi/Models/Components/ResponsesErrors.cs
-  - Styra/Opa/OpenApi/Models/Components/ResponsesLocation.cs
   - Styra/Opa/OpenApi/Models/Components/Result.cs
   - Styra/Opa/OpenApi/Models/Components/Revision.cs
   - Styra/Opa/OpenApi/Models/Components/Security.cs
   - Styra/Opa/OpenApi/Models/Components/ServerError.cs
   - Styra/Opa/OpenApi/Models/Components/ServerErrorWithStatusCode.cs
+  - Styra/Opa/OpenApi/Models/Components/Sqlserver.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponse.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponseWithStatusCode.cs
+  - Styra/Opa/OpenApi/Models/Components/Support.cs
+  - Styra/Opa/OpenApi/Models/Components/TargetDialects.cs
+  - Styra/Opa/OpenApi/Models/Components/TargetSQLTableMappings.cs
+  - Styra/Opa/OpenApi/Models/Components/Targets.cs
+  - Styra/Opa/OpenApi/Models/Components/Ucast.cs
   - Styra/Opa/OpenApi/Models/Errors/BatchServerError.cs
   - Styra/Opa/OpenApi/Models/Errors/ClientError.cs
   - Styra/Opa/OpenApi/Models/Errors/Errors.cs
@@ -61,6 +85,9 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Errors/ServerErrorErrors.cs
   - Styra/Opa/OpenApi/Models/Errors/ServerErrorLocation.cs
   - Styra/Opa/OpenApi/Models/Errors/UnhealthyServer.cs
+  - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationRequest.cs
+  - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationRequestBody.cs
+  - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequestBody.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputResponse.cs
@@ -94,33 +121,14 @@ generatedFiles:
   - USAGE.md
   - global.json
 examples:
-  executeBatchPolicyWithInput:
-    speakeasy-default-execute-batch-policy-with-input:
-      parameters:
-        path:
-          path: "app/rbac"
-        query: {}
-        header: {}
-      requestBody:
-        application/json: {"inputs": {"key": []}}
-      responses:
-        "200":
-          application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": "<value>"}, "key1": {"result": []}}}
-        "207":
-          application/json: {"responses": {"key": {"http_status_code": "200", "result": "<value>"}}}
-        "400":
-          application/json: {"code": "<value>", "message": "<value>"}
-        "500":
-          application/json: {"responses": {}}
   executeDefaultPolicyWithInput:
     speakeasy-default-execute-default-policy-with-input:
       requestBody:
-        application/json: "8203.11"
+        application/json: 4963.69
       responses:
         "200":
-          application/json: "4113.99"
-        "400":
-          application/json: {"code": "<value>", "message": "<value>"}
+          application/json: "<value>"
+        "400": {}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   executePolicy:
@@ -132,9 +140,8 @@ examples:
         header: {}
       responses:
         "200":
-          application/json: {"result": true}
-        "400":
-          application/json: {"code": "<value>", "message": "<value>"}
+          application/json: {"result": false}
+        "400": {}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   executePolicyWithInput:
@@ -148,10 +155,39 @@ examples:
         application/json: {"input": true}
       responses:
         "200":
-          application/json: {"result": "<value>"}
-        "400":
-          application/json: {"code": "<value>", "message": "<value>"}
+          application/json: {"result": false}
+        "400": {}
+        "500":
+          application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
+  executeBatchPolicyWithInput:
+    speakeasy-default-execute-batch-policy-with-input:
+      parameters:
+        path:
+          path: "app/rbac"
+        query: {}
+        header: {}
+      requestBody:
+        application/json: {"inputs": {"key": 6919.52}}
+      responses:
+        "200":
+          application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": "<value>"}, "key1": {"result": 8210.24}}}
+        "207":
+          application/json: {"responses": {"key": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}, "key1": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
+        "400": {}
+        "500":
+          application/json: {"responses": {"key": {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
+  compileQueryWithPartialEvaluation:
+    speakeasy-default-compile-query-with-partial-evaluation:
+      requestBody:
+        application/json: {"query": "<value>", "input": []}
+      responses:
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   health:
-    speakeasy-default-health: {}
+    speakeasy-default-health:
+      parameters:
+        query:
+          bundles: false
+          plugins: false
+examplesVersion: 1.0.0
+generatedTests: {}

@@ -11,9 +11,9 @@ namespace Styra.Opa.OpenApi.Models.Requests
 {
     using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
-    using System;
     
     public class ExecutePolicyResponse
     {
