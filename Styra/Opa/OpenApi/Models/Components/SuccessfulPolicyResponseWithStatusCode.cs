@@ -18,7 +18,7 @@ namespace Styra.Opa.OpenApi.Models.Components
     {
 
         [JsonProperty("http_status_code")]
-        public string? HttpStatusCode { get; set; }
+        public string HttpStatusCode { get; set; } = default!;
 
         /// <summary>
         /// The base or virtual document referred to by the URL path. If the path is undefined, this key will be omitted.

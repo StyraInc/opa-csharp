@@ -9,19 +9,12 @@
 #nullable enable
 namespace Styra.Opa.OpenApi.Models.Components
 {
-    using Newtonsoft.Json;
     using Styra.Opa.OpenApi.Utils;
     
-    public class ResponsesLocation
+    /// <summary>
+    /// UCAST JSON object describing the conditions under which the query is true.
+    /// </summary>
+    public class CompileResultMultitargetQuery
     {
-
-        [JsonProperty("file")]
-        public string File { get; set; } = default!;
-
-        [JsonProperty("row")]
-        public long Row { get; set; } = default!;
-
-        [JsonProperty("col")]
-        public long Col { get; set; } = default!;
     }
 }

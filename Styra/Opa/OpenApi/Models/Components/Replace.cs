@@ -18,26 +18,26 @@ namespace Styra.Opa.OpenApi.Models.Components
     using System.Reflection;
     
 
-    public class InputType
+    public class ReplaceType
     {
-        private InputType(string value) { Value = value; }
+        private ReplaceType(string value) { Value = value; }
 
         public string Value { get; private set; }
-        public static InputType Boolean { get { return new InputType("boolean"); } }
+        public static ReplaceType Boolean { get { return new ReplaceType("boolean"); } }
         
-        public static InputType Str { get { return new InputType("str"); } }
+        public static ReplaceType Str { get { return new ReplaceType("str"); } }
         
-        public static InputType Number { get { return new InputType("number"); } }
+        public static ReplaceType Number { get { return new ReplaceType("number"); } }
         
-        public static InputType ArrayOfAny { get { return new InputType("arrayOfAny"); } }
+        public static ReplaceType ArrayOfAny { get { return new ReplaceType("arrayOfAny"); } }
         
-        public static InputType MapOfAny { get { return new InputType("mapOfAny"); } }
+        public static ReplaceType MapOfAny { get { return new ReplaceType("mapOfAny"); } }
         
-        public static InputType Null { get { return new InputType("null"); } }
+        public static ReplaceType Null { get { return new ReplaceType("null"); } }
 
         public override string ToString() { return Value; }
-        public static implicit operator String(InputType v) { return v.Value; }
-        public static InputType FromString(string v) {
+        public static implicit operator String(ReplaceType v) { return v.Value; }
+        public static ReplaceType FromString(string v) {
             switch(v) {
                 case "boolean": return Boolean;
                 case "str": return Str;
@@ -45,7 +45,7 @@ namespace Styra.Opa.OpenApi.Models.Components
                 case "arrayOfAny": return ArrayOfAny;
                 case "mapOfAny": return MapOfAny;
                 case "null": return Null;
-                default: throw new ArgumentException("Invalid value for InputType");
+                default: throw new ArgumentException("Invalid value for ReplaceType");
             }
         }
         public override bool Equals(object? obj)
@@ -54,7 +54,7 @@ namespace Styra.Opa.OpenApi.Models.Components
             {
                 return false;
             }
-            return Value.Equals(((InputType)obj).Value);
+            return Value.Equals(((ReplaceType)obj).Value);
         }
 
         public override int GetHashCode()
@@ -64,12 +64,9 @@ namespace Styra.Opa.OpenApi.Models.Components
     }
 
 
-    /// <summary>
-    /// Arbitrary JSON used within your policies by accessing `input`
-    /// </summary>
-    [JsonConverter(typeof(Input.InputConverter))]
-    public class Input {
-        public Input(InputType type) {
+    [JsonConverter(typeof(Replace.ReplaceConverter))]
+    public class Replace {
+        public Replace(ReplaceType type) {
             Type = type;
         }
 
@@ -88,58 +85,58 @@ namespace Styra.Opa.OpenApi.Models.Components
         [SpeakeasyMetadata("form:explode=true")]
         public Dictionary<string, object>? MapOfAny { get; set; }
 
-        public InputType Type { get; set; }
+        public ReplaceType Type { get; set; }
 
 
-        public static Input CreateBoolean(bool boolean) {
-            InputType typ = InputType.Boolean;
+        public static Replace CreateBoolean(bool boolean) {
+            ReplaceType typ = ReplaceType.Boolean;
 
-            Input res = new Input(typ);
+            Replace res = new Replace(typ);
             res.Boolean = boolean;
             return res;
         }
 
-        public static Input CreateStr(string str) {
-            InputType typ = InputType.Str;
+        public static Replace CreateStr(string str) {
+            ReplaceType typ = ReplaceType.Str;
 
-            Input res = new Input(typ);
+            Replace res = new Replace(typ);
             res.Str = str;
             return res;
         }
 
-        public static Input CreateNumber(double number) {
-            InputType typ = InputType.Number;
+        public static Replace CreateNumber(double number) {
+            ReplaceType typ = ReplaceType.Number;
 
-            Input res = new Input(typ);
+            Replace res = new Replace(typ);
             res.Number = number;
             return res;
         }
 
-        public static Input CreateArrayOfAny(List<object> arrayOfAny) {
-            InputType typ = InputType.ArrayOfAny;
+        public static Replace CreateArrayOfAny(List<object> arrayOfAny) {
+            ReplaceType typ = ReplaceType.ArrayOfAny;
 
-            Input res = new Input(typ);
+            Replace res = new Replace(typ);
             res.ArrayOfAny = arrayOfAny;
             return res;
         }
 
-        public static Input CreateMapOfAny(Dictionary<string, object> mapOfAny) {
-            InputType typ = InputType.MapOfAny;
+        public static Replace CreateMapOfAny(Dictionary<string, object> mapOfAny) {
+            ReplaceType typ = ReplaceType.MapOfAny;
 
-            Input res = new Input(typ);
+            Replace res = new Replace(typ);
             res.MapOfAny = mapOfAny;
             return res;
         }
 
-        public static Input CreateNull() {
-            InputType typ = InputType.Null;
-            return new Input(typ);
+        public static Replace CreateNull() {
+            ReplaceType typ = ReplaceType.Null;
+            return new Replace(typ);
         }
 
-        public class InputConverter : JsonConverter
+        public class ReplaceConverter : JsonConverter
         {
 
-            public override bool CanConvert(System.Type objectType) => objectType == typeof(Input);
+            public override bool CanConvert(System.Type objectType) => objectType == typeof(Replace);
 
             public override bool CanRead => true;
 
@@ -156,7 +153,7 @@ namespace Styra.Opa.OpenApi.Models.Components
                 try
                 {
                     var converted = Convert.ToBoolean(json);
-                    return new Input(InputType.Boolean)
+                    return new Replace(ReplaceType.Boolean)
                     {
                         Boolean = converted
                     };
@@ -167,7 +164,7 @@ namespace Styra.Opa.OpenApi.Models.Components
                 }
 
                 if (json[0] == '"' && json[^1] == '"'){
-                    return new Input(InputType.Str)
+                    return new Replace(ReplaceType.Str)
                     {
                         Str = json[1..^1]
                     };
@@ -176,7 +173,7 @@ namespace Styra.Opa.OpenApi.Models.Components
                 try
                 {
                     var converted = Convert.ToDouble(json);
-                    return new Input(InputType.Number)
+                    return new Replace(ReplaceType.Number)
                     {
                         Number = converted
                     };
@@ -188,14 +185,14 @@ namespace Styra.Opa.OpenApi.Models.Components
 
                 try
                 {
-                    return new Input(InputType.ArrayOfAny)
+                    return new Replace(ReplaceType.ArrayOfAny)
                     {
                         ArrayOfAny = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<List<object>>(json)
                     };
                 }
                 catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    fallbackCandidates.Add((typeof(List<object>), new Input(InputType.ArrayOfAny), "ArrayOfAny"));
+                    fallbackCandidates.Add((typeof(List<object>), new Replace(ReplaceType.ArrayOfAny), "ArrayOfAny"));
                 }
                 catch (ResponseBodyDeserializer.DeserializationException)
                 {
@@ -208,14 +205,14 @@ namespace Styra.Opa.OpenApi.Models.Components
 
                 try
                 {
-                    return new Input(InputType.MapOfAny)
+                    return new Replace(ReplaceType.MapOfAny)
                     {
                         MapOfAny = ResponseBodyDeserializer.DeserializeUndiscriminatedUnionMember<Dictionary<string, object>>(json)
                     };
                 }
                 catch (ResponseBodyDeserializer.MissingMemberException)
                 {
-                    fallbackCandidates.Add((typeof(Dictionary<string, object>), new Input(InputType.MapOfAny), "MapOfAny"));
+                    fallbackCandidates.Add((typeof(Dictionary<string, object>), new Replace(ReplaceType.MapOfAny), "MapOfAny"));
                 }
                 catch (ResponseBodyDeserializer.DeserializationException)
                 {
@@ -255,8 +252,8 @@ namespace Styra.Opa.OpenApi.Models.Components
                     writer.WriteRawValue("null");
                     return;
                 }
-                Input res = (Input)value;
-                if (InputType.FromString(res.Type).Equals(InputType.Null))
+                Replace res = (Replace)value;
+                if (ReplaceType.FromString(res.Type).Equals(ReplaceType.Null))
                 {
                     writer.WriteRawValue("null");
                     return;

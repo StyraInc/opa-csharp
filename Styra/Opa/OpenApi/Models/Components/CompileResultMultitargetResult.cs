@@ -10,23 +10,20 @@
 namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
-    using Styra.Opa.OpenApi.Models.Errors;
+    using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
     using System.Collections.Generic;
     
-    public class ServerError
+    /// <summary>
+    /// The partially evaluated result of the query in each target dialect.
+    /// </summary>
+    public class CompileResultMultitargetResult
     {
 
-        [JsonProperty("code")]
-        public string Code { get; set; } = default!;
+        [JsonProperty("targets")]
+        public Targets? Targets { get; set; }
 
-        [JsonProperty("message")]
-        public string Message { get; set; } = default!;
-
-        [JsonProperty("errors")]
-        public List<ServerErrorErrors>? Errors { get; set; }
-
-        [JsonProperty("decision_id")]
-        public string? DecisionId { get; set; }
+        [JsonProperty("additionalProperties")]
+        public Dictionary<string, object>? AdditionalProperties { get; set; }
     }
 }

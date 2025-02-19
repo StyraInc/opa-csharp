@@ -37,4 +37,7 @@ sed -i "s|(docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput)|($2/a
 sed -i "s|(docs/sdks/opaapiclient/README.md#executebatchpolicywithinput)|($2/api/Styra.Opa.OpenApi.OpaApiClient.html#Styra_Opa_OpenApi_OpaApiClient_ExecuteBatchPolicyWithInputAsync_Styra_Opa_OpenApi_Models_Requests_ExecuteBatchPolicyWithInputRequest_)|g" $1
 # Health
 sed -i "s|(docs/sdks/opaapiclient/README.md#health)|($2/api/Styra.Opa.OpenApi.OpaApiClient.html#Styra_Opa_OpenApi_OpaApiClient_HealthAsync_System_Nullable_System_Boolean__System_Nullable_System_Boolean__System_Collections_Generic_List_System_String__)|g" $1
+# TODO: Replace CompileQuery with the ExecuteXXX version when available.
+# CompileQueryWIthPartialEvaluationRequest
+sed -i "s|(docs/sdks/opaapiclient/README.md#compilequerywithpartialevaluation)|($2/api/Styra.Opa.OpenApi.Models.Requests.CompileQueryWithPartialEvaluationRequest.html)|g" $1
 

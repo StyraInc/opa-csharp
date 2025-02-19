@@ -134,13 +134,18 @@ For more information about the API: [Enterprise OPA documentation](https://docs.
 
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
+<!-- $toc-max-depth=2 -->
+* [OPA C# SDK](#opa-c-sdk)
+  * [SDK Installation](#sdk-installation)
+  * [SDK Example Usage (high-level)](#sdk-example-usage-high-level)
+* [OPA OpenAPI SDK (low-level)](#opa-openapi-sdk-low-level)
+  * [SDK Example Usage](#sdk-example-usage)
+  * [Available Resources and Operations](#available-resources-and-operations)
+  * [Server Selection](#server-selection)
+  * [Error Handling](#error-handling)
+  * [Authentication](#authentication)
+  * [Community](#community)
 
-* [SDK Installation](#sdk-installation)
-* [SDK Example Usage](#sdk-example-usage)
-* [Available Resources and Operations](#available-resources-and-operations)
-* [Error Handling](#error-handling)
-* [Server Selection](#server-selection)
-* [Authentication](#authentication)
 <!-- End Table of Contents [toc] -->
 
 <!-- Start SDK Example Usage [usage] -->
@@ -150,18 +155,16 @@ For more information about the API: [Enterprise OPA documentation](https://docs.
 
 ```csharp
 using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
-using System.Collections.Generic;
 
-var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
+var sdk = new OpaApiClient();
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
         4963.69D
     ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+    acceptEncoding: GzipAcceptEncoding.Gzip
 );
 
 // handle response
@@ -172,10 +175,8 @@ var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
 ```csharp
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Requests;
-using Styra.Opa.OpenApi.Models.Components;
-using System.Collections.Generic;
 
-var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
+var sdk = new OpaApiClient();
 
 ExecutePolicyWithInputRequest req = new ExecutePolicyWithInputRequest() {
     Path = "app/rbac",
@@ -195,11 +196,11 @@ var res = await sdk.ExecutePolicyWithInputAsync(req);
 
 ```csharp
 using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
+using Styra.Opa.OpenApi.Models.Requests;
 using System.Collections.Generic;
 
-var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
+var sdk = new OpaApiClient();
 
 ExecuteBatchPolicyWithInputRequest req = new ExecuteBatchPolicyWithInputRequest() {
     Path = "app/rbac",
@@ -230,6 +231,7 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 * [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
 * [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
 * [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
+* [CompileQueryWithPartialEvaluation](docs/sdks/opaapiclient/README.md#compilequerywithpartialevaluation) - Partially evaluate a query
 * [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
 
 </details>
@@ -240,24 +242,19 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 
 ### Override Server URL Per-Client
 
-The default server can also be overridden globally by passing a URL to the `serverUrl: string` optional parameter when initializing the SDK client instance. For example:
+The default server can be overridden globally by passing a URL to the `serverUrl: string` optional parameter when initializing the SDK client instance. For example:
 ```csharp
 using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
-using System.Collections.Generic;
 
-var sdk = new OpaApiClient(
-    serverUrl: "http://localhost:8181",
-    bearerAuth: "<YOUR_BEARER_TOKEN_HERE>"
-);
+var sdk = new OpaApiClient(serverUrl: "http://localhost:8181");
 
 var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
     input: Input.CreateNumber(
         4963.69D
     ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+    acceptEncoding: GzipAcceptEncoding.Gzip
 );
 
 // handle response
@@ -290,13 +287,10 @@ When custom error responses are specified for an operation, the SDK may also thr
 
 ```csharp
 using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
-using System.Collections.Generic;
-using System;
 using Styra.Opa.OpenApi.Models.Errors;
 
-var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
+var sdk = new OpaApiClient();
 
 try
 {
@@ -305,7 +299,7 @@ try
             4963.69D
         ),
         pretty: false,
-        acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+        acceptEncoding: GzipAcceptEncoding.Gzip
     );
 
     // handle response
@@ -345,9 +339,7 @@ This SDK supports the following security scheme globally:
 To authenticate with the API the `BearerAuth` parameter must be set when initializing the SDK client instance. For example:
 ```csharp
 using Styra.Opa.OpenApi;
-using Styra.Opa.OpenApi.Models.Requests;
 using Styra.Opa.OpenApi.Models.Components;
-using System.Collections.Generic;
 
 var sdk = new OpaApiClient(bearerAuth: "<YOUR_BEARER_TOKEN_HERE>");
 
@@ -356,7 +348,7 @@ var res = await sdk.ExecuteDefaultPolicyWithInputAsync(
         4963.69D
     ),
     pretty: false,
-    acceptEncoding: Styra.Opa.OpenApi.Models.Components.GzipAcceptEncoding.Gzip
+    acceptEncoding: GzipAcceptEncoding.Gzip
 );
 
 // handle response

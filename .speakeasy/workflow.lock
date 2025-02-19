@@ -1,20 +1,21 @@
-speakeasyVersion: 1.441.0
+speakeasyVersion: 1.495.1
 sources:
     openapi:
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:45e57cd464bfe75e6a1de3212b01a6b3be58716eb31fc1eb3691944b60a4769b
-        sourceBlobDigest: sha256:f76f9d1e8be466eef2d0e9612845ce19f9a5f507682e92d7a4355b3b13eaa921
+        sourceRevisionDigest: sha256:582075004620a1628f86563bcafb38834ed8f0c9fa68f4e7cc52e886cfa0929e
+        sourceBlobDigest: sha256:b36d28bd4a763a8c99dfe92a7116e1f5d333fbdb3fc85e7c8f1370149a088d42
         tags:
             - latest
-            - speakeasy-sdk-regen-1731969825
+            - speakeasy-sdk-regen-1739995402
+            - 0.2.0
 targets:
     first-target:
         source: openapi
         sourceNamespace: openapi
-        sourceRevisionDigest: sha256:45e57cd464bfe75e6a1de3212b01a6b3be58716eb31fc1eb3691944b60a4769b
-        sourceBlobDigest: sha256:f76f9d1e8be466eef2d0e9612845ce19f9a5f507682e92d7a4355b3b13eaa921
-        codeSamplesNamespace: openapi-code-samples
-        codeSamplesRevisionDigest: sha256:1bb9d7b51457be2e9a2d59848fc30a4e4a8e7ff3394c0d7aac6fca3dc11d7990
+        sourceRevisionDigest: sha256:582075004620a1628f86563bcafb38834ed8f0c9fa68f4e7cc52e886cfa0929e
+        sourceBlobDigest: sha256:b36d28bd4a763a8c99dfe92a7116e1f5d333fbdb3fc85e7c8f1370149a088d42
+        codeSamplesNamespace: openapi-csharp-code-samples
+        codeSamplesRevisionDigest: sha256:316b1cdd74fb1433637acb802963bd65e2dfcbaec6d937a768c3098498341be5
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -33,5 +34,5 @@ workflow:
                     apiKey: $nuget_api_key
             codeSamples:
                 registry:
-                    location: registry.speakeasyapi.dev/styra/styra/openapi-code-samples
+                    location: registry.speakeasyapi.dev/styra/styra/openapi-csharp-code-samples
                 blocking: false

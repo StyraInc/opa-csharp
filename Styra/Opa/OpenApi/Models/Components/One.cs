@@ -10,23 +10,13 @@
 namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
-    using Styra.Opa.OpenApi.Models.Errors;
+    using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
-    using System.Collections.Generic;
     
-    public class ServerError
+    public class One
     {
 
-        [JsonProperty("code")]
-        public string Code { get; set; } = default!;
-
-        [JsonProperty("message")]
-        public string Message { get; set; } = default!;
-
-        [JsonProperty("errors")]
-        public List<ServerErrorErrors>? Errors { get; set; }
-
-        [JsonProperty("decision_id")]
-        public string? DecisionId { get; set; }
+        [JsonProperty("replace")]
+        public Replace? Replace { get; set; }
     }
 }
