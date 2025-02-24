@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -20,7 +21,7 @@ public class OpaClient
     private readonly OpaApiClient opa;
 
     // Default values to use when creating the SDK instance.
-    private readonly string sdkServerUrl = "http://localhost:8181";
+    private static readonly string sdkServerUrl = "http://localhost:8181";
 
     // Internal: Records whether or not to go to fallback mode immediately for
     // batched queries. It is switched over to false as soon as it gets a 404
@@ -183,8 +184,8 @@ public class OpaClient
     /// <exclude />
     private async Task<(OpaBatchResults, OpaBatchErrors)> queryMachineryBatch(string path, Dictionary<string, Dictionary<string, object>> inputs)
     {
-        OpaBatchResults successResults = new();
-        OpaBatchErrors failureResults = new();
+        OpaBatchResults successResults;
+        OpaBatchErrors failureResults;
 
         // Attempt using the /v1/batch/data endpoint. If we ever receive a 404, then it's a vanilla OPA instance, and we should skip straight to fallback mode.
         if (opaSupportsBatchQueryAPI)
@@ -214,10 +215,15 @@ public class OpaClient
                     // All-success case.
                     case 200:
                         successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults(); // Should not be null here.
+                        failureResults = [];
                         return (successResults, failureResults);
                     // Mixed results case.
                     case 207:
                         var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
+                        var numSuccess = mixedResponses.Values.Where(v => v.Type == ResponsesType.TwoHundred).Count();
+                        var numErr = mixedResponses.Values.Where(v => v.Type == ResponsesType.FiveHundred).Count();
+                        successResults = new(numSuccess);
+                        failureResults = new(numErr);
                         foreach (var (key, value) in mixedResponses)
                         {
                             switch (value.Type.ToString())
@@ -245,6 +251,7 @@ public class OpaClient
             catch (BatchServerError bse)
             {
                 failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
+                successResults = [];
                 return (successResults, failureResults);
             }
             catch (SDKException se) when (se.StatusCode == 404)
@@ -260,6 +267,8 @@ public class OpaClient
         // Fall back to sequential queries against the OPA instance.
         if (!opaSupportsBatchQueryAPI)
         {
+            successResults = [];
+            failureResults = [];
             foreach (var (key, value) in inputs)
             {
                 try
@@ -318,8 +327,8 @@ public class OpaClient
     /// <exclude />
     private async Task<(OpaBatchResultGeneric<T>, OpaBatchErrors)> queryMachineryBatch<T>(string path, Dictionary<string, Dictionary<string, object>> inputs)
     {
-        OpaBatchResultGeneric<T> successResults = new();
-        OpaBatchErrors failureResults = new();
+        OpaBatchResultGeneric<T> successResults;
+        OpaBatchErrors failureResults;
 
         // Attempt using the /v1/batch/data endpoint. If we ever receive a 404, then it's a vanilla OPA instance, and we should skip straight to fallback mode.
         if (opaSupportsBatchQueryAPI)
@@ -349,10 +358,15 @@ public class OpaClient
                     // All-success case.
                     case 200:
                         successResults = res.BatchSuccessfulPolicyEvaluation!.Responses!.ToOpaBatchResults<T>(); // Should not be null here.
+                        failureResults = [];
                         return (successResults, failureResults);
                     // Mixed results case.
                     case 207:
                         var mixedResponses = res.BatchMixedResults?.Responses!; // Should not be null here.
+                        var numSuccess = mixedResponses.Values.Where(v => v.Type == ResponsesType.TwoHundred).Count();
+                        var numErr = mixedResponses.Values.Where(v => v.Type == ResponsesType.FiveHundred).Count();
+                        successResults = new(numSuccess);
+                        failureResults = new(numErr);
                         foreach (var (key, value) in mixedResponses)
                         {
                             switch (value.Type.ToString())
@@ -380,6 +394,7 @@ public class OpaClient
             catch (BatchServerError bse)
             {
                 failureResults = bse.Responses!.ToOpaBatchErrors(); // Should not be null here.
+                successResults = [];
                 return (successResults, failureResults);
             }
             catch (SDKException se) when (se.StatusCode == 404)
@@ -395,6 +410,8 @@ public class OpaClient
         // Fall back to sequential queries against the OPA instance.
         if (!opaSupportsBatchQueryAPI)
         {
+            successResults = [];
+            failureResults = [];
             foreach (var (key, value) in inputs)
             {
                 try

@@ -55,8 +55,8 @@ public class OpaResult
         Result = resp.Result;
     }
 
-    public static explicit operator OpaResult(SuccessfulPolicyResponseWithStatusCode e) => new OpaResult(e);
-    public static explicit operator OpaResult(SuccessfulPolicyResponse e) => new OpaResult(e);
+    public static explicit operator OpaResult(SuccessfulPolicyResponseWithStatusCode e) => new(e);
+    public static explicit operator OpaResult(SuccessfulPolicyResponse e) => new(e);
 
     public override string ToString()
     {
