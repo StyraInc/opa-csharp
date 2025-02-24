@@ -55,8 +55,8 @@ public class OpaError
         Message = err.Message;
     }
 
-    public static explicit operator OpaError(OpenApi.Models.Components.ServerErrorWithStatusCode e) => new OpaError(e);
-    public static explicit operator OpaError(OpenApi.Models.Errors.ServerError e) => new OpaError(e);
+    public static explicit operator OpaError(OpenApi.Models.Components.ServerErrorWithStatusCode e) => new(e);
+    public static explicit operator OpaError(OpenApi.Models.Errors.ServerError e) => new(e);
 
     public override string ToString()
     {
