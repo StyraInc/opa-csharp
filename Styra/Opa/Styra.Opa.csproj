@@ -17,7 +17,7 @@
     <None Include="../../docs/*" Pack="true" PackagePath="/docs" />
 
     <PackageReference Include="newtonsoft.json" Version="13.0.3" />
-    <PackageReference Include="nodatime" Version="3.2.1" />
+    <PackageReference Include="nodatime" Version="3.2.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
   </ItemGroup>
