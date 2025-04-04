@@ -20,12 +20,15 @@ namespace Styra.Opa.OpenApi.Models.Components
         public Ucast? Ucast { get; set; }
 
         [JsonProperty("sqlserver")]
-        public CompileResultMultitargetSqlserver? Sqlserver { get; set; }
+        public Sqlserver? Sqlserver { get; set; }
 
         [JsonProperty("mysql")]
-        public CompileResultMultitargetMysql? Mysql { get; set; }
+        public Mysql? Mysql { get; set; }
 
         [JsonProperty("postgresql")]
-        public CompileResultMultitargetPostgresql? Postgresql { get; set; }
+        public Postgresql? Postgresql { get; set; }
+
+        [JsonProperty("sqlite")]
+        public Sqlite? Sqlite { get; set; }
     }
 }

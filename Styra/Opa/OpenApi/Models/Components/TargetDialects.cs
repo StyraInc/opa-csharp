@@ -29,6 +29,8 @@ namespace Styra.Opa.OpenApi.Models.Components
         SqlPlusMysql,
         [JsonProperty("sql+postgresql")]
         SqlPlusPostgresql,
+        [JsonProperty("sql+sqlite")]
+        SqlPlusSqlite,
     }
 
     public static class TargetDialectsExtension

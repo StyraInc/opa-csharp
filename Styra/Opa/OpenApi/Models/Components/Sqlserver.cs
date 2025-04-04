@@ -9,9 +9,24 @@
 #nullable enable
 namespace Styra.Opa.OpenApi.Models.Components
 {
+    using Newtonsoft.Json;
+    using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
+    using System.Collections.Generic;
     
     public class Sqlserver
     {
+
+        /// <summary>
+        /// String representing the SQL equivalent of the conditions under which the query is true.
+        /// </summary>
+        [JsonProperty("query")]
+        public string? Query { get; set; }
+
+        /// <summary>
+        /// Column masking rules, where the first two nested keys represent the table name and the column name, and the value describes which masking function to use.
+        /// </summary>
+        [JsonProperty("masks")]
+        public Dictionary<string, Dictionary<string, MaskingRule>>? Masks { get; set; }
     }
 }

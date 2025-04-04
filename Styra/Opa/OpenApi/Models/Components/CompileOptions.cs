@@ -35,6 +35,12 @@ namespace Styra.Opa.OpenApi.Models.Components
         [JsonProperty("targetSQLTableMappings")]
         public TargetSQLTableMappings? TargetSQLTableMappings { get; set; }
 
+        /// <summary>
+        /// The Rego rule to evaluate for generating column masks.
+        /// </summary>
+        [JsonProperty("maskRule")]
+        public string? MaskRule { get; set; }
+
         [JsonProperty("additionalProperties")]
         public Dictionary<string, object>? AdditionalProperties { get; set; }
     }

@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 59e61ed3e99e4e9a49731cb41f562cd6
+  docChecksum: 57a6a2a8635b93792761326637cf849b
   docVersion: 0.2.0
-  speakeasyVersion: 1.495.1
-  generationVersion: 2.515.4
-  releaseVersion: 1.5.0
-  configChecksum: ccc0b5f70a3c6f833e6970e32dc05f10
+  speakeasyVersion: 1.528.1
+  generationVersion: 2.565.1
+  releaseVersion: 1.5.1
+  configChecksum: 9ae8bcd924d476e8143435f61f21c6c4
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
@@ -15,7 +15,7 @@ features:
     additionalDependencies: 0.1.0
     additionalProperties: 0.0.1
     constsAndDefaults: 0.0.1
-    core: 3.10.13
+    core: 3.10.14
     examples: 2.81.5
     flattening: 2.81.3
     globalSecurity: 2.83.7
@@ -38,15 +38,11 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Components/CompileResultJSON.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultJSONResult.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultMultitarget.cs
-  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetMysql.cs
-  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetPostgresql.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetQuery.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetResult.cs
-  - Styra/Opa/OpenApi/Models/Components/CompileResultMultitargetSqlserver.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultSQL.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultSQLResult.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultUCAST.cs
-  - Styra/Opa/OpenApi/Models/Components/CompileResultUCASTQuery.cs
   - Styra/Opa/OpenApi/Models/Components/CompileResultUCASTResult.cs
   - Styra/Opa/OpenApi/Models/Components/Errors.cs
   - Styra/Opa/OpenApi/Models/Components/Explain.cs
@@ -68,6 +64,7 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Components/Security.cs
   - Styra/Opa/OpenApi/Models/Components/ServerError.cs
   - Styra/Opa/OpenApi/Models/Components/ServerErrorWithStatusCode.cs
+  - Styra/Opa/OpenApi/Models/Components/Sqlite.cs
   - Styra/Opa/OpenApi/Models/Components/Sqlserver.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponse.cs
   - Styra/Opa/OpenApi/Models/Components/SuccessfulPolicyResponseWithStatusCode.cs
@@ -128,7 +125,8 @@ examples:
       responses:
         "200":
           application/json: "<value>"
-        "400": {}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   executePolicy:
@@ -141,7 +139,8 @@ examples:
       responses:
         "200":
           application/json: {"result": false}
-        "400": {}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   executePolicyWithInput:
@@ -155,8 +154,9 @@ examples:
         application/json: {"input": true}
       responses:
         "200":
-          application/json: {"result": false}
-        "400": {}
+          application/json: {"result": true}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   executeBatchPolicyWithInput:
@@ -172,8 +172,9 @@ examples:
         "200":
           application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": "<value>"}, "key1": {"result": 8210.24}}}
         "207":
-          application/json: {"responses": {"key": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}, "key1": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
-        "400": {}
+          application/json: {"responses": {"key": {"http_status_code": "200", "result": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}, "key1": {"http_status_code": "200", "result": 6919.52, "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"responses": {"key": {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
   compileQueryWithPartialEvaluation:
@@ -183,11 +184,29 @@ examples:
       responses:
         "500":
           application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
+        "200":
+          application/json: {}
+          application/vnd.styra.multitarget+json: {}
+          application/vnd.styra.ucast.all+json: {}
+          application/vnd.styra.ucast.linq+json: {}
+          application/vnd.styra.ucast.minimal+json: {}
+          application/vnd.styra.ucast.prisma+json: {}
+          application/vnd.styra.sql.mysql+json: {}
+          application/vnd.styra.sql.postgresql+json: {}
+          application/vnd.styra.sql.sqlite+json: {}
+          application/vnd.styra.sql.sqlserver+json: {}
+        "400":
+          application/json: {"code": "<value>", "message": "<value>"}
   health:
     speakeasy-default-health:
       parameters:
         query:
           bundles: false
           plugins: false
+      responses:
+        "200":
+          application/json: {}
+        "500":
+          application/json: {"code": "<value>"}
 examplesVersion: 1.0.0
 generatedTests: {}

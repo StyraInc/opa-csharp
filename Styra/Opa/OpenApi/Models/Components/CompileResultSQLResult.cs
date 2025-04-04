@@ -30,7 +30,7 @@ namespace Styra.Opa.OpenApi.Models.Components
         /// Column masking functions, where the key is the column name, and the value describes which masking function to use.
         /// </summary>
         [JsonProperty("masks")]
-        public Dictionary<string, MaskingRule>? Masks { get; set; }
+        public Dictionary<string, Dictionary<string, MaskingRule>>? Masks { get; set; }
 
         [JsonProperty("additionalProperties")]
         public Dictionary<string, object>? AdditionalProperties { get; set; }
