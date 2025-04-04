@@ -108,10 +108,10 @@ namespace Styra.Opa.OpenApi
         public SDKConfig SDKConfiguration { get; private set; }
 
         private const string _language = "csharp";
-        private const string _sdkVersion = "1.5.0";
-        private const string _sdkGenVersion = "2.515.4";
+        private const string _sdkVersion = "1.5.1";
+        private const string _sdkGenVersion = "2.565.1";
         private const string _openapiDocVersion = "0.2.0";
-        private const string _userAgent = "speakeasy-sdk/csharp 1.5.0 2.515.4 0.2.0 Styra.Opa.OpenApi";
+        private const string _userAgent = "speakeasy-sdk/csharp 1.5.1 2.565.1 0.2.0 Styra.Opa.OpenApi";
         private string _serverUrl = "";
         private int _serverIndex = 0;
         private ISpeakeasyHttpClient _client;
@@ -184,7 +184,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("executeDefaultPolicyWithInput", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "executeDefaultPolicyWithInput", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 
@@ -283,7 +283,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("executePolicy", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "executePolicy", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 
@@ -388,7 +388,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("executePolicyWithInput", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "executePolicyWithInput", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 
@@ -493,7 +493,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("executeBatchPolicyWithInput", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "executeBatchPolicyWithInput", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 
@@ -615,7 +615,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("compileQueryWithPartialEvaluation", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "compileQueryWithPartialEvaluation", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 
@@ -749,6 +749,18 @@ namespace Styra.Opa.OpenApi
                     response.CompileResultSQL = obj;
                     return response;
                 }
+                else if(Utilities.IsContentTypeMatch("application/vnd.styra.sql.sqlite+json", contentType))
+                {
+                    var obj = ResponseBodyDeserializer.Deserialize<CompileResultSQL>(await httpResponse.Content.ReadAsStringAsync(), NullValueHandling.Ignore);
+                    var response = new CompileQueryWithPartialEvaluationResponse()
+                    {
+                        StatusCode = responseStatusCode,
+                        ContentType = contentType,
+                        RawResponse = httpResponse
+                    };
+                    response.CompileResultSQL = obj;
+                    return response;
+                }
                 else if(Utilities.IsContentTypeMatch("application/vnd.styra.sql.sqlserver+json", contentType))
                 {
                     var obj = ResponseBodyDeserializer.Deserialize<CompileResultSQL>(await httpResponse.Content.ReadAsStringAsync(), NullValueHandling.Ignore);
@@ -815,7 +827,7 @@ namespace Styra.Opa.OpenApi
                 httpRequest = new SecurityMetadata(_securitySource).Apply(httpRequest);
             }
 
-            var hookCtx = new HookContext("health", null, _securitySource);
+            var hookCtx = new HookContext(baseUrl, "health", new List<string> {  }, _securitySource);
 
             httpRequest = await this.SDKConfiguration.Hooks.BeforeRequestAsync(new BeforeRequestContext(hookCtx), httpRequest);
 

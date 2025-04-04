@@ -10,19 +10,22 @@
 namespace Styra.Opa.OpenApi.Models.Components
 {
     using Newtonsoft.Json;
-    using Styra.Opa.OpenApi.Models.Components;
     using Styra.Opa.OpenApi.Utils;
+    using System.Collections.Generic;
     
     public class TargetSQLTableMappings
     {
 
         [JsonProperty("sqlserver")]
-        public Sqlserver? Sqlserver { get; set; }
+        public Dictionary<string, object>? Sqlserver { get; set; }
 
         [JsonProperty("mysql")]
-        public Mysql? Mysql { get; set; }
+        public Dictionary<string, object>? Mysql { get; set; }
 
         [JsonProperty("postgresql")]
-        public Postgresql? Postgresql { get; set; }
+        public Dictionary<string, object>? Postgresql { get; set; }
+
+        [JsonProperty("sqlite")]
+        public Dictionary<string, object>? Sqlite { get; set; }
     }
 }

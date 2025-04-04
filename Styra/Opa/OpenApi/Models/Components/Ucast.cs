@@ -24,9 +24,9 @@ namespace Styra.Opa.OpenApi.Models.Components
         public CompileResultMultitargetQuery? Query { get; set; }
 
         /// <summary>
-        /// Column masking functions, where the key is the column name, and the value describes which masking function to use.
+        /// Column masking rules, where the first two nested keys represent the entity name and the property name, and the value describes which masking function to use.
         /// </summary>
         [JsonProperty("masks")]
-        public Dictionary<string, MaskingRule>? Masks { get; set; }
+        public Dictionary<string, Dictionary<string, MaskingRule>>? Masks { get; set; }
     }
 }

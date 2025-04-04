@@ -24,13 +24,13 @@ namespace Styra.Opa.OpenApi.Models.Components
         /// UCAST JSON object describing the conditions under which the query is true.
         /// </summary>
         [JsonProperty("query")]
-        public CompileResultUCASTQuery? Query { get; set; }
+        public Dictionary<string, object>? Query { get; set; }
 
         /// <summary>
         /// Column masking rules, where the key is the column name, and the value describes which masking function to use.
         /// </summary>
         [JsonProperty("masks")]
-        public Dictionary<string, MaskingRule>? Masks { get; set; }
+        public Dictionary<string, Dictionary<string, MaskingRule>>? Masks { get; set; }
 
         [JsonProperty("additionalProperties")]
         public Dictionary<string, object>? AdditionalProperties { get; set; }
