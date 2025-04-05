@@ -21,12 +21,6 @@ namespace Styra.Opa.OpenApi.Models.Requests
     {
 
         /// <summary>
-        /// The query to partially evaluate and compile.
-        /// </summary>
-        [JsonProperty("query")]
-        public string Query { get; set; } = default!;
-
-        /// <summary>
         /// Additional options to use during partial evaluation. Only the disableInlining option is currently supported in OPA. Enterprise OPA may support additional options.
         /// </summary>
         [JsonProperty("options")]
