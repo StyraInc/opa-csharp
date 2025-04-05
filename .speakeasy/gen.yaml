@@ -15,7 +15,7 @@ generation:
     oAuth2ClientCredentialsEnabled: false
     oAuth2PasswordEnabled: false
 csharp:
-  version: 1.5.1
+  version: 1.5.2
   additionalDependencies: []
   author: Styra
   clientServerStatusCodesAsErrors: true

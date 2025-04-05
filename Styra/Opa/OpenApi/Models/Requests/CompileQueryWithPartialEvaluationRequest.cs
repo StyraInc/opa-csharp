@@ -17,6 +17,12 @@ namespace Styra.Opa.OpenApi.Models.Requests
     {
 
         /// <summary>
+        /// The path separator is used to access values inside object and array documents. If the path indexes into an array, the server will attempt to convert the array index to an integer. If the path element cannot be converted to an integer, the server will respond with 404.
+        /// </summary>
+        [SpeakeasyMetadata("pathParam:style=simple,explode=false,name=path")]
+        public string Path { get; set; } = "";
+
+        /// <summary>
         /// Indicates the server should respond with a gzip encoded body. The server will send the compressed response only if its length is above `server.encoding.gzip.min_length` value. See the configuration section
         /// </summary>
         [SpeakeasyMetadata("header:style=simple,explode=false,name=Accept-Encoding")]
