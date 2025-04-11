@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 57a6a2a8635b93792761326637cf849b
+  docChecksum: f6d18c51f782926bf37ba7e351609a57
   docVersion: 0.2.0
-  speakeasyVersion: 1.528.1
-  generationVersion: 2.565.1
-  releaseVersion: 1.5.1
-  configChecksum: 9ae8bcd924d476e8143435f61f21c6c4
+  speakeasyVersion: 1.531.2
+  generationVersion: 2.570.0
+  releaseVersion: 1.5.2
+  configChecksum: a5490e17236f8c521a3297447dfb8631
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
@@ -15,7 +15,7 @@ features:
     additionalDependencies: 0.1.0
     additionalProperties: 0.0.1
     constsAndDefaults: 0.0.1
-    core: 3.10.14
+    core: 3.10.15
     examples: 2.81.5
     flattening: 2.81.3
     globalSecurity: 2.83.7
@@ -154,7 +154,7 @@ examples:
         application/json: {"input": true}
       responses:
         "200":
-          application/json: {"result": true}
+          application/json: {"result": false}
         "400":
           application/json: {"code": "<value>", "message": "<value>"}
         "500":
@@ -172,18 +172,21 @@ examples:
         "200":
           application/json: {"batch_decision_id": "1bef6b7d-cd13-4890-bfe1-fd2e8de32189", "responses": {"key": {"result": "<value>"}, "key1": {"result": 8210.24}}}
         "207":
-          application/json: {"responses": {"key": {"http_status_code": "200", "result": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}, "key1": {"http_status_code": "200", "result": 6919.52, "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
+          application/json: {"responses": {"key": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}, "key1": {"http_status_code": "200", "code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
         "400":
           application/json: {"code": "<value>", "message": "<value>"}
         "500":
           application/json: {"responses": {"key": {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}}}
   compileQueryWithPartialEvaluation:
     speakeasy-default-compile-query-with-partial-evaluation:
+      parameters:
+        path:
+          path: "app/rbac"
+        query: {}
+        header: {}
       requestBody:
-        application/json: {"query": "<value>", "input": []}
+        application/json: {"input": []}
       responses:
-        "500":
-          application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
         "200":
           application/json: {}
           application/vnd.styra.multitarget+json: {}
@@ -197,6 +200,8 @@ examples:
           application/vnd.styra.sql.sqlserver+json: {}
         "400":
           application/json: {"code": "<value>", "message": "<value>"}
+        "500":
+          application/json: {"code": "<value>", "message": "<value>", "decision_id": "b84cf736-213c-4932-a8e4-bb5c648f1b4d"}
   health:
     speakeasy-default-health:
       parameters:
@@ -208,5 +213,5 @@ examples:
           application/json: {}
         "500":
           application/json: {"code": "<value>"}
-examplesVersion: 1.0.0
+examplesVersion: 1.0.1
 generatedTests: {}

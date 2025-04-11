@@ -16,12 +16,6 @@ namespace Styra.Opa.OpenApi.Models.Requests
     {
 
         /// <summary>
-        /// The input document
-        /// </summary>
-        [SpeakeasyMetadata("request:mediaType=application/json")]
-        public Input Input { get; set; } = default!;
-
-        /// <summary>
         /// If parameter is `true`, response will formatted for humans.
         /// </summary>
         [SpeakeasyMetadata("queryParam:style=form,explode=true,name=pretty")]
@@ -32,5 +26,11 @@ namespace Styra.Opa.OpenApi.Models.Requests
         /// </summary>
         [SpeakeasyMetadata("header:style=simple,explode=false,name=Accept-Encoding")]
         public GzipAcceptEncoding? AcceptEncoding { get; set; }
+
+        /// <summary>
+        /// The input document
+        /// </summary>
+        [SpeakeasyMetadata("request:mediaType=application/json")]
+        public Input Input { get; set; } = default!;
     }
 }
