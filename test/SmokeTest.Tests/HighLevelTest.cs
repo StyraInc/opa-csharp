@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Styra.Opa;
+using Styra.Opa.Filters;
 using Styra.Opa.OpenApi.Models.Components;
 using Xunit.Abstractions;
 
@@ -9,7 +10,7 @@ namespace SmokeTest.Tests;
 // Used to verify presence of log messages in tests.
 public class ListLogger : ILogger<OpaClient>
 {
-  public List<string> Logs { get; } = new List<string>();
+  public List<string> Logs { get; } = [];
 
   IDisposable ILogger.BeginScope<TState>(TState state)
   {
@@ -20,8 +21,7 @@ public class ListLogger : ILogger<OpaClient>
 
   public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
   {
-    if (formatter == null) { throw new ArgumentNullException(nameof(formatter)); }
-    ;
+    ArgumentNullException.ThrowIfNull(formatter);
 
     var message = formatter(state, exception);
     if (!string.IsNullOrEmpty(message))
@@ -97,6 +97,12 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   {
     var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerEopa.Hostname, _containerEopa.GetMappedPublicPort(8181)).Uri;
     return new OpaClient(serverUrl: requestUri.ToString());
+  }
+
+  private OpaClient GetEOpaClientWithLogger(ILogger<OpaClient> logger)
+  {
+    var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerEopa.Hostname, _containerOpa.GetMappedPublicPort(8181)).Uri;
+    return new OpaClient(serverUrl: requestUri.ToString(), logger: logger);
   }
 
   [Fact]
@@ -848,6 +854,33 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
       { "CCC", expError },
     }, failures);
 
+  }
+
+  [Fact]
+  public async Task GetFiltersTest()
+  {
+    var logger = new ListLogger();
+    var client = GetEOpaClientWithLogger(logger);
+
+    try
+    {
+      var (filters, masks) = await client.GetFilters("filters/include", new Dictionary<string, object>
+    {
+        { "user", "caesar" },
+        { "tenant", new Dictionary<string, object>
+            {
+                { "id", 2 },
+                { "name", "acmecorp" }
+            }
+        },
+    });
+      Assert.NotNull(masks);
+      Assert.NotEqual(new Filters() { Type = "unknown", Op = "unknown" }, filters);
+    }
+    finally
+    {
+      Console.WriteLine(JsonConvert.SerializeObject(logger.Logs));
+    }
   }
 
   [Fact]

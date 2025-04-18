@@ -6,6 +6,14 @@ namespace Styra.Opa;
 
 internal static partial class LogMessages
 {
+
+    [LoggerMessage(
+        Message = "DEBUG: {message}",
+        Level = LogLevel.Debug)]
+    internal static partial void LogDebug(
+        this ILogger logger,
+        string message);
+
     [LoggerMessage(
         Message = "Batch Query API unavailable, falling back to sequential OPA queries",
         Level = LogLevel.Warning)]

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
@@ -22,6 +24,7 @@ public class OpaClient
 
     // Default values to use when creating the SDK instance.
     private static readonly string sdkServerUrl = "http://localhost:8181";
+    private readonly string _serverUrl;
 
     // Internal: Records whether or not to go to fallback mode immediately for
     // batched queries. It is switched over to false as soon as it gets a 404
@@ -49,6 +52,7 @@ public class OpaClient
     public OpaClient(string? serverUrl = null, ILogger<OpaClient>? logger = null, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         opa = new OpaApiClient(serverIndex: 0, serverUrl: serverUrl ?? sdkServerUrl);
+        _serverUrl = serverUrl?.TrimEnd('/') ?? sdkServerUrl;
         _logger = logger ?? new NullLogger<OpaClient>();
         _jsonSerializerSettings = jsonSerializerSettings;
     }
@@ -468,6 +472,122 @@ public class OpaClient
         };
 
         return await opa.ExecutePolicyWithInputAsync(req);
+    }
+
+    /// <summary>
+    /// Uses the Enterprise OPA Compile API to partially evaluate a data
+    /// filter policy. Results are returned as a tuple of the form
+    /// (data filters (UCAST nodes or SQL), column masking rules (if present)).
+    /// </summary>
+    /// <param name="path">The rule to use for generating data filters. (Example: "app/rbac")</param>
+    /// <param name="input">The input C# object OPA will use for evaluating the data filter policy.</param>
+    /// <param name="unknowns">The unknowns to use in partial evaluation of the data filter policy.</param>
+    /// <param name="tableMappings">The mappings between tables and columns that should be used for generating the data filters.</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
+    /// <returns>A ValueTuple of data filters (UCAST nodes or SQL) and column masking rules (if present).</returns>
+    /// <exception cref="OpaException"></exception>
+    public async Task<(Filters.Filters, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    {
+        if (input is null)
+        {
+            return await CompileMachinery(path, Input.CreateNull(), unknowns, tableMappings);
+        }
+        // Round-trip through JSON conversion, such that it becomes an Input.
+        var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+
+        return await CompileMachinery(path, roundTrippedInput, unknowns, tableMappings);
+    }
+
+    /// <exclude />
+    // Note(philip): This method allows us to hide the implementation of the
+    // `/v1/compile/{path}` query, and will be swapped out for a call into the
+    // Speakeasy-generated SDK once upstream bugfixes land.
+    private async Task<(Filters.Filters, Filters.ColumnMasks?)> CompileMachinery(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null)
+    {
+        // Build URL manually, emulating the query parameter wrangling Speakeasy would normally do for us.
+        var compileURL = $"{_serverUrl}/v1/compile/{path}";
+        var urlParams = new Dictionary<string, string>
+        {
+            { "pretty", requestPretty.ToString() },
+            { "provenance", requestProvenance.ToString() },
+            { "explain", requestExplain.ToString() },
+            { "metrics", requestMetrics.ToString() },
+            { "instrument", requestInstrument.ToString() },
+            { "strict-builtin-errors" ,requestStrictBuiltinErrors.ToString() },
+        };
+        string queryString = "?" + string.Join("&", urlParams.Select(p => $"{HttpUtility.UrlEncode(p.Key)}={HttpUtility.UrlEncode(p.Value)}"));
+        if (queryString != "?") { compileURL += queryString; }
+        _logger.LogDebug(string.Format("{0}", compileURL));
+
+        // TODO: Decide if we want to do a polymorphism about this, a discriminated union type about it, or something else entirely.
+        // The problem is that we need to make sure we deserialize into something sensible, so we will at a minimum need a response type, even if it's ugly. Ugh.
+
+        try
+        {
+            using var client = new HttpClient();
+            // Set custom Accept header
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.styra.ucast.linq+json"));
+
+            // Serialize request object to JSON
+            var jsonContent = JsonConvert.SerializeObject(input);
+            _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+            // Send the POST request asynchronously
+            var response = await client.PostAsync($"{_serverUrl}/v1/compile/{path}", content);
+
+            // Read response content
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug(string.Format("{0}", responseContent)); // DEBUG
+
+            // Handle different status codes
+            if (response.IsSuccessStatusCode) // 200 OK
+            {
+                // Deserialize the successful response
+                var result = JsonConvert.DeserializeObject<CompileResultUCAST>(responseContent);
+                if (result is null)
+                {
+                    LogMessages.LogQueryNullResult(_logger, path);
+                    var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with a result", path);
+                    throw new OpaException(msg);
+                }
+                // Handle null result cases.
+                if (result.Result is null)
+                {
+                    LogMessages.LogQueryNullResult(_logger, path);
+                    var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
+                    throw new OpaException(msg);
+                }
+                var query = JsonConvert.DeserializeObject<Filters.Filters>(JsonConvert.SerializeObject(result.Result.Query));
+                if (query is null)
+                {
+                    LogMessages.LogQueryNullResult(_logger, path);
+                    var msg = string.Format("executing policy at '{0}' succeeded, but UCAST data filter was malformed", path);
+                    throw new OpaException(msg);
+                }
+                var masks = JsonConvert.DeserializeObject<Filters.ColumnMasks>(JsonConvert.SerializeObject(result.Result.Masks));
+                return (query, masks);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) // 400
+            {
+                throw new Exception($"Bad request: {responseContent}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError) // 500
+            {
+                throw new Exception($"Server error: {responseContent}");
+            }
+            else
+            {
+                throw new Exception($"Unexpected status code: {response.StatusCode}, Response: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error during HTTP request: {ex.Message}", ex);
+        }
     }
 
     /// <exclude />
