@@ -113,7 +113,7 @@ public static class DictionaryExtensions
         var output = new OpaBatchResultGeneric<T>(responses.Count);
         foreach (var kvp in responses)
         {
-            output[kvp.Key] = OpaClient.convertResult<T>(kvp.Value.Result!);
+            output[kvp.Key] = OpaClient.ConvertResult<T>(kvp.Value.Result!);
         }
         return output;
     }
