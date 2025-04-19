@@ -62,6 +62,6 @@ namespace Styra.Opa.OpenApi.Models.Requests
         /// The query, input, and other settings for partial evaluation.
         /// </summary>
         [SpeakeasyMetadata("request:mediaType=application/json")]
-        public CompileQueryWithPartialEvaluationRequestBody RequestBody { get; set; } = default!;
+        public CompileQueryWithPartialEvaluationRequestApplicationJSONRequestBody RequestBody { get; set; } = default!;
     }
 }

@@ -17,7 +17,7 @@ namespace Styra.Opa.OpenApi.Models.Requests
     /// <summary>
     /// The query, input, and other settings for partial evaluation.
     /// </summary>
-    public class CompileQueryWithPartialEvaluationRequestBody
+    public class CompileQueryWithPartialEvaluationRequestApplicationJSONRequestBody
     {
 
         /// <summary>
