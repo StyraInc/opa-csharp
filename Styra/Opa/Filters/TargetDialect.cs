@@ -7,21 +7,21 @@ namespace Styra.Opa.Filters;
 public enum TargetDialects
 {
     [JsonProperty("ucast+all")]
-    UcastPlusAll,
+    UcastAll,
     [JsonProperty("ucast+minimal")]
-    UcastPlusMinimal,
+    UcastMinimal,
     [JsonProperty("ucast+prisma")]
-    UcastPlusPrisma,
+    UcastPrisma,
     [JsonProperty("ucast+linq")]
-    UcastPlusLinq,
+    UcastLinq,
     [JsonProperty("sql+sqlserver")]
-    SqlPlusSqlserver,
+    SqlSqlserver,
     [JsonProperty("sql+mysql")]
-    SqlPlusMysql,
+    SqlMysql,
     [JsonProperty("sql+postgresql")]
-    SqlPlusPostgresql,
+    SqlPostgresql,
     [JsonProperty("sql+sqlite")]
-    SqlPlusSqlite,
+    SqlSqlite,
 }
 
 public static class TargetDialectsExtension
@@ -53,5 +53,21 @@ public static class TargetDialectsExtension
         }
 
         throw new Exception($"Unknown value {value} for enum TargetDialects");
+    }
+
+    public static string ToAcceptHeader(this TargetDialects value)
+    {
+        return value switch
+        {
+            TargetDialects.UcastAll => "application/vnd.styra.ucast.all+json",
+            TargetDialects.UcastMinimal => "application/vnd.styra.ucast.minimal+json",
+            TargetDialects.UcastPrisma => "application/vnd.styra.ucast.prisma+json",
+            TargetDialects.UcastLinq => "application/vnd.styra.ucast.linq+json",
+            TargetDialects.SqlSqlserver => "application/vnd.styra.sql.sqlserver+json",
+            TargetDialects.SqlMysql => "application/vnd.styra.sql.mysql+json",
+            TargetDialects.SqlPostgresql => "application/vnd.styra.sql.postgresql+json",
+            TargetDialects.SqlSqlite => "application/vnd.styra.sql.sqlite+json",
+            _ => "application/json",
+        };
     }
 }

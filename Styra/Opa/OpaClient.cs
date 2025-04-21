@@ -7,6 +7,7 @@ using System.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
+using Styra.Opa.Filters;
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Components;
 using Styra.Opa.OpenApi.Models.Errors;
@@ -486,7 +487,7 @@ public class OpaClient
     /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
     /// <returns>A ValueTuple of data filters (UCAST nodes or SQL) and column masking rules (if present).</returns>
     /// <exception cref="OpaException"></exception>
-    public async Task<(Filters.Filters, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    public async Task<(Filters.IFilter, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         if (input is null)
         {
@@ -503,7 +504,7 @@ public class OpaClient
     // Note(philip): This method allows us to hide the implementation of the
     // `/v1/compile/{path}` query, and will be swapped out for a call into the
     // Speakeasy-generated SDK once upstream bugfixes land.
-    private async Task<(Filters.Filters, Filters.ColumnMasks?)> CompileMachinery(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null)
+    private async Task<(Filters.IFilter, Filters.ColumnMasks?)> CompileMachinery(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
     {
         // Build URL manually, emulating the query parameter wrangling Speakeasy would normally do for us.
         var compileURL = $"{_serverUrl}/v1/compile/{path}";
@@ -520,8 +521,16 @@ public class OpaClient
         if (queryString != "?") { compileURL += queryString; }
         _logger.LogDebug(string.Format("{0}", compileURL));
 
-        // TODO: Decide if we want to do a polymorphism about this, a discriminated union type about it, or something else entirely.
-        // The problem is that we need to make sure we deserialize into something sensible, so we will at a minimum need a response type, even if it's ugly. Ugh.
+        // Default dialect is `ucast+linq`.
+        targetDialects ??= [Filters.TargetDialects.UcastLinq];
+        var isMultiTarget = targetDialects.Count > 1;
+
+        // Decide the Accept header, based on dialect choice.
+        string acceptHeader = targetDialects.Count switch
+        {
+            1 => targetDialects[0].ToAcceptHeader(),
+            _ => "application/vnd.styra.multitarget+json",
+        };
 
         try
         {
@@ -529,14 +538,22 @@ public class OpaClient
             // Set custom Accept header
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
-                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.styra.ucast.linq+json"));
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptHeader));
 
             // Serialize request object to JSON
             var reqObj = new Dictionary<string, object> {
                 { "input", input },
             };
             if (unknowns is not null) { reqObj.Add("unknowns", unknowns); }
-            if (tableMappings is not null) { reqObj.Add("options", new Dictionary<string, object>() { { "tableMappings", tableMappings } }); }
+            // Handle options cases:
+            if (tableMappings is not null || targetDialects.Count > 1)
+            {
+                var options = new Dictionary<string, object>(2);
+                if (tableMappings is not null) { options.Add("tableMappings", tableMappings); }
+                if (targetDialects.Count > 1) { options.Add("targetDialects", targetDialects); }
+                reqObj.Add("options", options);
+            }
+
             var jsonContent = JsonConvert.SerializeObject(reqObj);
 
             _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
@@ -567,7 +584,12 @@ public class OpaClient
                     var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
                     throw new OpaException(msg);
                 }
-                var query = JsonConvert.DeserializeObject<Filters.Filters>(JsonConvert.SerializeObject(result.Result.Query));
+
+                // if (!isMultiTarget)
+                // {
+                // }
+                Filters.IFilter? query = JsonConvert.DeserializeObject<Filters.UCASTFilter>(JsonConvert.SerializeObject(result.Result.Query));
+
                 if (query is null)
                 {
                     LogMessages.LogQueryNullResult(_logger, path);

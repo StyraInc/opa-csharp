@@ -873,7 +873,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     });
 
     // Check that the data filters and column masks showed up correctly:
-    Assert.Equivalent(new Filters() { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
+    Assert.Equivalent(new UCASTFilter() { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
     Assert.Equivalent(new Dictionary<string, object>() {
       { "tickets", new Dictionary<string, object>() {
         {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },
