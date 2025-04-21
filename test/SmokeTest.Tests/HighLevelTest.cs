@@ -101,7 +101,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
 
   private OpaClient GetEOpaClientWithLogger(ILogger<OpaClient> logger)
   {
-    var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerEopa.Hostname, _containerOpa.GetMappedPublicPort(8181)).Uri;
+    var requestUri = new UriBuilder(Uri.UriSchemeHttp, _containerEopa.Hostname, _containerEopa.GetMappedPublicPort(8181)).Uri;
     return new OpaClient(serverUrl: requestUri.ToString(), logger: logger);
   }
 
@@ -859,12 +859,9 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   [Fact]
   public async Task GetFiltersTest()
   {
-    var logger = new ListLogger();
-    var client = GetEOpaClientWithLogger(logger);
+    var client = GetEOpaClient();
 
-    try
-    {
-      var (filters, masks) = await client.GetFilters("filters/include", new Dictionary<string, object>
+    var (filters, masks) = await client.GetFilters("filters/include", new Dictionary<string, object>
     {
         { "user", "caesar" },
         { "tenant", new Dictionary<string, object>
@@ -874,13 +871,14 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
             }
         },
     });
-      Assert.NotNull(masks);
-      Assert.NotEqual(new Filters() { Type = "unknown", Op = "unknown" }, filters);
-    }
-    finally
-    {
-      Console.WriteLine(JsonConvert.SerializeObject(logger.Logs));
-    }
+
+    // Check that the data filters and column masks showed up correctly:
+    Assert.Equivalent(new Filters() { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
+    Assert.Equivalent(new Dictionary<string, object>() {
+      { "tickets", new Dictionary<string, object>() {
+        {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },
+      }},
+    }, masks);
   }
 
   [Fact]

@@ -509,12 +509,12 @@ public class OpaClient
         var compileURL = $"{_serverUrl}/v1/compile/{path}";
         var urlParams = new Dictionary<string, string>
         {
-            { "pretty", requestPretty.ToString() },
-            { "provenance", requestProvenance.ToString() },
-            { "explain", requestExplain.ToString() },
-            { "metrics", requestMetrics.ToString() },
-            { "instrument", requestInstrument.ToString() },
-            { "strict-builtin-errors" ,requestStrictBuiltinErrors.ToString() },
+            { "pretty", requestPretty.ToString().ToLower() },
+            { "provenance", requestProvenance.ToString().ToLower() },
+            { "explain", requestExplain.ToString().ToLower() },
+            { "metrics", requestMetrics.ToString().ToLower() },
+            { "instrument", requestInstrument.ToString().ToLower() },
+            { "strict-builtin-errors" ,requestStrictBuiltinErrors.ToString().ToLower() },
         };
         string queryString = "?" + string.Join("&", urlParams.Select(p => $"{HttpUtility.UrlEncode(p.Key)}={HttpUtility.UrlEncode(p.Value)}"));
         if (queryString != "?") { compileURL += queryString; }
@@ -532,12 +532,18 @@ public class OpaClient
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/vnd.styra.ucast.linq+json"));
 
             // Serialize request object to JSON
-            var jsonContent = JsonConvert.SerializeObject(input);
+            var reqObj = new Dictionary<string, object> {
+                { "input", input },
+            };
+            if (unknowns is not null) { reqObj.Add("unknowns", unknowns); }
+            if (tableMappings is not null) { reqObj.Add("options", new Dictionary<string, object>() { { "tableMappings", tableMappings } }); }
+            var jsonContent = JsonConvert.SerializeObject(reqObj);
+
             _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
             // Send the POST request asynchronously
-            var response = await client.PostAsync($"{_serverUrl}/v1/compile/{path}", content);
+            var response = await client.PostAsync(compileURL, content);
 
             // Read response content
             var responseContent = await response.Content.ReadAsStringAsync();
