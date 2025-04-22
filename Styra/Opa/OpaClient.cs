@@ -484,27 +484,199 @@ public class OpaClient
     /// <param name="input">The input C# object OPA will use for evaluating the data filter policy.</param>
     /// <param name="unknowns">The unknowns to use in partial evaluation of the data filter policy.</param>
     /// <param name="tableMappings">The mappings between tables and columns that should be used for generating the data filters.</param>
+    /// <param name="targetDialect">The specific dialect of data filters to generate. (default: UCAST-LINQ dialect)</param>
     /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
     /// <returns>A ValueTuple of data filters (UCAST nodes or SQL) and column masking rules (if present).</returns>
     /// <exception cref="OpaException"></exception>
-    public async Task<(Filters.IFilter, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    public async Task<(Filters.IFilter, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         if (input is null)
         {
-            return await CompileMachinery(path, Input.CreateNull(), unknowns, tableMappings);
+            return await CompileMachinerySingle(path, Input.CreateNull(), unknowns, tableMappings, targetDialect);
         }
         // Round-trip through JSON conversion, such that it becomes an Input.
         var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
         var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
 
-        return await CompileMachinery(path, roundTrippedInput, unknowns, tableMappings);
+        return await CompileMachinerySingle(path, roundTrippedInput, unknowns, tableMappings, targetDialect);
+    }
+
+    public async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks)> GetMultipleFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    {
+        if (input is null)
+        {
+            return await CompileMachineryMulti(path, Input.CreateNull(), unknowns, tableMappings, targetDialects);
+        }
+        // Round-trip through JSON conversion, such that it becomes an Input.
+        var jsonInput = JsonConvert.SerializeObject(input, jsonSerializerSettings ?? _jsonSerializerSettings);
+        var roundTrippedInput = JsonConvert.DeserializeObject<Input>(jsonInput, jsonSerializerSettings ?? _jsonSerializerSettings) ?? throw new OpaException(string.Format("could not convert object type to a valid OPA input"));
+
+        return await CompileMachineryMulti(path, roundTrippedInput, unknowns, tableMappings, targetDialects);
     }
 
     /// <exclude />
     // Note(philip): This method allows us to hide the implementation of the
     // `/v1/compile/{path}` query, and will be swapped out for a call into the
     // Speakeasy-generated SDK once upstream bugfixes land.
-    private async Task<(Filters.IFilter, Filters.ColumnMasks?)> CompileMachinery(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
+    private async Task<(Filters.IFilter, Filters.ColumnMasks?)> CompileMachinerySingle(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq)
+    {
+        var (compileURL, jsonContent, acceptHeader) = BuildCompileRequest(path, input, unknowns, tableMappings, [targetDialect]);
+
+        try
+        {
+            using var client = new HttpClient();
+            // Set custom Accept header
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptHeader));
+
+            _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+            // Send the POST request asynchronously
+            var response = await client.PostAsync(compileURL, content);
+
+            // Read response content
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug(string.Format("{0}", responseContent)); // DEBUG
+
+            // Handle different status codes
+            if (response.IsSuccessStatusCode) // 200 OK
+            {
+                return targetDialect switch
+                {
+                    Filters.TargetDialects.UcastAll => BuildCompileResultUCAST(path, responseContent, targetDialect),
+                    Filters.TargetDialects.UcastMinimal => BuildCompileResultUCAST(path, responseContent, targetDialect),
+                    Filters.TargetDialects.UcastPrisma => BuildCompileResultUCAST(path, responseContent, targetDialect),
+                    Filters.TargetDialects.UcastLinq => BuildCompileResultUCAST(path, responseContent, targetDialect),
+                    Filters.TargetDialects.SqlSqlserver => BuildCompileResultSQL(path, responseContent, targetDialect),
+                    Filters.TargetDialects.SqlMysql => BuildCompileResultSQL(path, responseContent, targetDialect),
+                    Filters.TargetDialects.SqlPostgresql => BuildCompileResultSQL(path, responseContent, targetDialect),
+                    Filters.TargetDialects.SqlSqlite => BuildCompileResultSQL(path, responseContent, targetDialect),
+                    _ => throw new NotImplementedException(),
+                };
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) // 400
+            {
+                throw new Exception($"Bad request: {responseContent}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError) // 500
+            {
+                throw new Exception($"Server error: {responseContent}");
+            }
+            else
+            {
+                throw new Exception($"Unexpected status code: {response.StatusCode}, Response: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error during HTTP request: {ex.Message}", ex);
+        }
+    }
+
+    /// <exclude />
+    // Note(philip): This method allows us to hide the implementation of the
+    // `/v1/compile/{path}` query, and will be swapped out for a call into the
+    // Speakeasy-generated SDK once upstream bugfixes land.
+    private async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks?)> CompileMachineryMulti(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
+    {
+        // Default dialect is UCAST-Linq.
+        targetDialects ??= [Filters.TargetDialects.UcastLinq];
+
+        var (compileURL, jsonContent, acceptHeader) = BuildCompileRequest(path, input, unknowns, tableMappings, targetDialects);
+
+        try
+        {
+            using var client = new HttpClient();
+            // Set custom Accept header
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptHeader));
+
+            _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
+            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+            // Send the POST request asynchronously
+            var response = await client.PostAsync(compileURL, content);
+
+            // Read response content
+            var responseContent = await response.Content.ReadAsStringAsync();
+            _logger.LogDebug(string.Format("{0}", responseContent)); // DEBUG
+
+            // Handle different status codes
+            if (response.IsSuccessStatusCode) // 200 OK
+            {
+                var result = JsonConvert.DeserializeObject<CompileResultMultitargetRecord>(responseContent);
+                if (result is null)
+                {
+                    LogMessages.LogQueryNullResult(_logger, path);
+                    var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
+                    throw new OpaException(msg);
+                }
+
+                // Build up output dictionary.
+                Dictionary<string, Filters.IFilter> queries = new(targetDialects.Count);
+                ColumnMasks? masks = null;
+                foreach (var dialect in targetDialects)
+                {
+                    switch (dialect)
+                    {
+                        case Filters.TargetDialects.UcastAll:
+                        case Filters.TargetDialects.UcastMinimal:
+                        case Filters.TargetDialects.UcastPrisma:
+                        case Filters.TargetDialects.UcastLinq:
+                            if (result.Result.Ucast is not null)
+                            {
+                                queries["ucast"] = (UCASTFilter)result.Result.Ucast.Query;
+                            }
+                            masks ??= result.Result.Ucast?.Masks;
+                            break;
+                        case Filters.TargetDialects.SqlPostgresql:
+
+                            queries["postgresql"] = new SQLFilter(result.Result.PostgreSql?.Query ?? "", "postgresql");
+                            masks ??= result.Result.PostgreSql?.Masks;
+                            break;
+                        case Filters.TargetDialects.SqlMysql:
+
+                            queries["mysql"] = new SQLFilter(result.Result.MySql?.Query ?? "", "mysql");
+                            masks ??= result.Result.MySql?.Masks;
+                            break;
+                        case Filters.TargetDialects.SqlSqlserver:
+
+                            queries["sqlserver"] = new SQLFilter(result.Result.SqlServer?.Query ?? "", "sqlserver");
+                            masks ??= result.Result.SqlServer?.Masks;
+                            break;
+                        case Filters.TargetDialects.SqlSqlite:
+
+                            queries["sqlserver"] = new SQLFilter(result.Result.Sqlite?.Query ?? "", "sqlserver");
+                            masks ??= result.Result.Sqlite?.Masks;
+                            break;
+                    }
+                }
+                return (queries, masks);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) // 400
+            {
+                throw new Exception($"Bad request: {responseContent}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError) // 500
+            {
+                throw new Exception($"Server error: {responseContent}");
+            }
+            else
+            {
+                throw new Exception($"Unexpected status code: {response.StatusCode}, Response: {responseContent}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error during HTTP request: {ex.Message}", ex);
+        }
+    }
+
+    // URL, JSON content, accept header
+    private (string, string, string) BuildCompileRequest(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
     {
         // Build URL manually, emulating the query parameter wrangling Speakeasy would normally do for us.
         var compileURL = $"{_serverUrl}/v1/compile/{path}";
@@ -532,90 +704,69 @@ public class OpaClient
             _ => "application/vnd.styra.multitarget+json",
         };
 
-        try
+        // Serialize request object to JSON
+        var reqObj = new Dictionary<string, object> {
+            { "input", input },
+        };
+        if (unknowns is not null) { reqObj.Add("unknowns", unknowns); }
+        // Handle options cases:
+        if (tableMappings is not null || targetDialects.Count > 1)
         {
-            using var client = new HttpClient();
-            // Set custom Accept header
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(acceptHeader));
-
-            // Serialize request object to JSON
-            var reqObj = new Dictionary<string, object> {
-                { "input", input },
-            };
-            if (unknowns is not null) { reqObj.Add("unknowns", unknowns); }
-            // Handle options cases:
-            if (tableMappings is not null || targetDialects.Count > 1)
-            {
-                var options = new Dictionary<string, object>(2);
-                if (tableMappings is not null) { options.Add("tableMappings", tableMappings); }
-                if (targetDialects.Count > 1) { options.Add("targetDialects", targetDialects); }
-                reqObj.Add("options", options);
-            }
-
-            var jsonContent = JsonConvert.SerializeObject(reqObj);
-
-            _logger.LogDebug(string.Format("{0}", jsonContent)); // DEBUG
-            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
-
-            // Send the POST request asynchronously
-            var response = await client.PostAsync(compileURL, content);
-
-            // Read response content
-            var responseContent = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug(string.Format("{0}", responseContent)); // DEBUG
-
-            // Handle different status codes
-            if (response.IsSuccessStatusCode) // 200 OK
-            {
-                // Deserialize the successful response
-                var result = JsonConvert.DeserializeObject<CompileResultUCAST>(responseContent);
-                if (result is null)
-                {
-                    LogMessages.LogQueryNullResult(_logger, path);
-                    var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with a result", path);
-                    throw new OpaException(msg);
-                }
-                // Handle null result cases.
-                if (result.Result is null)
-                {
-                    LogMessages.LogQueryNullResult(_logger, path);
-                    var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
-                    throw new OpaException(msg);
-                }
-
-                // if (!isMultiTarget)
-                // {
-                // }
-                Filters.IFilter? query = JsonConvert.DeserializeObject<Filters.UCASTFilter>(JsonConvert.SerializeObject(result.Result.Query));
-
-                if (query is null)
-                {
-                    LogMessages.LogQueryNullResult(_logger, path);
-                    var msg = string.Format("executing policy at '{0}' succeeded, but UCAST data filter was malformed", path);
-                    throw new OpaException(msg);
-                }
-                var masks = JsonConvert.DeserializeObject<Filters.ColumnMasks>(JsonConvert.SerializeObject(result.Result.Masks));
-                return (query, masks);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) // 400
-            {
-                throw new Exception($"Bad request: {responseContent}");
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError) // 500
-            {
-                throw new Exception($"Server error: {responseContent}");
-            }
-            else
-            {
-                throw new Exception($"Unexpected status code: {response.StatusCode}, Response: {responseContent}");
-            }
+            var options = new Dictionary<string, object>(2);
+            if (tableMappings is not null) { options.Add("tableMappings", tableMappings); }
+            if (targetDialects.Count > 1) { options.Add("targetDialects", targetDialects); }
+            reqObj.Add("options", options);
         }
-        catch (Exception ex)
+
+        var jsonContent = JsonConvert.SerializeObject(reqObj);
+
+        return (compileURL, jsonContent, acceptHeader);
+    }
+
+    private (Filters.IFilter, Filters.ColumnMasks?) BuildCompileResultUCAST(string path, string response, Filters.TargetDialects dialect)
+    {
+        var result = JsonConvert.DeserializeObject<CompileResultUCASTRecord>(response);
+        if (result is null)
         {
-            throw new Exception($"Error during HTTP request: {ex.Message}", ex);
+            LogMessages.LogQueryNullResult(_logger, path);
+            var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
+            throw new OpaException(msg);
         }
+
+        var masks = result.Result.Masks;
+        Filters.IFilter? query = dialect switch
+        {
+            Filters.TargetDialects.UcastAll => (UCASTFilter)result.Result.Query,
+            Filters.TargetDialects.UcastMinimal => (UCASTFilter)result.Result.Query,
+            Filters.TargetDialects.UcastPrisma => (UCASTFilter)result.Result.Query,
+            Filters.TargetDialects.UcastLinq => (UCASTFilter)result.Result.Query,
+            _ => throw new NotImplementedException(),
+        };
+
+        return (query, result.Result.Masks);
+    }
+
+    private (Filters.IFilter, Filters.ColumnMasks?) BuildCompileResultSQL(string path, string response, Filters.TargetDialects dialect)
+    {
+        var result = JsonConvert.DeserializeObject<CompileResultSQLRecord>(response);
+        if (result is null)
+        {
+            LogMessages.LogQueryNullResult(_logger, path);
+            var msg = string.Format("executing policy at '{0}' succeeded, but OPA did not reply with valid data filters", path);
+            throw new OpaException(msg);
+        }
+
+        var masks = result.Result.Masks;
+        Filters.IFilter? query = dialect switch
+        {
+            Filters.TargetDialects.SqlPostgresql => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
+            Filters.TargetDialects.SqlMysql => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
+            Filters.TargetDialects.SqlSqlserver => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
+            Filters.TargetDialects.SqlSqlite => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
+            _ => throw new NotImplementedException(),
+        };
+
+        return (query, result.Result.Masks);
     }
 
     /// <exclude />
