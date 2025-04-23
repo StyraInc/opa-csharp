@@ -873,7 +873,46 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     });
 
     // Check that the data filters and column masks showed up correctly:
+    Assert.Equivalent(new UCASTFilter { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
+    Assert.Equivalent(new Dictionary<string, object>() {
+      { "tickets", new Dictionary<string, object>() {
+        {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },
+      }},
+    }, masks);
+  }
+
+  [Fact]
+  public async Task GetFiltersMultiTargetTest()
+  {
+    var client = GetEOpaClient();
+
+    var (filters, masks) = await client.GetMultipleFilters("filters/include", new Dictionary<string, object>()
+    {
+        { "user", "caesar" },
+        { "tenant", new Dictionary<string, object>
+            {
+                { "id", 2 },
+                { "name", "acmecorp" }
+            }
+        },
+    }, targetDialects: [
+      Styra.Opa.Filters.TargetDialects.SqlPostgresql,
+      Styra.Opa.Filters.TargetDialects.SqlMysql,
+      Styra.Opa.Filters.TargetDialects.SqlSqlserver,
+      Styra.Opa.Filters.TargetDialects.SqlSqlite,
+      Styra.Opa.Filters.TargetDialects.UcastPrisma,
+    ]);
+
+    // Check that the data filters and column masks showed up correctly:
     Assert.Equivalent(new UCASTFilter() { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
+    Assert.Equal("WHERE ((tickets.tenant = E'2' AND users.name = E'caesar') OR (tickets.tenant = E'2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE)))",
+                 filters["postgres"].ToString());
+    Assert.Equal("WHERE ((tickets.tenant = '2' AND users.name = 'caesar') OR (tickets.tenant = '2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
+                 filters["mysql"].ToString());
+    Assert.Equal("WHERE ((tickets.tenant = N'2' AND users.name = N'caesar') OR (tickets.tenant = N'2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
+                 filters["sqlserver"].ToString());
+    Assert.Equal("WHERE ((tickets.tenant = '2' AND users.name = 'caesar') OR (tickets.tenant = '2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
+                 filters["sqlite"].ToString());
     Assert.Equivalent(new Dictionary<string, object>() {
       { "tickets", new Dictionary<string, object>() {
         {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },

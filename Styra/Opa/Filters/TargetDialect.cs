@@ -70,4 +70,20 @@ public static class TargetDialectsExtension
             _ => "application/json",
         };
     }
+
+    public static string ToOptionString(this TargetDialects value)
+    {
+        return value switch
+        {
+            TargetDialects.UcastAll => "ucast+all",
+            TargetDialects.UcastMinimal => "ucast+minimal",
+            TargetDialects.UcastPrisma => "ucast+prisma",
+            TargetDialects.UcastLinq => "ucast+linq",
+            TargetDialects.SqlSqlserver => "sql+sqlserver",
+            TargetDialects.SqlMysql => "sql+mysql",
+            TargetDialects.SqlPostgresql => "sql+postgresql",
+            TargetDialects.SqlSqlite => "sql+sqlite",
+            _ => "unknown",
+        };
+    }
 }

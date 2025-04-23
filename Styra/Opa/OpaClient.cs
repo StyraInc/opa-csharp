@@ -501,7 +501,7 @@ public class OpaClient
         return await CompileMachinerySingle(path, roundTrippedInput, unknowns, tableMappings, targetDialect);
     }
 
-    public async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks)> GetMultipleFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    public async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks?)> GetMultipleFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         if (input is null)
         {
@@ -628,27 +628,23 @@ public class OpaClient
                         case Filters.TargetDialects.UcastLinq:
                             if (result.Result.Ucast is not null)
                             {
-                                queries["ucast"] = (UCASTFilter)result.Result.Ucast.Query;
+                                queries["ucast"] = new UCASTFilter(result.Result.Ucast.Query);
                             }
                             masks ??= result.Result.Ucast?.Masks;
                             break;
                         case Filters.TargetDialects.SqlPostgresql:
-
                             queries["postgresql"] = new SQLFilter(result.Result.PostgreSql?.Query ?? "", "postgresql");
                             masks ??= result.Result.PostgreSql?.Masks;
                             break;
                         case Filters.TargetDialects.SqlMysql:
-
                             queries["mysql"] = new SQLFilter(result.Result.MySql?.Query ?? "", "mysql");
                             masks ??= result.Result.MySql?.Masks;
                             break;
                         case Filters.TargetDialects.SqlSqlserver:
-
                             queries["sqlserver"] = new SQLFilter(result.Result.SqlServer?.Query ?? "", "sqlserver");
                             masks ??= result.Result.SqlServer?.Masks;
                             break;
                         case Filters.TargetDialects.SqlSqlite:
-
                             queries["sqlserver"] = new SQLFilter(result.Result.Sqlite?.Query ?? "", "sqlserver");
                             masks ??= result.Result.Sqlite?.Masks;
                             break;
@@ -714,7 +710,7 @@ public class OpaClient
         {
             var options = new Dictionary<string, object>(2);
             if (tableMappings is not null) { options.Add("tableMappings", tableMappings); }
-            if (targetDialects.Count > 1) { options.Add("targetDialects", targetDialects); }
+            if (targetDialects.Count > 1) { options.Add("targetDialects", targetDialects.Select(x => x.ToOptionString()).ToList()); }
             reqObj.Add("options", options);
         }
 
@@ -733,13 +729,12 @@ public class OpaClient
             throw new OpaException(msg);
         }
 
-        var masks = result.Result.Masks;
         Filters.IFilter? query = dialect switch
         {
-            Filters.TargetDialects.UcastAll => (UCASTFilter)result.Result.Query,
-            Filters.TargetDialects.UcastMinimal => (UCASTFilter)result.Result.Query,
-            Filters.TargetDialects.UcastPrisma => (UCASTFilter)result.Result.Query,
-            Filters.TargetDialects.UcastLinq => (UCASTFilter)result.Result.Query,
+            Filters.TargetDialects.UcastAll => new UCASTFilter(result.Result.Query),
+            Filters.TargetDialects.UcastMinimal => new UCASTFilter(result.Result.Query),
+            Filters.TargetDialects.UcastPrisma => new UCASTFilter(result.Result.Query),
+            Filters.TargetDialects.UcastLinq => new UCASTFilter(result.Result.Query),
             _ => throw new NotImplementedException(),
         };
 
@@ -756,13 +751,12 @@ public class OpaClient
             throw new OpaException(msg);
         }
 
-        var masks = result.Result.Masks;
         Filters.IFilter? query = dialect switch
         {
-            Filters.TargetDialects.SqlPostgresql => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
-            Filters.TargetDialects.SqlMysql => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
-            Filters.TargetDialects.SqlSqlserver => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
-            Filters.TargetDialects.SqlSqlite => new SQLFilter(result.Result.Query, dialect.ToString().ToLower()),
+            Filters.TargetDialects.SqlPostgresql => new SQLFilter(result.Result.Query, dialect.ToOptionString()),
+            Filters.TargetDialects.SqlMysql => new SQLFilter(result.Result.Query, dialect.ToOptionString()),
+            Filters.TargetDialects.SqlSqlserver => new SQLFilter(result.Result.Query, dialect.ToOptionString()),
+            Filters.TargetDialects.SqlSqlite => new SQLFilter(result.Result.Query, dialect.ToOptionString()),
             _ => throw new NotImplementedException(),
         };
 

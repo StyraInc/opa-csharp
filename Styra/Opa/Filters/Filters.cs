@@ -1,5 +1,7 @@
 
 
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Styra.Ucast.Linq;
 
@@ -24,7 +26,12 @@ public interface IFilter
 /// </summary>
 public class UCASTFilter : UCASTNode, IFilter
 {
+    // For object initializations.
     public UCASTFilter() : base() { }
+
+    // For direct conversion from the underlying type.
+    [SetsRequiredMembers]
+    public UCASTFilter(UCASTNode query) : base(query.Type, query.Op, query.Field, query.Value) { }
 
     public FilterType GetFilterType()
     {
@@ -43,9 +50,12 @@ public class UCASTFilter : UCASTNode, IFilter
 public class SQLFilter : IFilter
 {
     [JsonProperty("query")]
-    public string Query;
-    private readonly string dialect;
+    public required string Query;
+    private readonly string? dialect;
 
+    public SQLFilter() { }
+
+    [SetsRequiredMembers]
     public SQLFilter(string sqlQuery, string sqlDialect)
     {
         Query = sqlQuery;
