@@ -4,7 +4,7 @@
 #   unknowns:
 #     - input.tickets
 #     - input.users
-#   mask_rule: data.filters.mask_from_annotation
+#   mask_rule: mask_from_annotation
 package filters
 
 import rego.v1

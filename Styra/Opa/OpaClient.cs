@@ -645,7 +645,7 @@ public class OpaClient
                             masks ??= result.Result.SqlServer?.Masks;
                             break;
                         case Filters.TargetDialects.SqlSqlite:
-                            queries["sqlserver"] = new SQLFilter(result.Result.Sqlite?.Query ?? "", "sqlserver");
+                            queries["sqlite"] = new SQLFilter(result.Result.Sqlite?.Query ?? "", "sqlserver");
                             masks ??= result.Result.Sqlite?.Masks;
                             break;
                     }

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Styra.Opa;
 using Styra.Opa.Filters;
 using Styra.Opa.OpenApi.Models.Components;
+using Styra.Ucast.Linq;
 using Xunit.Abstractions;
 
 namespace SmokeTest.Tests;
@@ -873,10 +874,36 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     });
 
     // Check that the data filters and column masks showed up correctly:
-    Assert.Equivalent(new UCASTFilter { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
+    Assert.Equivalent(new UCASTFilter(
+      new UCASTNode(
+        type: "compound",
+        op: "or",
+        value: new List<UCASTNode>
+        {
+          new(
+            type: "compound",
+            op: "and",
+            value: new List<UCASTNode>
+            {
+              new(type: "field", op: "eq", field: "tickets.tenant", value: 2),
+              new(type: "field", op: "eq", field: "users.name", value: "caesar")
+            }
+          ),
+          new(
+            type: "compound",
+            op: "and",
+            value: new List<UCASTNode>
+            {
+              new(type: "field", op: "eq", field: "tickets.tenant", value: 2),
+              new(type: "field", op: "eq", field: "tickets.assignee", value: null),
+              new(type: "field", op: "eq", field: "tickets.resolved", value: false)
+            }
+          )
+        }
+      )), filters);
     Assert.Equivalent(new Dictionary<string, object>() {
       { "tickets", new Dictionary<string, object>() {
-        {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },
+        {"id", new MaskingFunc() {} },
       }},
     }, masks);
   }
@@ -904,9 +931,35 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     ]);
 
     // Check that the data filters and column masks showed up correctly:
-    Assert.Equivalent(new UCASTFilter() { Type = "field", Op = "eq", Field = "tickets.tenant", Value = 2 }, filters);
-    Assert.Equal("WHERE ((tickets.tenant = E'2' AND users.name = E'caesar') OR (tickets.tenant = E'2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE)))",
-                 filters["postgres"].ToString());
+    Assert.Equivalent(new UCASTFilter(
+      new UCASTNode(
+        type: "compound",
+        op: "or",
+        value: new List<UCASTNode>
+        {
+          new(
+            type: "compound",
+            op: "and",
+            value: new List<UCASTNode>
+            {
+              new(type: "field", op: "eq", field: "tickets.tenant", value: 2),
+              new(type: "field", op: "eq", field: "users.name", value: "caesar")
+            }
+          ),
+          new(
+            type: "compound",
+            op: "and",
+            value: new List<UCASTNode>
+            {
+              new(type: "field", op: "eq", field: "tickets.tenant", value: 2),
+              new(type: "field", op: "eq", field: "tickets.assignee", value: null),
+              new(type: "field", op: "eq", field: "tickets.resolved", value: false)
+            }
+          )
+        }
+      )), filters["ucast"]);
+    Assert.Equal("WHERE ((tickets.tenant = E'2' AND users.name = E'caesar') OR (tickets.tenant = E'2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
+                 filters["postgresql"].ToString());
     Assert.Equal("WHERE ((tickets.tenant = '2' AND users.name = 'caesar') OR (tickets.tenant = '2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
                  filters["mysql"].ToString());
     Assert.Equal("WHERE ((tickets.tenant = N'2' AND users.name = N'caesar') OR (tickets.tenant = N'2' AND tickets.assignee IS NULL AND tickets.resolved = FALSE))",
@@ -915,7 +968,7 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
                  filters["sqlite"].ToString());
     Assert.Equivalent(new Dictionary<string, object>() {
       { "tickets", new Dictionary<string, object>() {
-        {"id", new Styra.Ucast.Linq.MaskingFunc() { Replace = new Styra.Ucast.Linq.MaskingFunc.ReplaceFunc() {Value = "***"} } },
+        {"id", new MaskingFunc() {} },
       }},
     }, masks);
   }

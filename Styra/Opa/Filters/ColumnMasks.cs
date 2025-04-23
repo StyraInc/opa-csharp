@@ -12,8 +12,11 @@ namespace Styra.Opa.Filters;
 public class ColumnMasks : Dictionary<string, Dictionary<string, MaskingFunc>>
 {
     public ColumnMasks() : base() { }
-
     public ColumnMasks(int capacity) : base(capacity) { }
+
+    [JsonConstructor]
+    public ColumnMasks(IDictionary<string, Dictionary<string, MaskingFunc>> dictionary)
+        : base(dictionary) { }
 
     public override string ToString()
     {
