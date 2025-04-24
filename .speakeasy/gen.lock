@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: f1a8c321-72a7-41c5-8f5e-3d925aeafa1a
 management:
-  docChecksum: 333ca03cf38dfec851e5305d7d4010be
+  docChecksum: 4346963935904ac97518f5f46dca9c31
   docVersion: 0.2.0
-  speakeasyVersion: 1.532.0
-  generationVersion: 2.578.0
-  releaseVersion: 1.5.3
-  configChecksum: 6c4373ee1f66a2b9b638dc596c4155fb
+  speakeasyVersion: 1.538.0
+  generationVersion: 2.591.1
+  releaseVersion: 1.5.4
+  configChecksum: fe2d8213cc5d7ddaafa0e63691e3ef21
   repoURL: https://github.com/StyraInc/opa-csharp.git
   repoSubDirectory: Styra/Opa/OpenApi/
   published: true
@@ -83,7 +83,7 @@ generatedFiles:
   - Styra/Opa/OpenApi/Models/Errors/ServerErrorLocation.cs
   - Styra/Opa/OpenApi/Models/Errors/UnhealthyServer.cs
   - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationRequest.cs
-  - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationRequestBody.cs
+  - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationRequestApplicationJSONRequestBody.cs
   - Styra/Opa/OpenApi/Models/Requests/CompileQueryWithPartialEvaluationResponse.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequest.cs
   - Styra/Opa/OpenApi/Models/Requests/ExecuteBatchPolicyWithInputRequestBody.cs
@@ -186,6 +186,15 @@ examples:
         header: {}
       requestBody:
         application/json: {"input": []}
+        application/vnd.styra.multitarget+json: {"input": []}
+        application/vnd.styra.ucast.all+json: {"input": []}
+        application/vnd.styra.ucast.minimal+json: {"input": []}
+        application/vnd.styra.ucast.linq+json: {"input": []}
+        application/vnd.styra.ucast.prisma+json: {"input": []}
+        application/vnd.styra.sql.sqlserver+json: {"input": []}
+        application/vnd.styra.sql.mysql+json: {"input": []}
+        application/vnd.styra.sql.postgresql+json: {"input": []}
+        application/vnd.styra.sql.sqlite+json: {"input": []}
       responses:
         "200":
           application/json: {}
