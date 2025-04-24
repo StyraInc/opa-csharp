@@ -909,6 +909,33 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
   }
 
   [Fact]
+  public async Task GetFiltersWithMasksTest()
+  {
+    var client = GetEOpaClient();
+
+    // Result here should be identical to the filters-oriented test, but our
+    // goal here is to make sure column masks are showing up correctly.
+    var (_, masks) = await client.GetFilters("filters/include", new Dictionary<string, object>()
+    {
+        { "user", "bob" },
+        { "tenant", new Dictionary<string, object>
+            {
+                { "id", 2 },
+                { "name", "acmecorp" }
+            }
+        },
+    });
+
+    // Check that the column masks showed up correctly for the
+    // 'reader' role in the test policy.
+    Assert.Equivalent(new Dictionary<string, object>() {
+      { "tickets", new Dictionary<string, object>() {
+        {"id", new MaskingFunc() { Replace = new() {Value = "***"} } },
+      }},
+    }, masks);
+  }
+
+  [Fact]
   public async Task GetFiltersMultiTargetTest()
   {
     var client = GetEOpaClient();
@@ -969,6 +996,39 @@ public class HighLevelTest : IClassFixture<OPAContainerFixture>, IClassFixture<E
     Assert.Equivalent(new Dictionary<string, object>() {
       { "tickets", new Dictionary<string, object>() {
         {"id", new MaskingFunc() {} },
+      }},
+    }, masks);
+  }
+
+  [Fact]
+  public async Task GetFiltersMultiTargetWithMasksTest()
+  {
+    var client = GetEOpaClient();
+
+    // Result here should be identical to the filters-oriented test, but our
+    // goal here is to make sure column masks are showing up correctly.
+    var (_, masks) = await client.GetMultipleFilters("filters/include", new Dictionary<string, object>()
+    {
+        { "user", "bob" },
+        { "tenant", new Dictionary<string, object>
+            {
+                { "id", 2 },
+                { "name", "acmecorp" }
+            }
+        },
+    }, targetDialects: [
+      Styra.Opa.Filters.TargetDialects.SqlPostgresql,
+      Styra.Opa.Filters.TargetDialects.SqlMysql,
+      Styra.Opa.Filters.TargetDialects.SqlSqlserver,
+      Styra.Opa.Filters.TargetDialects.SqlSqlite,
+      Styra.Opa.Filters.TargetDialects.UcastPrisma,
+    ]);
+
+    // Check that the column masks showed up correctly for the
+    // 'reader' role in the test policy.
+    Assert.Equivalent(new Dictionary<string, object>() {
+      { "tickets", new Dictionary<string, object>() {
+        {"id", new MaskingFunc() { Replace = new() {Value = "***"} } },
       }},
     }, masks);
   }
