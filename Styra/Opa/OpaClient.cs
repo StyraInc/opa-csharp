@@ -476,9 +476,12 @@ public class OpaClient
     }
 
     /// <summary>
-    /// Uses the Enterprise OPA Compile API to partially evaluate a data
-    /// filter policy. Results are returned as a tuple of the form
-    /// (data filters (UCAST nodes or SQL), column masking rules (if present)).
+    /// Uses Enterprise OPA's Compile API to partially evaluate a data
+    /// filter policy. Results are returned as a tuple with the members:
+    /// <list type="bullet">
+    ///     <item>Data Filters (UCAST or SQL)</item>
+    ///     <item>Column Masking Rules</item>
+    /// </list>
     /// </summary>
     /// <param name="path">The rule to use for generating data filters. (Example: "app/rbac")</param>
     /// <param name="input">The input C# object OPA will use for evaluating the data filter policy.</param>
@@ -488,7 +491,8 @@ public class OpaClient
     /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
     /// <returns>A ValueTuple of data filters (UCAST nodes or SQL) and column masking rules (if present).</returns>
     /// <exception cref="OpaException"></exception>
-    public async Task<(Filters.IFilter, Filters.ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq, JsonSerializerSettings? jsonSerializerSettings = null)
+    /// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api"/></remarks>
+    public async Task<(IFilter, ColumnMasks?)> GetFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         if (input is null)
         {
@@ -501,7 +505,26 @@ public class OpaClient
         return await CompileMachinerySingle(path, roundTrippedInput, unknowns, tableMappings, targetDialect);
     }
 
-    public async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks?)> GetMultipleFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null, JsonSerializerSettings? jsonSerializerSettings = null)
+    /// <summary>
+    /// Uses Enterprise OPA's Compile API to partially evaluate a data
+    /// filter policy. Results are returned as a Dictionary pairing filter types to the generated data filters.
+    /// Each data filtering result has the form:
+    /// <list type="bullet">
+    ///     <item>Data Filters (UCAST or SQL)</item>
+    ///     <item>Column Masking Rules</item>
+    /// </list>
+    /// This is intentionally similar to the results of calling <see cref="GetFilters"/> multiple times in a row, and allows efficient retrieval of multiple data filter types if needed.
+    /// </summary>
+    /// <param name="path">The rule to use for generating data filters. (Example: "app/rbac")</param>
+    /// <param name="input">The input C# object OPA will use for evaluating the data filter policy.</param>
+    /// <param name="unknowns">The unknowns to use in partial evaluation of the data filter policy.</param>
+    /// <param name="tableMappings">The mappings between tables and columns that should be used for generating the data filters.</param>
+    /// <param name="targetDialects">The dialects of data filters to generate. (default: UCAST-LINQ dialect)</param>
+    /// <param name="jsonSerializerSettings">The Newtonsoft.Json.JsonSerializerSettings object to use for round-tripping the input through JSON serdes. (default: global serializer settings, if any)</param>
+    /// <returns>A ValueTuple of data filters (UCAST nodes or SQL) and column masking rules (if present).</returns>
+    /// <exception cref="OpaException"></exception>
+    /// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api"/></remarks>
+    public async Task<(Dictionary<string, IFilter>, ColumnMasks?)> GetMultipleFilters(string path, object? input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null, JsonSerializerSettings? jsonSerializerSettings = null)
     {
         if (input is null)
         {
@@ -518,7 +541,7 @@ public class OpaClient
     // Note(philip): This method allows us to hide the implementation of the
     // `/v1/compile/{path}` query, and will be swapped out for a call into the
     // Speakeasy-generated SDK once upstream bugfixes land.
-    private async Task<(Filters.IFilter, Filters.ColumnMasks?)> CompileMachinerySingle(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq)
+    private async Task<(IFilter, ColumnMasks?)> CompileMachinerySingle(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, Filters.TargetDialects targetDialect = Filters.TargetDialects.UcastLinq)
     {
         var (compileURL, jsonContent, acceptHeader) = BuildCompileRequest(path, input, unknowns, tableMappings, [targetDialect]);
 
@@ -579,7 +602,7 @@ public class OpaClient
     // Note(philip): This method allows us to hide the implementation of the
     // `/v1/compile/{path}` query, and will be swapped out for a call into the
     // Speakeasy-generated SDK once upstream bugfixes land.
-    private async Task<(Dictionary<string, Filters.IFilter>, Filters.ColumnMasks?)> CompileMachineryMulti(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
+    private async Task<(Dictionary<string, IFilter>, ColumnMasks?)> CompileMachineryMulti(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
     {
         // Default dialect is UCAST-Linq.
         targetDialects ??= [Filters.TargetDialects.UcastLinq];
@@ -616,8 +639,8 @@ public class OpaClient
                 }
 
                 // Build up output dictionary.
-                Dictionary<string, Filters.IFilter> queries = new(targetDialects.Count);
-                ColumnMasks? masks = null;
+                Dictionary<string, IFilter> queries = new(targetDialects.Count);
+                ColumnMasks? masks = null; // Assumption: Masks *should* remain identical across all returned masks.
                 foreach (var dialect in targetDialects)
                 {
                     switch (dialect)
@@ -671,7 +694,15 @@ public class OpaClient
         }
     }
 
-    // URL, JSON content, accept header
+    /// <summary>
+    /// Generates the URL, JSON payload, and <c>Accept</c> header string for <see cref="GetFilters"/> and <see cref="GetMultipleFilters"/> requests.
+    /// </summary>
+    /// <param name="path">The policy path to use for the Compile API.</param>
+    /// <param name="input">The Speakeasy SDK Input type to use for the <c>input</c> part of the JSON request payload.</param>
+    /// <param name="unknowns">A list of unknowns to use for the <c>unknowns</c> part of the JSON request payload.</param>
+    /// <param name="tableMappings">An object describing table/column mappings for the different database types.</param>
+    /// <param name="targetDialects">A list of target dialects to generate data filters for. If more than one target dialect is provided, the multitarget <c>Accept</c> header and <c>options.targetDialects</c> payload field will be generated.</param>
+    /// <returns>A ValueTuple of (URL, JSON payload string, and <c>Accept</c> header).</returns>
     private (string, string, string) BuildCompileRequest(string path, Input input, List<string>? unknowns = null, Filters.TargetSQLTableMappings? tableMappings = null, List<Filters.TargetDialects>? targetDialects = null)
     {
         // Build URL manually, emulating the query parameter wrangling Speakeasy would normally do for us.
@@ -719,7 +750,16 @@ public class OpaClient
         return (compileURL, jsonContent, acceptHeader);
     }
 
-    private (Filters.IFilter, Filters.ColumnMasks?) BuildCompileResultUCAST(string path, string response, Filters.TargetDialects dialect)
+    /// <summary>
+    /// Assembles a ValueTuple of UCAST data filter and ColumnMasks from a JSON Compile API response.
+    /// </summary>
+    /// <param name="path">Policy path used to generate the filter. Used mostly for informative error logs.</param>
+    /// <param name="response">The JSON response string.</param>
+    /// <param name="dialect">The data filter dialect used to generate the filter. Used mostly for validation.</param>
+    /// <returns>A ValueTuple of the form (UCAST data filter, Column masks).</returns>
+    /// <exception cref="OpaException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
+    private (IFilter, ColumnMasks?) BuildCompileResultUCAST(string path, string response, Filters.TargetDialects dialect)
     {
         var result = JsonConvert.DeserializeObject<CompileResultUCASTRecord>(response);
         if (result is null)
@@ -729,7 +769,7 @@ public class OpaClient
             throw new OpaException(msg);
         }
 
-        Filters.IFilter? query = dialect switch
+        IFilter? query = dialect switch
         {
             Filters.TargetDialects.UcastAll => new UCASTFilter(result.Result.Query),
             Filters.TargetDialects.UcastMinimal => new UCASTFilter(result.Result.Query),
@@ -741,7 +781,17 @@ public class OpaClient
         return (query, result.Result.Masks);
     }
 
-    private (Filters.IFilter, Filters.ColumnMasks?) BuildCompileResultSQL(string path, string response, Filters.TargetDialects dialect)
+    /// <summary>
+    /// Assembles a ValueTuple of SQL data filter and ColumnMasks from a JSON Compile API response.
+    /// </summary>
+    /// <param name="path">Policy path used to generate the filter. Used mostly for informative error logs.</param>
+    /// <param name="response">The JSON response string.</param>
+    /// <param name="dialect">The data filter dialect used to generate the filter. Used mostly for validation.</param>
+    /// <returns>A ValueTuple of the form (SQL data filter, Column masks).</returns>
+    /// <returns>A ValueTuple of the form (SQL data filter, Column masks).</returns>
+    /// <exception cref="OpaException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
+    private (IFilter, ColumnMasks?) BuildCompileResultSQL(string path, string response, Filters.TargetDialects dialect)
     {
         var result = JsonConvert.DeserializeObject<CompileResultSQLRecord>(response);
         if (result is null)
@@ -751,7 +801,7 @@ public class OpaClient
             throw new OpaException(msg);
         }
 
-        Filters.IFilter? query = dialect switch
+        IFilter? query = dialect switch
         {
             Filters.TargetDialects.SqlPostgresql => new SQLFilter(result.Result.Query, dialect.ToOptionString()),
             Filters.TargetDialects.SqlMysql => new SQLFilter(result.Result.Query, dialect.ToOptionString()),

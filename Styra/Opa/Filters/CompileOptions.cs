@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace Styra.Opa.Filters;
 
+/// <summary>
+/// A data object, used to set Compile API options for Enterprise OPA.
+/// </summary>
 public class CompileOptions
 {
     /// <summary>

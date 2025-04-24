@@ -7,8 +7,9 @@ using Styra.Ucast.Linq;
 namespace Styra.Opa.Filters;
 
 /// <summary>
-/// Wrapper type for the column masking rule objects EOPA generates alongside data filtering results.
+/// Wrapper type for the column masking rule objects Enterprise OPA generates alongside data filtering results.
 /// </summary>
+/// <remarks>See: <see href="https://docs.styra.com/apps/data/explanation/column-masks"/></remarks>
 public class ColumnMasks : Dictionary<string, Dictionary<string, MaskingFunc>>
 {
     public ColumnMasks() : base() { }

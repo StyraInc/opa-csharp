@@ -4,6 +4,11 @@ using Newtonsoft.Json;
 
 namespace Styra.Opa.Filters;
 
+/// <summary>
+/// An enum of all data filter formats that Enterprise OPA supports in the Compile API.
+/// Used in the <c>options.targetDialects</c> payload field, and for <c>Accept</c> header selection.
+/// </summary>
+/// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api"/></remarks>
 public enum TargetDialects
 {
     [JsonProperty("ucast+all")]
@@ -55,6 +60,12 @@ public static class TargetDialectsExtension
         throw new Exception($"Unknown value {value} for enum TargetDialects");
     }
 
+    /// <summary>
+    /// Generates an HTTP <c>Accept</c> header string for use with Enterprise OPA's Compile API.
+    /// </summary>
+    /// <param name="value">The TargetDialects value to use.</param>
+    /// <returns>An <c>Accept</c> header string of the format <c>application/vnd.styra.${data_filter_type}+json</c>.</returns>
+    /// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api#accept-header--controlling-the-target-response-format"/></remarks>
     public static string ToAcceptHeader(this TargetDialects value)
     {
         return value switch
@@ -71,6 +82,13 @@ public static class TargetDialectsExtension
         };
     }
 
+    /// <summary>
+    /// Generates a dialect string for use in Enterprise OPA's Compile API.
+    /// The string can be used in the <c>options.targetDialects</c> payload field.
+    /// </summary>
+    /// <param name="value">The TargetDialects value to use.</param>
+    /// <returns>A dialect string for the <c>options.targetDialects</c> payload field.</returns>
+    /// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api#request-body"/></remarks>
     public static string ToOptionString(this TargetDialects value)
     {
         return value switch

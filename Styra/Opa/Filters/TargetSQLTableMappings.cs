@@ -3,6 +3,11 @@ using Newtonsoft.Json;
 
 namespace Styra.Opa.Filters;
 
+/// <summary>
+/// Mapping between tables and columns for the Enterprise OPA Compile API.
+/// Used in the <c>options.targetSQLTableMappings</c> payload field.
+/// </summary>
+/// <remarks>See: <see href="https://docs.styra.com/enterprise-opa/reference/api-reference/partial-evaluation-api#request-body"/></remarks>
 public class TargetSQLTableMappings
 {
     [JsonProperty("sqlserver")]
