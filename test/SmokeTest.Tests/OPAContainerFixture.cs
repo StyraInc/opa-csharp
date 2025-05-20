@@ -1,4 +1,6 @@
-﻿namespace SmokeTest.Tests;
+﻿
+namespace SmokeTest.Tests;
+
 public class OPAContainerFixture : IAsyncLifetime
 {
     // Note: We disable this warning because we control when/how the constructor
@@ -7,7 +9,7 @@ public class OPAContainerFixture : IAsyncLifetime
     private IContainer _container;
 #pragma warning restore CS8618
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         string[] startupFiles = {
             "testdata/policy.rego",
@@ -44,7 +46,7 @@ public class OPAContainerFixture : IAsyncLifetime
 
         _container = container;
     }
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _container.DisposeAsync();
     }
