@@ -35,6 +35,13 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
         return new OpaApiClient(serverIndex: 0, serverUrl: requestUri.ToString());
     }
 
+    private bool NoEOPALicenseEnvVarsFound()
+    {
+        var key = Environment.GetEnvironmentVariable("EOPA_LICENSE_KEY") ?? "";
+        var token = Environment.GetEnvironmentVariable("EOPA_LICENSE_TOKEN") ?? "";
+        return key == "" && token == "";
+    }
+
     [Fact]
     public async Task OpenApiClientRBACTestcontainersTest()
     {
@@ -104,6 +111,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     [Fact]
     public async Task OpenApiClientBatchPolicyNoInputTest()
     {
+        Assert.SkipWhen(NoEOPALicenseEnvVarsFound(), "No EOPA license variables provided at test launch time.");
         // Currently, this API only exists in Enterprise OPA.
         var client = GetEOpaApiClient();
 
@@ -129,6 +137,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     [Fact]
     public async Task OpenApiClientBatchPolicyAllSuccessTest()
     {
+        Assert.SkipWhen(NoEOPALicenseEnvVarsFound(), "No EOPA license variables provided at test launch time.");
         // Currently, this API only exists in Enterprise OPA.
         var client = GetEOpaApiClient();
 
@@ -179,6 +188,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     [Fact]
     public async Task OpenApiClientBatchPolicyMixedTest()
     {
+        Assert.SkipWhen(NoEOPALicenseEnvVarsFound(), "No EOPA license variables provided at test launch time.");
         // Currently, this API only exists in Enterprise OPA.
         var client = GetEOpaApiClient();
 
@@ -242,6 +252,7 @@ public class OpenApiTest : IClassFixture<OPAContainerFixture>, IClassFixture<EOP
     [Fact]
     public async Task OpenApiClientBatchPolicyAllFailureTest()
     {
+        Assert.SkipWhen(NoEOPALicenseEnvVarsFound(), "No EOPA license variables provided at test launch time.");
         // Currently, this API only exists in Enterprise OPA.
         var client = GetEOpaApiClient();
 

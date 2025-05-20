@@ -8,7 +8,7 @@ public class EOPAContainerFixture : IAsyncLifetime
     private IContainer _container;
 #pragma warning restore CS8618
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         string[] startupFiles = {
             "testdata/policy.rego",
@@ -49,7 +49,7 @@ public class EOPAContainerFixture : IAsyncLifetime
 
         _container = container;
     }
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _container.DisposeAsync();
     }
