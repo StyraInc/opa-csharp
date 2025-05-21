@@ -10,7 +10,7 @@
 
   <!-- Normal Package Includes. -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Testcontainers" Version="4.4.0" />
     <PackageReference Include="xunit.v3" Version="2.0.2" />
