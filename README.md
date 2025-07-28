@@ -70,9 +70,11 @@ Console.WriteLine("allowed: " + allowed);
 
 <details>
   <summary>Result</summary>
+
 ```txt
 allowed: True
 ```
+
 </details>
 
 ### Simple Query with Output
@@ -118,10 +120,12 @@ foreach (var pair in result)
 
 <details>
   <summary>Result</summary>
+
 ```txt
 content of data.roles:
     admin => [ read write ]
 ```
+
 </details>
 
 ### Default Rule
@@ -148,9 +152,11 @@ Console.WriteLine("allowed: " + allowed);
 
 <details>
   <summary>Result</summary>
+
 ```txt
 allowed: False
 ```
+
 </details>
 
 ### Batched Queries
@@ -203,13 +209,15 @@ if (errors.Count > 0)
 
 <details>
   <summary>Result</summary>
-    ```txt
-    Query results, by key:
-      AAA => True
-      BBB => False
-      CCC => False
-      DDD => False
-    ```
+
+```txt
+Query results, by key:
+    AAA => True
+    BBB => False
+    CCC => False
+    DDD => False
+```
+
 </details>
 
 See the [API Documentation](https://styrainc.github.io/opa-csharp/api/Styra.Opa.OpenApi.Models.Components.Result.html) for reference on the properties and types available from a result.
@@ -297,10 +305,12 @@ namespace Application
 
 <details>
   <summary>Result</summary>
-    ```txt
-    The JSON that OPA will receive: {"input": {"user":"bob","action":"read"}}
-    allowed: False
-    ```
+
+```txt
+The JSON that OPA will receive: {"input": {"user":"bob","action":"read"}}
+allowed: False
+```
+
 </details>
 
 ### Integrating logging with the OPA C# SDK
@@ -334,6 +344,7 @@ internal class Program
 
 <details>
     <summary>Result</summary>
+
 ```log
 info: Styra.Opa.OpaClient[0]
       Initialized an OPA client for the OPA at: http://localhost:8181.
@@ -342,6 +353,7 @@ warn: Styra.Opa.OpaClient[2066302899]
 Unhandled exception. OpaException: executing policy at 'this/rule/does/not/exist' succeeded, but OPA did not reply with a result
     ...
 ```
+
 </details>
 
 > [!NOTE]
