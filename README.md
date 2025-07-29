@@ -4,7 +4,7 @@
 [![NuGet Version](https://img.shields.io/nuget/v/Styra.Opa?style=flat&color=%2324b6e0)](https://www.nuget.org/packages/Styra.Opa/)
 
 > [!IMPORTANT]
-> The documentation for this SDK lives at https://docs.styra.com/sdk, with reference documentation available at https://styrainc.github.io/opa-csharp
+> Reference documentation is available at <https://styrainc.github.io/opa-csharp>
 
 You can use the Styra OPA SDK to connect to [Open Policy Agent](https://www.openpolicyagent.org/) and [Enterprise OPA](https://www.styra.com/enterprise-opa/) deployments.
 
@@ -19,105 +19,337 @@ dotnet add package Styra.Opa
 
 ## SDK Example Usage (high-level)
 
-All the code examples that follow assume that the high-level SDK module has been imported, and that an `OpaClient` instance was created:
+The following examples assume an OPA server at `http://localhost:8181` equipped with the following Rego policy in `authz.rego`:
+
+```rego
+package authz
+import rego.v1
+
+default allow := false
+allow if input.subject == "alice"
+```
+
+and this `data.json`:
+
+```json
+{
+  "roles": {
+    "admin": ["read", "write"]
+  }
+}
+```
+
+### Simple Query
+
+For a simple boolean response with input, use the SDK as follows:
 
 ```csharp
 using Styra.Opa;
 
-
-private string serverURL = "http://opa-host:8181";
-private string path = "authz/allow";
-private OpaClient opa;
-
-opa = new OPAClient(serverURL);
+string opaUrl = "http://localhost:8181";
+OpaClient opa = new OpaClient(opaUrl);
 
 var input = new Dictionary<string, object>() {
-    { "user", "alice" },
-    { "action", "read" },
-    {"resource", "/finance/reports/fy2038_budget.csv"},
+    {"subject", "alice"},
+    {"action", "read"},
 };
 
-// (local variable) bool allowed
-var allowed = await opa.check("authz/allow", input);
-// (local variable) violations List<string>?
-var violations = await opa.evaluate<List<string>>("authz/violations", input);
+bool allowed = false;
 
-// Normal true/false cases...
-if (allowed) {
-    // ...
-} else {
-    Console.WriteLine("Violations: " + violations);
-}
-```
-
-### Input types
-
-The `check` and `evaluate` methods are overloaded for most standard JSON types, which include the following variants for the `input` parameter:
-
-| C# type | JSON equivalent type |
-| ------- | -------------------- |
-| `bool` | Boolean |
-| `double` | Number |
-| `string` | String |
-| `List<object>` | Array |
-| `Dictionary<string, object>` | Object |
-
-### Result Types
-
-#### `OpaClient.check`
-For the `check` method, the output type is always `bool`.
-
-#### `OpaClient.evaluate<T>`
-For the `evaluate` method, the output type is configurable using generics, as shown in the example below.
-
-```csharp
-string path = "authz/accounts/max_limit";
-
-double maxLimit
-try {
-    maxLimit = opa.evaluate<double?>(path, "example");
-}
-catch (OpaException) {
-    maxLimit = 0.0f;
-}
-```
-
-Nullable types are also allowed for output types, and if an error occurs during evaluation, a null result will be returned to the caller.
-
-```csharp
-string path = "authz/accounts/max_limit";
-
-double? maxLimit = opa.evaluate<double?>(path, "example");
-```
-
-If the selected return type `<T>` is possible to deserialize from the returned JSON, `evaluate<T>` will attempt to populate the variable with the value(s) present.
-
-```csharp
-public struct AuthzStatus
+try
 {
-    public AuthzStatus(bool allowed)
-    {
-        Allowed = allowed;
-    }
-
-    public double Allowed { get; }
-
-    public override string ToString() => $"Application authorized: {Allowed}";
+    allowed = await opa.Check("authz/allow", input);
+}
+catch (OpaException e)
+{
+    Console.WriteLine("exception while making request against OPA: " + e);
 }
 
-var input = new Dictionary<string, object>() {
-    { "user", "alice" },
-    { "action", "read" },
+Console.WriteLine("allowed: " + allowed);
+```
+
+<details>
+  <summary>Result</summary>
+
+```txt
+allowed: True
+```
+
+</details>
+
+### Simple Query with Output
+
+The `.Evaluate()` method can be used instead of `.Check()` for non-boolean output types:
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Styra.Opa;
+
+var opaUrl = "http://localhost:8181";
+var opa = new OpaClient(opaUrl);
+
+var input = new Dictionary<string, string>() {
+    {"subject", "alice"},
+    {"action", "read"},
 };
 
-AuthzStatus status;
-try {
-    status = opa.evaluate<AuthzStatus>(path, input);
+var result = new Dictionary<string, List<string>>();
+
+try
+{
+    result = await opa.Evaluate<Dictionary<string, List<string>>>("roles", input);
 }
-catch (OpaException) {
-    status = new AuthzStatus(false);
+catch (OpaException e)
+{
+    Console.WriteLine("exception while making request against OPA: " + e.Message);
+}
+
+Console.WriteLine("content of data.roles:");
+foreach (var pair in result)
+{
+    Console.Write("  {0} => [ ", pair.Key);
+    foreach (var item in pair.Value)
+    {
+        Console.Write("{0} ", item);
+    }
+    Console.WriteLine("]");
 }
 ```
+
+<details>
+  <summary>Result</summary>
+
+```txt
+content of data.roles:
+    admin => [ read write ]
+```
+
+</details>
+
+### Default Rule
+
+For evaluating the default rule (configured with your OPA service), use `EvaluateDefault`. `input` is optional, and left out in this example:
+
+```csharp
+using Styra.Opa;
+
+string opaUrl = "http://localhost:8181";
+OpaClient opa = new OpaClient(opaUrl);
+
+bool allowed = false;
+
+try {
+    allowed = await opa.EvaluateDefault<bool();
+}
+catch (OpaException e) {
+    Console.WriteLine("exception while making request against OPA: " + e);
+}
+
+Console.WriteLine("allowed: " + allowed);
+```
+
+<details>
+  <summary>Result</summary>
+
+```txt
+allowed: False
+```
+
+</details>
+
+### Batched Queries
+
+Enterprise OPA supports executing many queries in a single request with the [Batch API][eopa-batch-api].
+
+   [eopa-batch-api]: /enterprise-opa/reference/api-reference/batch-api
+
+The OPA C# SDK has native support for Enterprise OPA's batch API, with a fallback behavior of sequentially executing single queries if the Batch API is unavailable (such as with open source Open Policy Agent).
+
+```csharp
+using Styra.Opa;
+
+string opaUrl = "http://localhost:8181";
+OpaClient opa = new OpaClient(opaUrl);
+
+var input = new Dictionary<string, Dictionary<string, object>>() {
+    { "AAA", new Dictionary<string, object>() { { "subject", "alice" }, { "action", "read" } } },
+    { "BBB", new Dictionary<string, object>() { { "subject", "bob" }, { "action", "write" } } },
+    { "CCC", new Dictionary<string, object>() { { "subject", "dave" }, { "action", "read" } } },
+    { "DDD", new Dictionary<string, object>() { { "subject", "sybil" }, { "action", "write" } } },
+};
+
+OpaBatchResults results = new OpaBatchResults();
+OpaBatchErrors errors = new OpaBatchErrors();
+try
+{
+    (results, errors) = await opa.EvaluateBatch("authz/allow", input);
+}
+catch (OpaException e)
+{
+    Console.WriteLine("exception while making request against OPA: " + e.Message);
+}
+
+Console.WriteLine("Query results, by key:");
+foreach (var pair in results)
+{
+    Console.WriteLine("  {0} => {1}", pair.Key, pair.Value.Result.Boolean);
+}
+
+if (errors.Count > 0)
+{
+    Console.WriteLine("Query errors, by key:");
+    foreach (var pair in errors)
+    {
+        Console.WriteLine("  {0} => {1}", pair.Key, pair.Value);
+    }
+}
+```
+
+<details>
+  <summary>Result</summary>
+
+```txt
+Query results, by key:
+    AAA => True
+    BBB => False
+    CCC => False
+    DDD => False
+```
+
+</details>
+
+See the [API Documentation](https://styrainc.github.io/opa-csharp/api/Styra.Opa.OpenApi.Models.Components.Result.html) for reference on the properties and types available from a result.
+
+### Using Custom Classes for Input and Output
+
+Using the OPA C# SDK, it can be more natural to use custom class types as inputs and outputs to a policy, rather than `System.Collections.Dictionary` (or `Collections.List`). Internally, the OPA C# SDK uses [`Newtonsoft.Json`](https://www.newtonsoft.com/json) to serialize and deserialize inputs and outputs JSON to the provided types.
+
+In the example below, note:
+
+- Using an `enum` for an input field
+- Hiding the sensitive `UUID` with the `JsonIgnore` property
+- Deserializing the query response to a `bool`
+
+```csharp
+using System;
+using Styra.Opa;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Application
+{
+    class Program
+    {
+        public enum ActionType
+        {
+            invalid,
+            create,
+            read,
+            update,
+            delete
+        }
+
+        private class CustomRBACObject
+        {
+
+            [JsonProperty("user")]
+            public string User = "";
+
+            [JsonProperty("action")]
+            [JsonConverter(typeof(StringEnumConverter))]
+            public ActionType Action = ActionType.invalid;
+
+            [JsonIgnore]
+            public string UUID = System.Guid.NewGuid().ToString();
+
+            public CustomRBACObject() { }
+
+            public CustomRBACObject(string user, ActionType action)
+            {
+                User = user;
+                Action = action;
+            }
+        }
+
+        static async Task<int> Main(string[] args)
+        {
+            string opaUrl = "http://localhost:8181";
+            OpaClient opa = new OpaClient(opaUrl);
+
+            var input = new CustomRBACObject("bob", ActionType.read);
+            Console.WriteLine("The JSON that OPA will receive: {{\"input\": {0}}}", JsonConvert.SerializeObject(input));
+
+            bool allowed = false;
+            try
+            {
+                allowed = await opa.Evaluate<bool>("authz/allow", input);
+            }
+            catch (OpaException e)
+            {
+                Console.WriteLine("exception while making request against OPA: " + e.Message);
+            }
+
+            Console.WriteLine("allowed: " + allowed);
+            return 0;
+        }
+    }
+}
+```
+
+<details>
+  <summary>Result</summary>
+
+```txt
+The JSON that OPA will receive: {"input": {"user":"bob","action":"read"}}
+allowed: False
+```
+
+</details>
+
+### Integrating logging with the OPA C# SDK
+
+The OPA C# SDK uses opt-in, [compile-time source generated logging](https://learn.microsoft.com/en-us/dotnet/core/extensions/logger-message-generator), which can be integrated as a part of the overall logs of a larger application.
+
+Here's a quick example:
+
+```csharp
+using Microsoft.Extensions.Logging;
+using Styra.Opa;
+
+internal class Program
+{
+    static async Task<int> Main(string[] args)
+    {
+        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+        ILogger<OpaClient> logger = factory.CreateLogger<OpaClient>();
+
+        var opaURL = "http://localhost:8181";
+        OpaClient opa = new OpaClient(opaURL, logger);
+
+        logger.LogInformation("Initialized an OPA client for the OPA at: {Description}.", opaURL);
+
+        var allow = await opa.Evaluate<bool>("this/rule/does/not/exist", false);
+
+        return 0;
+    }
+}
+```
+
+<details>
+    <summary>Result</summary>
+
+```log
+info: Styra.Opa.OpaClient[0]
+      Initialized an OPA client for the OPA at: http://localhost:8181.
+warn: Styra.Opa.OpaClient[2066302899]
+      executing policy at 'this/rule/does/not/exist' succeeded, but OPA did not reply with a result
+Unhandled exception. OpaException: executing policy at 'this/rule/does/not/exist' succeeded, but OPA did not reply with a result
+    ...
+```
+
+</details>
 
 > [!NOTE]
 > For low-level SDK usage, see the sections below.
@@ -135,16 +367,16 @@ For more information about the API: [Enterprise OPA documentation](https://docs.
 <!-- Start Table of Contents [toc] -->
 ## Table of Contents
 <!-- $toc-max-depth=2 -->
-* [OPA C# SDK](#opa-c-sdk)
-  * [SDK Installation](#sdk-installation)
-  * [SDK Example Usage (high-level)](#sdk-example-usage-high-level)
-* [OPA OpenAPI SDK (low-level)](#opa-openapi-sdk-low-level)
-  * [SDK Example Usage](#sdk-example-usage)
-  * [Available Resources and Operations](#available-resources-and-operations)
-  * [Server Selection](#server-selection)
-  * [Error Handling](#error-handling)
-  * [Authentication](#authentication)
-  * [Community](#community)
+- [OPA C# SDK](#opa-c-sdk)
+  - [SDK Installation](#sdk-installation)
+  - [SDK Example Usage (high-level)](#sdk-example-usage-high-level)
+- [OPA OpenAPI SDK (low-level)](#opa-openapi-sdk-low-level)
+  - [SDK Example Usage](#sdk-example-usage)
+  - [Available Resources and Operations](#available-resources-and-operations)
+  - [Server Selection](#server-selection)
+  - [Error Handling](#error-handling)
+  - [Authentication](#authentication)
+  - [Community](#community)
 
 <!-- End Table of Contents [toc] -->
 
@@ -227,12 +459,12 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 
 ### [OpaApiClient SDK](docs/sdks/opaapiclient/README.md)
 
-* [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
-* [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
-* [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
-* [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
-* [CompileQueryWithPartialEvaluation](docs/sdks/opaapiclient/README.md#compilequerywithpartialevaluation) - Partially evaluate a query
-* [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
+- [ExecuteDefaultPolicyWithInput](docs/sdks/opaapiclient/README.md#executedefaultpolicywithinput) - Execute the default decision  given an input
+- [ExecutePolicy](docs/sdks/opaapiclient/README.md#executepolicy) - Execute a policy
+- [ExecutePolicyWithInput](docs/sdks/opaapiclient/README.md#executepolicywithinput) - Execute a policy given an input
+- [ExecuteBatchPolicyWithInput](docs/sdks/opaapiclient/README.md#executebatchpolicywithinput) - Execute a policy given a batch of inputs
+- [CompileQueryWithPartialEvaluation](docs/sdks/opaapiclient/README.md#compilequerywithpartialevaluation) - Partially evaluate a query
+- [Health](docs/sdks/opaapiclient/README.md#health) - Verify the server is operational
 
 </details>
 <!-- End Available Resources and Operations [operations] -->
@@ -243,6 +475,7 @@ var res = await sdk.ExecuteBatchPolicyWithInputAsync(req);
 ### Override Server URL Per-Client
 
 The default server can be overridden globally by passing a URL to the `serverUrl: string` optional parameter when initializing the SDK client instance. For example:
+
 ```csharp
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Components;
@@ -337,6 +570,7 @@ This SDK supports the following security scheme globally:
 | `BearerAuth` | http | HTTP Bearer |
 
 To authenticate with the API the `BearerAuth` parameter must be set when initializing the SDK client instance. For example:
+
 ```csharp
 using Styra.Opa.OpenApi;
 using Styra.Opa.OpenApi.Models.Components;
