@@ -58,7 +58,7 @@ bool allowed = false;
 
 try
 {
-    allowed = await opa.check("authz/allow", input);
+    allowed = await opa.Check("authz/allow", input);
 }
 catch (OpaException e)
 {
@@ -79,7 +79,7 @@ allowed: True
 
 ### Simple Query with Output
 
-The `.evaluate()` method can be used instead of `.check()` for non-boolean output types:
+The `.Evaluate()` method can be used instead of `.Check()` for non-boolean output types:
 
 ```csharp
 using System;
@@ -99,7 +99,7 @@ var result = new Dictionary<string, List<string>>();
 
 try
 {
-    result = await opa.evaluate<Dictionary<string, List<string>>>("roles", input);
+    result = await opa.Evaluate<Dictionary<string, List<string>>>("roles", input);
 }
 catch (OpaException e)
 {
@@ -130,7 +130,7 @@ content of data.roles:
 
 ### Default Rule
 
-For evaluating the default rule (configured with your OPA service), use `evaluateDefault`. `input` is optional, and left out in this example:
+For evaluating the default rule (configured with your OPA service), use `EvaluateDefault`. `input` is optional, and left out in this example:
 
 ```csharp
 using Styra.Opa;
@@ -141,7 +141,7 @@ OpaClient opa = new OpaClient(opaUrl);
 bool allowed = false;
 
 try {
-    allowed = await opa.evaluateDefault<bool();
+    allowed = await opa.EvaluateDefault<bool();
 }
 catch (OpaException e) {
     Console.WriteLine("exception while making request against OPA: " + e);
@@ -184,7 +184,7 @@ OpaBatchResults results = new OpaBatchResults();
 OpaBatchErrors errors = new OpaBatchErrors();
 try
 {
-    (results, errors) = await opa.evaluateBatch("authz/allow", input);
+    (results, errors) = await opa.EvaluateBatch("authz/allow", input);
 }
 catch (OpaException e)
 {
@@ -257,16 +257,12 @@ namespace Application
             [JsonProperty("user")]
             public string User = "";
 
-            // highlight-start
             [JsonProperty("action")]
             [JsonConverter(typeof(StringEnumConverter))]
             public ActionType Action = ActionType.invalid;
-            // highlight-end
 
-            // highlight-start
             [JsonIgnore]
             public string UUID = System.Guid.NewGuid().ToString();
-            // highlight-end
 
             public CustomRBACObject() { }
 
@@ -288,8 +284,7 @@ namespace Application
             bool allowed = false;
             try
             {
-                // highlight-next-line
-                allowed = await opa.evaluate<bool>("authz/allow", input);
+                allowed = await opa.Evaluate<bool>("authz/allow", input);
             }
             catch (OpaException e)
             {
@@ -335,7 +330,7 @@ internal class Program
 
         logger.LogInformation("Initialized an OPA client for the OPA at: {Description}.", opaURL);
 
-        var allow = await opa.evaluate<bool>("this/rule/does/not/exist", false);
+        var allow = await opa.Evaluate<bool>("this/rule/does/not/exist", false);
 
         return 0;
     }
