@@ -19,7 +19,7 @@
     <None Include="../../docs/*" Pack="true" PackagePath="/docs" />
 
     <PackageReference Include="newtonsoft.json" Version="13.0.4" />
-    <PackageReference Include="nodatime" Version="3.3.2" />
+    <PackageReference Include="nodatime" Version="3.3.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.8" />
     <PackageReference Include="OpenPolicyAgent.Ucast.Linq" Version="0.8.0" />
